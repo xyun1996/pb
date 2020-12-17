@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/sector.proto";
+import "object/enum.proto";
+
+package proto_csmsg;
+
+//  MSG_CS_SECTOR_Achievement           = 30271;  //  成就数据
+message CS_SECTOR_Achievement {
+}
+//  MSG_SC_SECTOR_Achievement           = 30272;  //  成就数据-返回
+message SC_SECTOR_Achievement {
+    ErrorCode                               ret         = 1;
+    map<uint32, proto_object.Sector>        sectorData  = 2;
+}
+
+
+//  MSG_CS_SECTOR_ChipSet               = 30273;  //  芯片集合
+message CS_SECTOR_ChipSet {
+}
+//  MSG_SC_SECTOR_ChipSet               = 30274;  //  芯片集合-返回
+message SC_SECTOR_ChipSet {
+    ErrorCode                               ret         = 1;
+    map<uint32, bool>                       data        = 2;
+}
+//  MSG_CS_SECTOR_PickReward            = 30275;  //  领取星数奖励
+message CS_SECTOR_PickReward {
+    uint32                                  sectorId    = 1;
+    uint32                                  id          = 2; // 打开宝箱id
+}
+//  MSG_SC_SECTOR_PickReward            = 30276;  //  领取星数奖励-返回
+message SC_SECTOR_PickReward {
+    ErrorCode                               ret         = 1;
+    uint32                                  sectorId    = 2;
+    uint32                                  id          = 3; // 打开宝箱id
+}
+
+// MSG_SC_SECTOR_SyncUpdateDiff        = 30277;  //  差异同步
+message SC_SECTOR_SyncUpdateDiff {
+    map<uint32, proto_object.DungeonStageState> update = 1;
+}
+// MSG_CS_SECTOR_Detail                = 30278;  //  扇区关卡数据
+message CS_SECTOR_Detail  {
+}
+// MSG_SC_SECTOR_Detail                = 30279;  //  扇区关卡数据-返回
+message SC_SECTOR_Detail {
+    map<uint32, proto_object.DungeonStageState> data = 1;
+}
+
+// MSG_CS_SECTOR_BattleFirstRewardPick = 30280;  //  扇区关卡首通奖励领取
+message CS_SECTOR_BattleFirstRewardPick {
+    uint32 id = 1;
+}
+// MSG_SC_SECTOR_BattleFirstRewardPick = 30281;  //  扇区关卡首通奖励领取-返回
+message SC_SECTOR_BattleFirstRewardPick {
+    ErrorCode                                       ret             = 1;
+    map<uint32, uint32>                             rewards         = 2; // 奖励，物品id-数量
+}

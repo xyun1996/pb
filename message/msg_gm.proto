@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+
+
+package proto_csmsg;
+
+//  GM
+//  MSG_CS_GM_GMOperation        = 30001;
+message CS_GM_GMOperation {
+    uint32          id      = 1;
+    string          param   = 2;
+  }
+  //  MSG_SC_GM_GMOperation       = 30002;
+  message SC_GM_GMOperation {
+    ErrorCode           ret      = 1;
+  }

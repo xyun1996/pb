@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/mail.proto";
+
+package proto_csmsg;
+
+// MSG_SC_MAIL_Notify                  = 30601;  //  新邮件通知
+message SC_MAIL_Notify {
+}
+// MSG_CS_MAIL_Fetch                   = 30602;  //  仅针对30601前提下发起
+message CS_MAIL_Fetch {
+}
+// MSG_SC_MAIL_Fetch                   = 30603;  //  仅针对30601前提下发起-返回
+message SC_MAIL_Fetch {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_Read                    = 30604;  //  单邮件阅读
+message CS_MAIL_Read {
+    uint64                                      uid         = 1;
+}
+// MSG_SC_MAIL_Read                    = 30605;  //  单邮件阅读-返回
+message SC_MAIL_Read {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_ReceiveAttachment       = 30606;  //  单邮件附件领取
+message CS_MAIL_ReceiveAttachment {
+    uint64                                      uid         = 1;
+}
+// MSG_SC_MAIL_ReceiveAttachment       = 30607;  //  单邮件附件领取-返回
+message SC_MAIL_ReceiveAttachment {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_Delete                  = 30608;  //  单邮件删除
+message CS_MAIL_Delete {
+    uint64                                      uid         = 1;
+}
+// MSG_SC_MAIL_Delete                  = 30609;  //  单邮件删除-返回
+message SC_MAIL_Delete  {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_OneClickPickUp          = 30610;  //  邮件一键领取
+message CS_MAIL_OneClickPickUp {
+}
+// MSG_SC_MAIL_OneClickPickUp          = 30611;  //  邮件一键领取-返回
+message SC_MAIL_OneClickPickUp {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_SC_MAIL_SyncUpdateDiff          = 30612;  //  邮件差异更新
+message SC_MAIL_SyncUpdateDiff {
+    map<uint64, proto_object.MailDetail>        update      = 1;
+    map<uint64, bool>                           delete      = 2;
+}
+
+// MSG_CS_MAIL_Detail                  = 30613;  //  请求邮箱数据-登录请求
+message CS_MAIL_Detail {
+}
+// MSG_SC_MAIL_Detail                  = 30614;  //  请求邮箱数据-登录请求-返回
+message SC_MAIL_Detail  {
+    map<uint64, proto_object.MailDetail>        data        = 1;
+}
+// MSG_CS_MAIL_OneKeyDelete            = 30615;  //  邮件一键删除已读
+message CS_MAIL_OneKeyDelete {
+
+}
+// MSG_SC_MAIL_OneKeyDelete            = 30616;  //  邮件一键删除已读-返回
+message SC_MAIL_OneKeyDelete {
+    ErrorCode                                   ret         = 1;
+}

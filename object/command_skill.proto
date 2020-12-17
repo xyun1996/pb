@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message CSTproficient {
+    uint32 id = 1; // 精通技能id
+    uint32 level = 2; // 精通技能等级
+}
+
+message CSTComposition {
+    repeated uint32 skillActive = 1; // 主动技能列表
+    repeated uint32 skillPassive = 2; // 被动技能列表
+    map<uint32, CSTproficient> skillProficient = 3; // 精通技能加点
+}
+
+message CSTSaving {
+    repeated uint32 skillActive = 1; // 主动技能列表
+    map<uint32, CSTproficient> skillProficient = 2; // 精通技能加点数据
+}
+
+message CommandSkillTree {
+    uint32 id = 1; // 树id
+    uint32 level = 2; // 树等级
+    uint32 exp = 3; // 树经验
+    CSTSaving saving = 4; // 废弃
+    map<uint32, CSTSaving> sheet = 5; // 保存页 key-页id | value-保存的数据
+}
+
+message CommandSkill {
+    map<uint32, CommandSkillTree> tree = 1; // key-树id | value-树
+    uint32 pLevel = 2; // 专精等级
+    uint32 pExp = 3; // 专精经验
+    uint32 selected = 4; // 废弃
+}

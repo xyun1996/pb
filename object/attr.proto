@@ -1,0 +1,73 @@
+
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+enum AttributionID {
+	AttributionIDNone = 0;    //
+	hp = 1;    ////生命值
+	maxHp = 2;    ////最大生命值
+	pow = 3;    ////攻击力
+	def = 4;    ////防御值
+	speed = 5;    ////速度值
+	hit = 6;    ////命中值
+	dodge = 7;    ////闪避值
+	move_speed = 8;    ////移动速度
+	crit = 9;    ////暴击值
+	crit_damage = 10;    ////暴击伤害倍率
+	lucky = 11;    ////幸运值
+	sunder = 12;    ////破甲值
+	true_damage = 13;    ////真实伤害值
+	resistance = 14;    ////抗性值
+	battle_hp_regen = 15;    ////战后生命恢复
+	attack_range = 16;    ////射程
+	life_steal = 17;    ////普攻吸血
+	spell_life_steal = 18;    ////技能吸血
+	damage_increase = 19;    ////伤害提高
+	injury_reduce = 20;    ////受伤减少
+	heal = 21;    ////治疗效果提高
+	treatment = 22;    ////受到治疗效果
+	cd_reduce = 23;    ////技能冷却缩短
+	return_damage = 24;    ////反伤
+	hp_regen = 25;    ////每5秒回血能力
+	skill_intensity = 26;    ////算力
+	a9 = 27;    //
+	a10 = 28;    //
+	a11 = 29;    //
+	a12 = 30;    //
+	a13 = 31;    //
+	a14 = 32;    //
+	MaxProperty = 33;    ////最大属性数量
+	base_maxHp = 102;    //基础-最大生命值
+	base_pow = 103;    //基础-攻击力
+	base_def = 104;    //基础-防御值
+	base_speed = 105;    //基础-速度值
+	base_hit = 106;    //基础-命中值
+	base_dodge = 107;    //基础-闪避值
+	base_move_speed = 108;    //基础-移动速度
+	base_crit = 109;    //基础-暴击值
+	base_crit_damage = 110;    //基础-暴击伤害倍率
+	base_lucky = 111;    //基础-幸运值
+	base_sunder = 112;    //基础-破甲值
+	base_true_damage = 113;    //基础-真实伤害值
+	base_hp_regen = 115;    //基础-生命恢复
+	base_attack_range = 116;    //基础-射程
+	base_skill_intensity = 126;    //基础-算力
+	ratio_maxHp = 202;    //千分比-最大生命值
+	ratio_pow = 203;    //千分比-攻击力
+	ratio_def = 204;    //千分比-防御值
+	ratio_speed = 205;    //千分比-速度值
+	ratio_hit = 206;    //千分比-命中值
+	ratio_dodge = 207;    //千分比-闪避值
+	ratio_move_speed = 208;    //千分比-移动速度
+	ratio_crit = 209;    //千分比-暴击值
+	ratio_crit_damage = 210;    //千分比-暴击伤害倍率
+	ratio_lucky = 211;    //千分比-幸运值
+	ratio_sunder = 212;    //千分比-破甲值
+	ratio_true_damage = 213;    //千分比-真实伤害值
+	ratio_hp_regen = 215;    //千分比-生命恢复
+	ratio_attack_range = 216;    //千分比-射程
+	ratio_skill_intensity = 226;    //千分比-算力
+}

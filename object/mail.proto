@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message MailInfo {
+    uint32                              code        = 1; // 邮件码 针对平台，填充了code就走配置，为0就走平台填充的数据
+    string                              senderName  = 2; // 发送人
+    string                              title       = 3; // 邮件标题
+    string                              content     = 4; // 邮件内容
+    int64                               created     = 5; // 创建时间   
+    int64                               effectiveTm = 6; // 生效时间
+}
+
+message MailAttachment {
+    // 后续再修正
+    map<uint32, uint32>                 data        = 1; // key-物品id | value-物品数量
+}
+
+message MailExpiredInfo {
+    int64                               duration    = 1; // 指定持续时间
+    int64                               expiredTm   = 2; // 指定过期时间点
+}
+
+message MailCondition {
+    message cond {
+        repeated uint64                 data        = 1;
+    }
+    repeated cond                       data        = 1;
+    bool                                onceCheck   = 2;
+}
+
+message MailDetail {
+    uint64                              uid         = 1;
+    MailInfo                            info        = 2;
+    MailAttachment                      att         = 3;
+    int64                              expiredTm   = 4;
+    enum Status {
+        Status_None         = 0;
+        Status_Read         = 1;
+        Status_Received     = 2;
+    }
+    Status                              status      = 5;
+}
+
+message MailBrief {
+    uint64                              uid         = 1; // 邮件唯一id --全局邮件系统控制生成
+    MailInfo                            info        = 2; // 邮件信息
+    MailAttachment                      att         = 3; // 附件
+    MailCondition                       cond        = 4; // 领取条件
+    MailExpiredInfo                     expired     = 5; // 过期信息
+}
+
+enum GlobalMailUidMark {
+    GlobalMailUidMarkNone = 0;
+    GlobalMailUidMarkIdx = 62;
+}
+
+message MailBox {
+    map<uint64, MailDetail>             data        = 1;
+    map<uint64, bool>                   invalid     = 2;
+    uint64 uidGenerator = 3; //0 != uid & (1 << 62)
+    repeated MailBrief offLine = 4; // 未处理的邮件
+    repeated uint64 mailList = 5;
+    uint64 opseq = 6; // 全局邮件操作序
+    message globalMail {
+        map<uint64, bool> staus = 1; // true-已领取|false-无效邮件
+    }
+}
+message MailSet {
+    map<uint64, MailBrief>          data        = 1;
+}
+message MailGlobal {
+    uint64 uidGenerator = 1; //0 != uid & (1 << 62)
+    MailSet                             global      = 2;
+}

@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+
+// 由于产出多种资源，因此无法共享时间
+message ResourceGeneratorBase {
+    // uid = 功能开放id << 32 | 各模块具体逻辑id 
+    // 例：建筑模块 建筑功能id << 32 | 建筑id 
+    // 注意，该uid为交互唯一id，但并非逻辑唯一id
+    uint64                                      uid             = 1;    
+    uint32                                      itemId          = 2;    //资源id
+    int64                                       originalStartTm = 3;    //上次操作时间
+    int64                                       relativeStartTm = 4;    //真实计数开始时间
+    uint32                                      containNum      = 5;    //持有数量 * 100--进度条数据
+    uint32                                      extraNum        = 6;    //加速导致的数据
+    uint32                                      keepNum         = 7;    //直接持有的数据
+} 
+
+message AutoResourceGeneratorBase {
+    uint32  itemId  = 1; // 物品id
+    int64   startTm = 2; // 开始操作时间
+    uint32  frag    = 3; // 不满1的计算碎片                         
+}
+
+message ResourceGeneratorGroup {
+    repeated ResourceGeneratorBase              data            = 1;
+    map<uint32, AutoResourceGeneratorBase>      autoResData     = 2; // 自动产生的道具
+}
+
+message Effector {
+    ResourceGeneratorGroup rg = 1; 
+}

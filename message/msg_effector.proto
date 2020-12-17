@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "object/effector.proto";
+
+package proto_csmsg;
+
+
+//   MSG_CS_EFFECTOR_ResouceGenerator    = 30931;  //  资源产出详情
+message CS_EFFECTOR_ResourceGenerator {
+}
+//   MSG_SC_EFFECTOR_ResouceGenerator    = 30932;  //  资源产出详情-返回
+message SC_EFFECTOR_ResourceGenerator {
+    proto_object.ResourceGeneratorGroup detail = 1;
+}
+//   MSG_SC_EFFECTOR_RGSyncUpdateDiff    = 30933;  //  资源产出同步
+message SC_EFFECTOR_RGSyncUpdateDiff {
+    repeated proto_object.ResourceGeneratorBase update = 1;
+    map<uint64, bool> rgDelete = 2;
+    //自动产出资源
+    repeated proto_object.AutoResourceGeneratorBase autoRg = 3;
+    map<uint32, bool> argDelete = 4;
+}

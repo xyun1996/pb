@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/sector.proto";
+
+package proto_csmsg;
+
+//   MSG_CS_ENDLESS_Detail = 31201; // 无尽模式-基础数据
+message CS_ENDLESS_Detail {}
+//   MSG_SC_ENDLESS_Detail = 31202; // 无尽模式-基础数据
+message SC_ENDLESS_Detail {
+    ErrorCode ret = 1;
+    proto_object.Endless data = 2;
+}
+//   MSG_SC_ENDLESS_SyncUpdateDiff = 31203; // 无尽模式-差异同步
+message SC_ENDLESS_SyncUpdateDiff {
+    map<uint32, bool> completed = 1; // 关卡id
+    map<uint32, uint32> processingUpdate = 2; // 关卡id-进度
+}

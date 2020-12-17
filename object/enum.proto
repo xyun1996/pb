@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+enum BuildingState {
+    BuildingStateNone               = 0;
+    BuildingStateCreate             = 1; // 创建
+    BuildingStateNormal             = 2; // 正常
+    BuildingStateUpgrade            = 3; // 升级
+}
+ 
+enum LineState {
+    LineStateNone                   = 0;
+    LineStateRunning                = 1;    // 运行中
+    LineStateInDonwTime             = 2;    // 停机
+    LineStateOutputOver             = 3;    // 产出已满
+}
+
+enum QuestState {
+    QuestStateNone                   = 0;       
+    QuestStateReceived               = 1;    //  接收
+    QuestStateCompleted              = 2;    //  完成
+    QuestStateExpired                = 3;    //  过期--仅配置了消失时间的支线展示
+}
+
+enum QuestDeleteReason {
+    QuestDeleteReasonNone                       = 0;
+    QuestDeleteReasonCompleted                  = 1;    //完成后立即删除
+    QuestDeleteReasonCompletedShowOver          = 2;    //完成，展示结束后的删除
+    QuestDeleteReasonExpired                    = 3;    //过期后立即删除
+    QuestDeleteReasonExpiredShowOver            = 4;    //过期，展示结束后的删除
+}
+
+enum DungeonStageState {
+    DungeonStageStateNone                       = 0;
+    DungeonStageStateCompleted                  = 1;    //完成，但没有领取奖励
+    DungeonStageStatePicked                     = 2;    //完成且领取了奖励
+}
+
+enum ExplorationCurGridState {
+    ExplorationCurGridState_None                = 0;
+    
+    //
+    // normal selected --> (dropAlg)? --> over
+    // battle selected --> (algWaiting)? -->  (dropAlg)? --> over
+
+    ExplorationCurGridState_Secleted            = 1;    // 格子选中阶段
+    ExplorationCurGridState_Over                = 2;    // 当前各自逻辑完成
+    ExplorationCurGridState_HalfOver            = 3;    // 中场结束
+    ExplorationCurGridState_DropAlg             = 4;    // 函数溢出售卖
+
+    ExplorationCurGridStateBattleALGWaiting     = 11;   // 函数选择阶段
+    ExplorationCurGridStateBattleFailure        = 12;   // 战斗失败阶段
+}
+
+enum ReconstitutionOp {
+    ReconstitutionOpNone                        = 0;
+    ReconstitutionOpReProdution                 = 1;    // 复制
+    ReconstitutionOpFusion                      = 2;    // 融合
+    ReconstitutionOpReConstitution              = 3;    // 重构
+    ReconstitutionOpMax                         = 4;  
+}
+
+enum StatisticResident {
+    StatisticResidentNone = 0;
+}
+
+enum BattleDungeonCat {
+    BattleDungeonCatNone = 0;
+    BattleDungeonCatExploration = 1;
+    BattleDungeonCatFrag = 2;
+    BattleDungeonCatMaterial = 3;
+    BattleDungeonCatMax = 4;
+}

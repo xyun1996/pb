@@ -1,0 +1,67 @@
+
+syntax = "proto3";
+
+option go_package = "proto/proto_csmsg";
+
+package proto_csmsg;
+
+enum SystemFunctionID{
+	SystemFunctionID_None = 0;    //
+	SystemFunctionID_BaseSystem = 100;    //基础系统
+	SystemFunctionID_Achievement = 101;    //成就
+	SystemFunctionID_ChangeName = 102;    //名称修改
+	SystemFunctionID_CombatSystem = 200;    //战斗系统
+	SystemFunctionID_PlaySpeed = 201;    //播放加速
+	SystemFunctionID_AutoDeploy = 202;    //自动部署
+	SystemFunctionID_EnemyDetail = 203;    //怪物详情
+	SystemFunctionID_Skada = 204;    //战斗统计
+	SystemFunctionID_BattleExit = 205;    //战斗撤退
+	SystemFunctionID_Building = 300;    //绿洲
+	SystemFunctionID_BuildingMask = 301;    //绿洲遮罩
+	SystemFunctionID_Exploration = 400;    //探索
+	SystemFunctionID_AutoEquip = 401;    //自动装备
+	SystemFunctionID_QuickFormat = 402;    //编队
+	SystemFunctionID_bench1 = 403;    //替补席1
+	SystemFunctionID_bench2 = 404;    //替补席2
+	SystemFunctionID_bench3 = 40401;    //替补席3
+	SystemFunctionID_Random = 405;    //战局随机性
+	SystemFunctionID_commander_skill = 406;    //指挥官技能
+	SystemFunctionID_SectorBuilding = 407;    //扇区建筑
+	SystemFunctionID_BattleDeploy = 408;    //布阵拖拽
+	SystemFunctionID_commander_skill_Ui = 409;    //指挥官技能Ui
+	SystemFunctionID_AutoExploration = 410;    //计划作战
+	SystemFunctionID_AutoBattle = 411;    //自动战斗
+	SystemFunctionID_HeroGroup = 500;    //角色列表
+	SystemFunctionID_HeroInfo = 501;    //角色资料
+	SystemFunctionID_HeroRank = 502;    //潜能突破
+	SystemFunctionID_SkillUp = 503;    //角色技能升级
+	SystemFunctionID_Lottery = 600;    //抽卡
+	SystemFunctionID_Store = 610;    //商店
+	SystemFunctionID_Social = 700;    //社交
+	SystemFunctionID_Backpack = 800;    //仓库
+	SystemFunctionID_Factory = 900;    //工厂
+	SystemFunctionID_Training = 901;    //训练场
+	SystemFunctionID_HeroEnter = 1000;    //角色入驻
+	SystemFunctionID_LifeSkill = 1001;    //生活技能
+	SystemFunctionID_Dorm = 1100;    //宿舍
+	SystemFunctionID_Algorithm = 1200;    //算法
+	SystemFunctionID_Algorithm_pro = 1201;    //算法进阶功能锁
+	SystemFunctionID_Algorithm_optimize = 1202;    //算法优化
+	SystemFunctionID_Algorithm_reconsitution = 1203;    //算法重构
+	SystemFunctionID_Mail = 1300;    //邮件
+	SystemFunctionID_friendship = 1400;    //亲密度
+	SystemFunctionID_friendship_sector_Ui = 1401;    //亲密度关卡UI解锁
+	SystemFunctionID_Task = 1500;    //任务逻辑
+	SystemFunctionID_DailyTask = 1501;    //日常任务
+	SystemFunctionID_TaskUi = 1502;    //任务UI解锁
+	SystemFunctionID_Avg = 1600;    //剧情
+	SystemFunctionID_MaterialDungeon = 1700;    //素材副本
+	SystemFunctionID_GoldDungeron = 1701;    //金币副本
+	SystemFunctionID_ExpDungeon = 1702;    //经验副本
+	SystemFunctionID_EquipDungeon = 1703;    //标准算法副本
+	SystemFunctionID_TestDungeon = 1704;    //测试算法副本
+	SystemFunctionID_Endless = 1800;    //无尽模式
+	SystemFunctionID_Hard = 1900;    //噩梦模式
+	SystemFunctionID_Guid = 2000;    //新手引导关
+	SystemFunctionID_ATHDungeon = 2100;    //算法素材副本
+}

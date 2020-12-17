@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+
+package proto_csmsg;
+
+// MSG_CS_AVG_Complete = 31021; // 播放avg完成
+message CS_AVG_Complete {
+    uint32 avgId = 1;
+}
+// MSG_SC_AVG_Complete = 31022; // 播放avg完成
+message SC_AVG_Complete {
+    ErrorCode ret = 1;
+    map<uint32, uint32> rewards = 2;
+}

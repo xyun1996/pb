@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+
+package proto_csmsg;
+
+message LotteryElem {
+    uint32                            item        = 1;
+    uint32                            num         = 2;
+    bool firstReward = 3; // 首次奖励
+  }
+  // lottery
+  //  MSG_CS_LOTTERY_ExecOnce             = 30051;  //  单抽
+  message CS_LOTTERY_ExecOnce {
+    uint32                            pool        = 1;
+  }
+  //  MSG_SC_LOTTERY_ExecOnce             = 30052;  //  单抽-返回
+  message SC_LOTTERY_ExecOnce {
+    ErrorCode                         ret         = 1;
+    LotteryElem                       elem        = 2;
+  }
+  //  MSG_CS_LOTTERY_ExecTen              = 30053;  //  十连
+  message  CS_LOTTERY_ExecTen {
+    uint32                            pool        = 1;
+  }
+  //  MSG_SC_LOTTERY_ExecTen              = 30054;  //  十连-返回
+  message  SC_LOTTERY_ExecTen {
+    ErrorCode                         ret         = 1;
+    repeated  LotteryElem             elem        = 2;
+  } 

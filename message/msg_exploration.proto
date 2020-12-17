@@ -1,0 +1,466 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/exploration.proto";
+import "object/object.proto";
+import "object/overclock.proto";
+
+package proto_csmsg;
+
+message OverClock {
+    message elem {
+        uint32 id = 1;
+        uint32 param = 2; // 参数-目前只针对自选芯片
+    }
+    map<uint32, elem> data = 1;
+}
+
+//   // exploration
+//   MSG_CS_EXPLORATION_Start            = 30301;  //  探索开始
+message CS_EXPLORATION_Start {
+    uint32                                          dungeonId   = 1;
+    uint32                                          formId      = 2;
+    OverClock                                       ocChoice    = 3; // 超频选项 
+    uint32                                          moduleId    = 4; // 功能模块id
+}
+//   MSG_SC_EXPLORATION_Start            = 30302;  //  探索开始-返回
+message SC_EXPLORATION_Start {
+    ErrorCode                                       ret         = 1;
+    proto_object.EXPLORATION_Map_Detail             epMap       = 2;
+    proto_object.Exploration_Operator_Detail        epOp        = 3;  
+    proto_object.Exploration_Grid_Detail            epGrid      = 4;
+    proto_object.Exploration_Formation_Detail       epForm      = 5;
+    proto_object.EXPLORATION_NextMap_Brief          epNext      = 6;
+    proto_object.EXPLORATION_Backpack_Detail        epBackpack  = 7;
+    proto_object.BuffGroup                          epBuff      = 8;
+    proto_object.Exploration_Resident_Detail        epResident  = 9;
+}
+// MSG_CS_EXPLORATION_Detail           = 30311;  //  探索数据-全量同步
+message CS_EXPLORATION_Detail {
+}
+// MSG_SC_EXPLORATION_Detail           = 30312;  //  探索数据-全量同步--返回
+message SC_EXPLORATION_Detail {    
+    proto_object.EXPLORATION_Map_Detail         epMap       = 1;
+    proto_object.Exploration_Operator_Detail    epOp        = 2;  
+    proto_object.Exploration_Grid_Detail        epGrid      = 3;    
+    proto_object.Exploration_Formation_Detail   epForm      = 4;  
+    proto_object.EXPLORATION_NextMap_Brief      epNext      = 5;  
+    proto_object.EXPLORATION_Backpack_Detail    epBackpack  = 6; 
+    proto_object.BuffGroup                      epBuff      = 7;    
+    proto_object.Exploration_Resident_Detail    epResident  = 8;                        
+}
+// MSG_SC_EXPLORATION_SyncUpdateDiff   = 30306;  //  探索数据-差异同步
+message SC_EXPLORATION_SyncUpdateDiff {
+    proto_object.EXPLORATION_Map_Detail         epMap       = 1;
+    proto_object.Exploration_Operator_Detail    epOp        = 2;  
+    proto_object.Exploration_Grid_Detail        epGrid      = 3; 
+    proto_object.Exploration_Formation_Detail   epForm      = 4;
+    proto_object.EXPLORATION_NextMap_Brief      epNext      = 5;
+    proto_object.EXPLORATION_Backpack_Detail    epBackpack  = 6;
+    proto_object.BuffGroup                      epBuff      = 7;
+    proto_object.Exploration_Resident_Detail    epResident  = 8;  
+}
+//   MSG_CS_EXPLORATION_Select           = 30304;  //  选择
+message CS_EXPLORATION_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_Select           = 30305;  //  选择-返回
+message SC_EXPLORATION_Select {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_NextFloor        = 30309;  //  下一层
+message CS_EXPLORATION_NextFloor {
+    uint32                                          id          = 1;        // brief中标识id
+}
+// MSG_SC_EXPLORATION_NextFloor        = 30310;  //  下一层-返回
+message SC_EXPLORATION_NextFloor {
+    ErrorCode                                       ret         = 1;
+}
+
+message ExplorationSettleReward {
+    uint32 exp = 1; // 角色经验
+    uint32 intimacy = 2; // 亲密度
+    uint32 cstExp = 3; // 指挥官技能树经验
+    uint32 exByte = 4; // 效能转换的比特
+    uint32 eplGold = 5; //缓存币
+}
+
+// MSG_CS_EXPLORATION_Settle           = 30309;  //  结算
+message CS_EXPLORATION_Settle {
+    uint32                                          position    = 1; //row << 16 | col;
+    bool costumeStm = 2; // 仅针对失败结算 true=消耗对应体力，获取奖励 false=扣除1点体力，离开
+}
+// MSG_SC_EXPLORATION_Settle           = 30310;  //  结算-返回
+message SC_EXPLORATION_Settle {
+    ErrorCode                                       ret         = 1;
+    // map<uint32, uint32> rewardsRecord = 2; // 物品记录 key-物品id | value-物品数量 --废弃
+    // map<uint32, uint32> back = 3; // 返还 -- 废弃
+    ExplorationSettleReward rewards = 4;
+}
+
+// MSG_CS_EXPLORATION_RewardsShow      = 30319;  //  失败奖励预览
+message CS_EXPLORATION_RewardsShow {}
+// MSG_SC_EXPLORATION_RewardsShow      = 30320;  //  失败奖励预览-返回
+message SC_EXPLORATION_RewardsShow {
+    ErrorCode                                       ret         = 1;
+    ExplorationSettleReward rewards = 2;
+}
+
+// MSG_CS_EXPLORATION_FreshFromation   = 30313;  //  调整编队
+message CS_EXPLORATION_FreshFromation {
+    map<uint32, uint32>                             data        = 1; // key-角色|val-位置
+}
+// MSG_SC_EXPLORATION_FreshFromation   = 30314;  //  调整编队-返回
+message SC_EXPLORATION_FreshFromation {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_SettleFloor      = 30317;  //  结算层 --后续废弃
+message CS_EXPLORATION_SettleFloor {
+    uint32                                          position    = 1; //row << 16 | col; 
+}
+// MSG_SC_EXPLORATION_SettleFloor      = 30318;  //  结算层-返回 --后续废弃
+message SC_EXPLORATION_SettleFloor {
+    ErrorCode                                       ret         = 1;
+    map<uint32, uint32> rewardsRecord = 2; // 物品记录 key-物品id | value-物品数量
+}
+
+//   // battle room
+//   MSG_CS_EXPLORATION_BATTLE_Start     = 30321;  //  战斗房发起战斗
+message CS_EXPLORATION_BATTLE_Start  {
+    uint32                                          position    = 1; //row << 16 | col;
+    map<uint32, uint32>                             data        = 2; // key-角色|val-位置
+}
+//   MSG_SC_EXPLORATION_BATTLE_Start     = 30322;  //  战斗房发起战斗-返回
+message SC_EXPLORATION_BATTLE_Start {
+    ErrorCode                                       ret         = 1;
+    // 预分配奖励 todo
+}
+//   MSG_CS_EXPLORATION_BATTLE_Settle    = 30323;  //  战斗房发起结算
+message CS_EXPLORATION_BATTLE_Settle {
+    uint32                                          position    = 1; //row << 16 | col;
+    enum battleSettleResult {
+        battleSettleResultNone                      = 0;
+        battleSettleResultWin                       = 1;
+        battleSettleResultLose                      = 2;
+        battleSettleResultTimeout                   = 3;
+    }
+    battleSettleResult                              result      = 2;
+    // 怪物数据 todo
+    message elem {
+        uint32                                      per         = 1; // 恢复后的血量per
+        uint32                                      injury      = 2; // 该场承伤
+        uint32                                      damage      = 4; // 该场造伤
+        bool                                        dead        = 3; // true-死亡
+        proto_object.BattleRecord                   record      = 5; // 记录
+    }
+    map<uint32, elem>                               monsterHpPer= 3; // 怪物血量万分比 key-坐标 val 怪物只需要血量
+    map<uint32, elem>                               charHpPer   = 4; // 角色血量万分比 key-角色id val
+    uint32                                          mp          = 5;
+    uint32                                          hmp         = 6;
+    bool                                            win         = 7; // true-赢
+}
+//   MSG_SC_EXPLORATION_BATTLE_Settle    = 30324;  //  战斗房发起结算-返回
+message SC_EXPLORATION_BATTLE_Settle {
+    ErrorCode                                       ret         = 1;
+    bool                                            over        = 2; // 当over为真时,表明探索立即终止
+    map<uint32, uint32> rewardsRecord = 3; // 物品记录 key-物品id | value-物品数量
+    map<uint32, uint32> back = 4; // 返还
+}
+//   MSG_CS_EXPLORATION_BATTLE_Restart   = 30325;  //  战斗房战斗内重新开始
+message CS_EXPLORATION_BATTLE_Restart {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_BATTLE_Restart   = 30326;  //  战斗房战斗内重新开始-返回
+message SC_EXPLORATION_BATTLE_Restart {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_BATTLE_Quit      = 30327;  //  战斗房主动退出
+message CS_EXPLORATION_BATTLE_Quit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_BATTLE_Quit      = 30328;  //  战斗房主动退出-返回
+message SC_EXPLORATION_BATTLE_Quit {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_BATTLE_ALGSelect = 30329;  //  战斗房结算后奖励领取
+message CS_EXPLORATION_BATTLE_ALGSelect {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; // 奖励索引 0开始
+}
+//   MSG_SC_EXPLORATION_BATTLE_ALGSelect = 30330;  //  战斗房结算后奖励领取-返回
+message SC_EXPLORATION_BATTLE_ALGSelect {
+    ErrorCode                                       ret         = 1;
+}
+
+// MSG_CS_EXPLORATION_BATTLE_Ambush    = 30331;  //  伏击开始
+message CS_EXPLORATION_BATTLE_Ambush {
+    uint32                                          position    = 1; //row << 16 | col;
+    map<uint32, uint32>                             data        = 2; // key-角色|val-位置
+}
+// MSG_SC_EXPLORATION_BATTLE_Ambush    = 30332;  //  伏击开始
+message SC_EXPLORATION_BATTLE_Ambush {
+    ErrorCode                                       ret         = 1;
+    uint32 alg = 2;
+}
+// MSG_CS_EXPLORATION_BATTLE_Stealth   = 30333;  //  潜行开始
+message CS_EXPLORATION_BATTLE_Stealth {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_BATTLE_Stealth   = 30334;  //  潜行开始
+message SC_EXPLORATION_BATTLE_Stealth {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_BATTLE_Focus     = 30335;  //  专注改判
+message CS_EXPLORATION_BATTLE_Focus {
+    uint32                                          position    = 1; //row << 16 | col;
+    bool ambush = 2; // true ambush false stealth
+}
+// MSG_SC_EXPLORATION_BATTLE_Focus     = 30336;  //  专注改判
+message SC_EXPLORATION_BATTLE_Focus {
+    ErrorCode                                       ret         = 1;
+    uint32 value = 2;
+}
+
+//   // item room  30341-30360
+//   MSG_CS_EXPLORATION_ITEM_Select      = 30341;  //  道具房选择
+message CS_EXPLORATION_ITEM_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //道具索引 0开始
+}
+//   MSG_SC_EXPLORATION_ITEM_Select      = 30342;  //  道具房选择-返回
+message SC_EXPLORATION_ITEM_Select {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_ITEM_Quit        = 30343;  //  道具房放弃
+message CS_EXPLORATION_ITEM_Quit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_ITEM_Quit        = 30344;  //  道具房放弃-返回
+message SC_EXPLORATION_ITEM_Quit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_ITEM_LockUnlock        = 30345;  //  道具房物品锁定-解锁操作
+message CS_EXPLORATION_ITEM_LockUnlock {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //道具索引 0开始
+}
+// MSG_SC_EXPLORATION_ITEM_LockUnlock        = 30346;  //  道具房物品锁定-解锁操作-返回
+message SC_EXPLORATION_ITEM_LockUnlock {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_ITEM_Fresh       = 30347;  //  道具房刷新
+message CS_EXPLORATION_ITEM_Fresh {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_ITEM_Fresh       = 30348;  //  道具房刷新-返回
+message SC_EXPLORATION_ITEM_Fresh {
+    ErrorCode                                       ret         = 1;
+}
+
+
+//   // store room 30361-30380
+//   MSG_CS_EXPLORATION_STORE_Purchase   = 30361;  //  商店房发起购买
+message CS_EXPLORATION_STORE_Purchase {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //商品索引 0开始  
+}
+//   MSG_SC_EXPLORATION_STORE_Purchase   = 30362;  //  商店房发起购买-返回
+message SC_EXPLORATION_STORE_Purchase {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_STORE_Quit       = 30363;  //  商店房退出
+message CS_EXPLORATION_STORE_Quit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_STORE_Quit       = 30364;  //  商店房退出-返回
+message SC_EXPLORATION_STORE_Quit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_STORE_Sold       = 30365;  //  商店房售卖
+message CS_EXPLORATION_STORE_Sold {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32 algId = 2; // 函数id
+}
+// MSG_SC_EXPLORATION_STORE_Sold       = 30366;  //  商店房售卖
+message SC_EXPLORATION_STORE_Sold {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_STORE_Refresh    = 30367;  //  商店房刷新
+message CS_EXPLORATION_STORE_Refresh {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_STORE_Refresh    = 30368;  //  商店房刷新
+message SC_EXPLORATION_STORE_Refresh {
+    ErrorCode                                       ret         = 1;
+}
+//   // recover room 30381-30400
+//   MSG_CS_EXPLORATION_RECOVER_Select   = 30381;  //  恢复房选择
+message CS_EXPLORATION_RECOVER_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //事件索引 0开始  
+}
+//   MSG_SC_EXPLORATION_RECOVER_Select   = 30382;  //  恢复房选择-返回
+message SC_EXPLORATION_RECOVER_Select {
+    ErrorCode                                       ret         = 1;
+    map<uint32, uint32> result = 2; // 奖励 key-物品id | value-物品数量
+    map<uint32, uint32> buff = 3; // key-buffId | value-buff数量
+}
+
+//   // event room 30401-30421
+//   MSG_CS_EXPLORATION_EVENT_Select     = 30401;  //  事件房选择
+message CS_EXPLORATION_EVENT_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //事件索引 0开始 
+}
+//   MSG_SC_EXPLORATION_EVENT_Select     = 30402;  //  事件房选择-返回
+message SC_EXPLORATION_EVENT_Select {
+    ErrorCode                                       ret         = 1;
+    map<uint32, uint32> result = 2; // 奖励 key-物品id | value-物品数量
+    map<uint32, uint32> buff = 3; // key-buffId | value-buff数量
+}
+// MSG_CS_EXPLORATION_EVENT_Focus      = 30403;  //  事件房专注改判
+message CS_EXPLORATION_EVENT_Focus {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_EVENT_Focus      = 30404;  //  事件房专注改判
+message SC_EXPLORATION_EVENT_Focus {
+    ErrorCode                                       ret         = 1;
+    uint32 value = 2;// 改判后的值
+}
+// MSG_CS_EXPLORATION_EVENT_RandomConfirm      = 30405;  //  事件房随机逻辑确认
+message CS_EXPLORATION_EVENT_RandomConfirm {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_EVENT_RandomConfirm      = 30406;  //  事件房随机逻辑确认
+message SC_EXPLORATION_EVENT_RandomConfirm {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_EVENT_AlgUpgrade = 30407; // 事件房函数升级
+message CS_EXPLORATION_EVENT_AlgUpgrade {
+    uint32 position = 1; //row << 16 | col;
+    uint32 algId = 2; // 函数id
+}
+// MSG_SC_EXPLORATION_EVENT_AlgUpgrade = 30408; // 事件房函数升级
+message SC_EXPLORATION_EVENT_AlgUpgrade {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_EVENT_SpecifyExit = 30409; // 事件房特殊逻辑下退出
+message CS_EXPLORATION_EVENT_SpecifyExit {
+    uint32                                          position    = 1; //row << 16 | col; 
+}
+// MSG_SC_EXPLORATION_EVENT_SpecifyExit = 30410; // 事件房特殊逻辑下退出
+message SC_EXPLORATION_EVENT_SpecifyExit {
+    ErrorCode                                       ret         = 1;
+}
+//   // reconstitution room 30421-30440
+//   MSG_CS_EXPLORATION_RECONSTITUTION_Reproduction  = 30421;  //  重构房-复制
+message CS_EXPLORATION_RECONSTITUTION_Reproduction {
+    uint32                                          position    = 1; //row << 16 | col;  
+    message elem {
+        uint32                                      algId       = 1;
+        uint32                                      ch          = 2; // 角色id，0作为全局芯片 
+    }
+    elem                                            alg         = 2; // 函数
+    uint32                                          heroId      = 3; // 角色id
+}
+//   MSG_SC_EXPLORATION_RECONSTITUTION_Reproduction  = 30422;  //  重构房-复制-返回
+message SC_EXPLORATION_RECONSTITUTION_Reproduction {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_RECONSTITUTION_Fusion        = 30423;  //  重构房-融合
+message CS_EXPLORATION_RECONSTITUTION_Fusion {
+    uint32                                          position    = 1; //row << 16 | col;  
+    message elem {
+        uint32                                      algId       = 1;
+        uint32                                      ch          = 2; // 角色id，0作为全局芯片 
+    }
+    repeated elem                                   alg         = 2; // 函数                                
+}
+//   MSG_SC_EXPLORATION_RECONSTITUTION_Fusion        = 30424;  //  重构房-融合-返回
+message SC_EXPLORATION_RECONSTITUTION_Fusion {
+    ErrorCode                                       ret         = 1;
+    uint32                                          alg         = 2; // alg=0即为空
+}
+//   MSG_CS_EXPLORATION_RECONSTITUTION_Reconstitution= 30425;  //  重构房-重构
+message CS_EXPLORATION_RECONSTITUTION_Reconstitution {
+    uint32                                          position    = 1; //row << 16 | col;  
+    message elem {
+        uint32                                      algId       = 1;
+        uint32                                      ch          = 2; // 角色id，0作为全局芯片 
+    }
+    elem                                            alg         = 2; // 函数
+}
+//   MSG_SC_EXPLORATION_RECONSTITUTION_Reconstitution= 30426;  //  重构房-重构-返回
+message SC_EXPLORATION_RECONSTITUTION_Reconstitution {
+    ErrorCode                                       ret         = 1;
+    uint32                                          alg         = 2; // alg=0即为空
+}
+// MSG_CS_EXPLORATION_RECONSTITUTION_Quit          = 30427;  //  重构房-放弃
+message CS_EXPLORATION_RECONSTITUTION_Quit {
+    uint32                                          position    = 1; //row << 16 | col; 
+}
+// MSG_SC_EXPLORATION_RECONSTITUTION_Quit          = 30428;  //  重构房-放弃-返回
+message SC_EXPLORATION_RECONSTITUTION_Quit {
+    ErrorCode                                       ret         = 1;
+}
+  // resident 
+  // store 30441-40450
+//   MSG_CS_EXPLORATION_RESIDENT_STORE_Purchase   = 30441;  //  常驻商店房发起购买
+message CS_EXPLORATION_RESIDENT_STORE_Purchase {
+    uint32                                          idx         = 2; //商品索引 0开始  
+}
+//   MSG_SC_EXPLORATION_RESIDENT_STORE_Purchase   = 30442;  //  常驻商店房发起购买-返回
+message SC_EXPLORATION_RESIDENT_STORE_Purchase {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_NtfServerEnter   = 30315;  //  通知服务器进入探索
+message CS_EXPLORATION_NtfServerEnter {
+
+}
+// MSG_SC_EXPLORATION_NtfServerEnter   = 30316;  //  通知服务器进入探索
+message SC_EXPLORATION_NtfServerEnter {
+    ErrorCode                                       ret         = 1;
+}
+
+//   // overclock
+//   MSG_CS_EXPLORATION_OVERCLOCK_Detail = 30451; // 请求超频数据
+message CS_EXPLORATION_OVERCLOCK_Detail {}
+//   MSG_SC_EXPLORATION_OVERCLOCK_Detail = 30452; // 请求超频数据
+message SC_EXPLORATION_OVERCLOCK_Detail {
+    proto_object.Overclock data = 1;
+}
+// MSG_CS_EXPLORATION_AlgUpperLimit_Sold = 30461; // 函数上限_售卖 
+message CS_EXPLORATION_AlgUpperLimit_Sold {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32 algId = 2; // 函数id
+}
+// MSG_SC_EXPLORATION_AlgUpperLimit_Sold = 30462; // 函数上限_售卖
+message SC_EXPLORATION_AlgUpperLimit_Sold {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_AlgUpperLimit_PurchaseLimit = 30463; // 函数上限_购买上限 
+message CS_EXPLORATION_AlgUpperLimit_PurchaseLimit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_AlgUpperLimit_PurchaseLimit = 30464; // 函数上限_购买上限
+message SC_EXPLORATION_AlgUpperLimit_PurchaseLimit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_AlgUpperLimit_Exit = 30465; // 函数上限_离开 
+message CS_EXPLORATION_AlgUpperLimit_Exit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_AlgUpperLimit_Exit = 30466; // 函数上限_离开
+message SC_EXPLORATION_AlgUpperLimit_Exit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_CAMP_FETTER_USE = 30467; //使用羁绊技能
+message CS_EXPLORATION_CAMP_FETTER_USE {
+    uint64                                          uid = 1;//camp<<32|num
+}
+// MSG_SC_EXPLORATION_CAMP_FETTER_USE = 30468; //使用羁绊技能
+message SC_EXPLORATION_CAMP_FETTER_USE {
+    ErrorCode                                       ret = 1;
+}

@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/object.proto";
+import "object/hero.proto";
+import "message/msg_hero.proto";
+
+package proto_csmsg;
+
+// 副本
+// 用户                      服务器
+// 用户外部发起进去副本       
+//                          响应进入副本           
+// --- 内循环开始                         
+//                          同步数据
+// 根据数据类型布阵发起       
+//                          响应布阵  
+// 开始战斗
+// 战斗结算                 
+//                          响应结算
+//                          同步下一逻辑数据    
+
+// 探索
+// 用户                      服务器                   
+// 发起探索                   
+//                           响应进入探索
+//                           同步数据
+// 根据用户进入战斗
+// 布阵发起
+//                           响应布阵
+// 开始战斗
+// 战斗结算
+//                           响应结算
+//                           同步下一逻辑数据       
+
+message BattleMonster {
+    uint64 uid = 1; // 怪物唯一id
+    uint32 coordination = 2; // 战场地图坐标 row << 16 | col
+    uint32 templateId = 3; // 模板id
+    uint32 level = 4; // 等级
+    uint32 intensity = 5; // 强度
+    map<uint32, uint32> skillGroup = 6; // 技能列表
+    map<uint32, uint32> attr = 7; // 属性
+    uint32 hpPer = 8; // 当前血量万分比
+    uint32 cat = 9; // 单位类型
+}
+
+message BattleWave {
+    uint32 total = 1; // 总波数
+    uint32 cur = 2; // 当前波数
+    uint32 scene = 3; // 场景
+}
+
+// MSG_SC_BATTLE_NtfEnter              = 32501;  //  通知进入
+message SC_BATTLE_NtfEnter {
+    uint32 dungeonId = 1;
+    BattleWave wave = 2;
+    map<uint32, proto_object.HeroAttr> heroData = 3; // 角色数据  //--废弃
+    map<uint32, BattleHeroSt> battle = 4;
+    BattlePlayer player = 5; //指挥官属性
+}
+// MSG_SC_BATTLE_NtfWaveStep           = 32502;  //  通知阶段
+message SC_BATTLE_NtfWaveStep {
+    BattleWave wave = 1;
+}
+// MSG_SC_BATTLE_NtfOverRewards        = 32503;  //  通知奖励
+message SC_BATTLE_NtfOverRewards {
+    bool result = 1; // 输赢
+    map<uint32, uint32> innerRewards = 2; // 阶段奖励 key=itemId | value=num
+    map<uint32, uint32> overRewards = 3; // 结束奖励 key=itemId | value=num
+    map<uint32, uint32> firstClear = 4; // 首通奖励 key=itemId | value=num
+    uint32 totalExp = 5;
+}
+
+// MSG_SC_BATTLE_NtfMonsterData        = 33001;  //  通知怪物展示数据
+message SC_BATTLE_NtfMonsterData {
+    bool form = 1; // true=需要布阵，false则不需要布阵，立即开始
+    map<uint64, BattleMonster> data = 2;   //  key-uid
+    proto_object.CommonReward reward = 3; // 奖励
+    uint32 battleId = 4; //  战斗组
+    map<uint32, uint32> grids = 5;   // key-坐标 | val-格子id key row << 16 | col
+}
+// MSG_SC_BATTLE_NtfAlgData            = 33002;  //  通知函数展示数据
+message SC_BATTLE_NtfAlgData {
+    repeated uint32 alg = 1;
+}
+// MSG_SC_BATTLE_NtfEventData          = 33003;  //  通知事件展示数据
+// MSG_SC_BATTLE_NtfTreasureData       = 33004;  //  通知宝箱数据
+// MSG_SC_BATTLE_NtfStoreData          = 33005;  //  通知商店数据
+// MSG_SC_BATTLE_SyncStepRewards       = 33006;  //  阶段奖励同步
+// MSG_SC_BATTLE_NtfAlgDiff            = 33007;  //  函数差异同步
+
+message AlgDiffModule {
+    map<uint64, uint32> update = 1; // key=algid << 32 | heroId, heroId = 0 则表示通用
+    map<uint64, bool> delete = 2; // key = algId << 32 | heroId
+    map<uint32, uint32> tmpUpdate = 3; // 临时芯片的差异
+    map<uint32, bool> tmpDelete = 4; // 临时芯片的删除
+    map<uint32, uint32> hiddenUpdate = 5; // 隐藏芯片的差异
+    map<uint32, bool> hiddenDelete = 6; // 隐藏芯片的删除
+}
+message SC_BATTLE_NtfAlgDiff {
+    map<uint32, AlgDiffModule> diff = 1;// key-define.AlgFromModule
+}
+
+// MSG_CS_BATTLE_BattleSettle          = 33103;  //  战斗结算
+message CS_BATTLE_BattleSettle {
+    map<uint32, uint32> hero = 1; // 角色id-角色血量万分比
+    bool win = 2;
+}
+// MSG_SC_BATTLE_BattleSettle          = 33104;  //  战斗结算-返回
+message SC_BATTLE_BattleSettle {
+    ErrorCode ret = 1;
+}
+// MSG_CS_BATTLE_AlgSelect             = 33105;  //  函数选择
+message CS_BATTLE_AlgSelect {
+    uint32 idx = 1; // 0开始
+}
+// MSG_SC_BATTLE_AlgSelect             = 33106;  //  函数选择
+message SC_BATTLE_AlgSelect {
+    ErrorCode ret = 1;
+}
+
+
+// MSG_SC_BATTLE_EventSelect           = 33201;  //  事件选择
+// MSG_CS_BATTLE_EventSelect           = 33202;  //  事件选择-返回
+
+// MSG_CS_BATTLE_StartBattleWithForm   = 33101;  //  同步阵容数据且发起战斗
+message CS_BATTLE_StartBattleWithForm {
+    map<uint32, uint32> data = 1; // key-角色id | value-位置
+}
+// MSG_SC_BATTLE_StartBattleWithForm   = 33102;  //  同步阵容数据且发起战斗-返回
+message SC_BATTLE_StartBattleWithForm {
+    ErrorCode ret = 1;
+}
+
+// MSG_CS_BATTLE_Quit                  = 32504;  //  通知退出副本
+message CS_BATTLE_Quit {}
+// MSG_SC_BATTLE_Quit                  = 32505;  //  通知退出副本
+message SC_BATTLE_Quit {
+    ErrorCode ret = 1;
+}
+// MSG_CS_BATTLE_Restart               = 32506;  //  重新开始
+message CS_BATTLE_Restart {}
+// MSG_SC_BATTLE_Restart               = 32507;  //  重新开始
+message SC_BATTLE_Restart {
+    ErrorCode ret = 1;
+}
+// MSG_CS_BATTLE_DungeonEnter          = 32508;  //  发起进入副本
+message CS_BATTLE_DungeonEnter {
+    uint32 stageId = 1;
+    proto_object.Formation form = 2; // 编队数据逻辑
+}
+// MSG_SC_BATTLE_DungeonEnter          = 32509;  //  发起进入副本-返回
+message SC_BATTLE_DungeonEnter {
+    ErrorCode ret = 1;
+}
+
+
+// MSG_CS_BATTLE_ReqHeroDetail         = 32001;  //  角色属性
+message CS_BATTLE_ReqHeroDetail {
+    map<uint32, bool> data = 1; // 角色组
+}
+// MSG_SC_BATTLE_ReqHeroDetail         = 32002;  //  角色属性-返回
+message SC_BATTLE_ReqHeroDetail {
+    ErrorCode ret = 1;
+    map<uint32, proto_object.HeroAttr> data = 2;   //--废弃
+    map<uint32, BattleHeroSt> battle = 3;
+}
+// MSG_CS_BATTLE_ReqPlayerDetail       = 32003;  //  指挥官属性
+message CS_BATTLE_ReqPlayerDetail  {
+}
+// MSG_SC_BATTLE_ReqPlayerDetail       = 32004;  //  指挥官属性-返回
+message SC_BATTLE_ReqPlayerDetail {
+    ErrorCode ret = 1;
+    BattlePlayer player = 2;
+}
+
+message BattleHeroSt {
+    // 属性ID-属性值
+    map<uint32, uint64> attr = 1;
+    // 角色基础技能
+    // 技能ID-技能等级， 角色基础技能-配置表中的id非param，具体技能通过id去索引
+    map<uint32, uint32> baseSkill = 2; 
+    // 算法技能
+    repeated uint32 athSkill = 3;
+}
+
+message BattlePlayer {
+    // 属性ID-属性值
+    map<uint32, uint64> attr = 1;
+}

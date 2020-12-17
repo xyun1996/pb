@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/training.proto";
+
+package proto_csmsg;
+
+message TraingingDetail {
+    map<uint32, proto_object.TrainingSlotBase>                  data    = 1;
+}
+//  MSG_CS_TRAINING_SlotHero            = 30211;  //  插入角色
+message CS_TRAINING_SlotHero {
+    uint32                                                      heroId  = 1;    //  角色id
+    uint32                                                      slotIdx = 2;    //  槽位
+    uint32                                                      effType = 3;    //  效率类型
+}
+//  MSG_SC_TRAINING_SlotHero            = 30212;  //  插入角色-返回
+message SC_TRAINING_SlotHero {
+    ErrorCode                                                   ret     = 1;
+    TraingingDetail                                             detail  = 2;
+}
+//  MSG_CS_TRAINING_Settle              = 30213;  //  结算
+message CS_TRAINING_Settle {
+    uint32                                                      slotIdx = 1;    //  槽位
+}
+//  MSG_SC_TRAINING_Settle              = 30214;  //  结算-返回
+message SC_TRAINING_Settle {
+    ErrorCode                                                   ret     = 1;
+    TraingingDetail                                             detail  = 2;
+    uint32                                                      overflow= 3;    //  溢出
+    uint32                                                      refund  = 4;    //  返还
+    uint32                                                      realExp = 5;    //  后续删除
+}
+//  MSG_CS_TRAINING_Detail              = 30215;  //  训练场数据
+message CS_TRAINING_Detail {
+
+}
+//  MSG_SC_TRAINING_Detail              = 30216;  //  训练场数据-返回
+message SC_TRAINING_Detail {
+    TraingingDetail                                             detail  = 1;
+}

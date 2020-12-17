@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+enum FT_R {
+    R_0 = 0;
+    R_90 = 90;
+    R_180 = 180;
+    R_270 = 270;
+}
+
+message DormRoomElem {
+    int32 id = 1;
+    uint32 pos = 2; // x << 16 | y
+    FT_R r = 3;
+    uint32 param = 4; // 针对家具为绑定的角色id,针对饰品时为指定的墙id,默认1,2,3,4
+}
+
+message DormRoom {
+    int32 id = 1;
+    repeated DormRoomElem data = 2;
+}
+
+
+message DormHouse {
+    int32 id = 1;
+    map<uint32, DormRoom>   data = 2; // pos = (x + 8) << 16 | (y+8)
+}
+
+message DormGroup {
+    map<int32, DormHouse> data = 1; // 宿舍id - 宿舍数据 接设置
+    map<uint32, DormRoom> prefab = 2;
+    int32 comfort = 3; // 历史达到的最高舒适度
+    uint32 counter = 4;
+}

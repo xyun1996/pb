@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message LotteryBase {
+    uint32                      total               = 1;    //  总次数
+    uint32                      seq                 = 2;    //  十连
+    uint32                      single              = 3;    //  单抽
+    uint32                      free                = 4;    //  免费单抽
+    uint32                      special             = 5;    //  大奖次数
+    uint32                      guarantee           = 6;    //  保底及以上次数
+    uint32                      specialMiss         = 7;    //  大奖错过次数
+    uint32                      guaranteeMiss       = 8;    //  保底错过次数
+    uint32                      freeTs              = 9;    //  下次免费
+    int64                       disappearTs         = 10;   //  活动结束时间
+}
+
+message Lottery {
+    map<uint32, LotteryBase>        data            = 1;
+}

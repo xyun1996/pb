@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "message/define.proto";
+
+import "object/command_skill.proto";
+
+package proto_csmsg;
+
+// MSG_CS_COMMANDSKILL_Detail = 31041; // 技能树详情
+message CS_COMMANDSKILL_Detail {}
+// MSG_SC_COMMANDSKILL_Detail = 31042; // 技能树详情
+message SC_COMMANDSKILL_Detail {
+    proto_object.CommandSkill data = 1;
+}
+// MSG_SC_COMMANDSKILL_SyncUpdate = 31047; // 技能树数据同步
+message SC_COMMANDSKILL_SyncUpdate {
+    map<uint32, PairU32> update = 1; // key-树id | value first-等级 second-经验
+    PairU32 proficentUpdate = 2; // first-树专精等级 second-树专精经验
+}
+// MSG_CS_COMMANDSKILL_Upgrade = 31048; // 技能树升级
+message CS_COMMANDSKILL_Upgrade {
+    uint32 treeId = 1; // 技能树id
+    map<uint32, uint32> cost = 2; // key-消耗物品id | value-消耗物品数量
+}
+// MSG_SC_COMMANDSKILL_Upgrade = 31049; // 技能树升级
+message SC_COMMANDSKILL_Upgrade {
+    ErrorCode ret = 1;
+}
+// MSG_CS_COMMANDSKILL_Unlock = 31050;// 解锁
+message CS_COMMANDSKILL_Unlock {
+    uint32 treeId = 1;
+}
+// MSG_SC_COMMANDSKILL_Unlock = 31051;// 解锁
+message SC_COMMANDSKILL_Unlock {
+    ErrorCode ret = 1;
+}
+// MSG_CS_COMMANDSKILL_SaveSheet = 31052; // 技能页的修改保存
+message CS_COMMANDSKILL_SaveSheet {
+    uint32 treeId = 1; // 树id
+    uint32 sheetId = 2; // 页签id 默认1，2，3... 从1开始计数至配置上限
+    proto_object.CSTSaving data = 3; //保存数据
+}
+// MSG_SC_COMMANDSKILL_SaveSheet = 31053; // 技能页的修改保存
+message SC_COMMANDSKILL_SaveSheet {
+    ErrorCode ret = 1;
+}
+// MSG_CS_COMMANDSKILL_SaveFromFormation = 31054; // 编队的当前技能页的修改
+message CS_COMMANDSKILL_SaveFromFormation {
+    uint32 formId = 1;
+    uint32 treeId = 2;
+    proto_object.CSTSaving data = 3; //保存数据
+}
+// MSG_SC_COMMANDSKILL_SaveFromFormation = 31055; // 编队的当前技能页的修改
+message SC_COMMANDSKILL_SaveFromFormation {
+    ErrorCode ret = 1;
+}

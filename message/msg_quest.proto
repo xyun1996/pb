@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/quest.proto";
+import "object/enum.proto";
+
+package proto_csmsg;
+
+
+//  MSG_CS_QUEST_UpgradeSchedule         = 30231;  //  发起更新任务进度
+message CS_QUEST_UpgradeSchedule {
+    uint32                                      qusetId     = 1;
+    uint32                                      questStep   = 2;
+}
+//  MSG_SC_QUEST_UpgradeSchedule         = 30232;  //  发起更新任务进度-返回
+message SC_QUEST_UpgradeSchedule {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_QUEST_CommitQuest             = 30233;  //  任务提交
+message CS_QUEST_CommitQuest  {
+    uint32                                      qusetId     = 1;
+}
+//  MSG_SC_QUEST_CommitQuest             = 30234;  //  任务提交-返回
+message SC_QUEST_CommitQuest {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_SC_QUEST_SyncUpdateDiff          = 30235;  //  同步差异信息
+message SC_QUEST_SyncUpdateDiff {
+    map<uint32, proto_object.Quest>             update      = 1;
+    map<uint32, proto_object.QuestDeleteReason> delete      = 2;
+}
+
+//   // dailyQuest/weeklyQuest
+//   MSG_CS_QUESTPERIOD_Detail           = 30521;  //  日常周常数据
+message CS_QUESTPERIOD_Detail {
+}
+//   MSG_SC_QUESTPERIOD_Detail           = 30522;  //  日常周常数据-返回
+message SC_QUESTPERIOD_Detail {
+    ErrorCode                                   ret             = 1;
+    map<uint32, bool>                           dailyRewards    = 2; // 日活奖励标识 key 领取过的索引
+    map<uint32, bool>                           weeklyRewarsd   = 3; // 周常奖励标识 key 领取过的索引
+    repeated uint32 daily = 4; // 每日所有任务集合-无状态
+    repeated uint32 weekly = 5; // 每周所有任务集合-无状态
+}
+//   MSG_CS_QUESTPERIOD_RewardPicked     = 30523;  //  日常周常活跃奖励领取
+message CS_QUESTPERIOD_RewardPicked {
+    uint32                                      cat             = 1; //类型 1-日常，2-周常
+    uint32                                      idx             = 2;
+}
+//   MSG_SC_QUESTPERIOD_RewardPicked     = 30524;  //  日常周常活跃奖励领取-返回
+message SC_QUESTPERIOD_RewardPicked {
+    ErrorCode                                   ret             = 1;
+}

@@ -1,0 +1,129 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/dorm.proto";
+
+package proto_csmsg;
+
+message PrefabUpdate {
+    map<uint32, proto_object.DormRoom> prefabUpdate = 1;
+    map<uint32, bool> prefabDelete = 2;
+}
+
+// // MSG_CS_DORM_HouseDetail             = 30801;  //  宿舍单体数据
+// message CS_DORM_HouseDetail {
+//     int32 houseId = 1;
+// }
+// // MSG_SC_DORM_HouseDetail             = 30802;  //  宿舍单体数据-返回
+// message SC_DORM_HouseDetail {
+//     ErrorCode ret = 1;
+//     proto_object.DormHouse data = 2; // 宿舍id - 宿舍数据 接设置
+// }
+// // MSG_CS_DORM_RoomInstall             = 30803;  //  房间安置
+// message CS_DORM_RoomInstall {
+//     uint32 roomId = 1;
+//     int32 houseId = 2;
+//     uint32 pos = 3;
+// }
+// // MSG_SC_DORM_RoomInstall             = 30804;  //  房间安置-返回
+// message SC_DORM_RoomInstall {
+//     ErrorCode ret = 1;
+// }
+// // MSG_CS_DORM_RoomMove                = 30805;  //  房间同宿舍迁移
+// message CS_DORM_RoomMove {
+//     int32 houseId = 1;
+//     uint32 fromPos = 2;
+//     uint32 toPos = 3;
+// }
+// // MSG_SC_DORM_RoomMove                = 30806;  //  房间同宿舍迁移-返回
+// message SC_DORM_RoomMove {
+//     ErrorCode ret = 1;
+// }
+// // MSG_CS_DORM_RoomStorage             = 30807;  //  房间收纳
+// message CS_DORM_RoomStorage {
+//     int32 houseId = 1;
+//     uint32 pos = 2;
+// }
+// // MSG_SC_DORM_RoomStorage             = 30808;  //  房间收纳-返回
+// message SC_DORM_RoomStorage {
+//     ErrorCode ret = 1;
+// }
+// // MSG_CS_DORM_RoomInstallFromPrefab   = 30809;  //  从预制房安装
+// message CS_DORM_RoomInstallFromPrefab {
+//     uint32 id = 1; // prefab id
+//     int32 houseId = 2;
+//     uint32 pos = 3;
+// } 
+// // MSG_SC_DORM_RoomInstallFromPrefab   = 30810;  //  从预制房安装-返回
+// message SC_DORM_RoomInstallFromPrefab {
+//     ErrorCode ret = 1; 
+// }
+// MSG_CS_DORM_RoomDecomposition       = 30811;  //  房间分解
+message CS_DORM_RoomDecomposition {
+    int32 houseId = 1;
+    uint32 param = 2;
+    bool pos = 3; // true 从原地图分解, false 从预制分解
+}
+// MSG_SC_DORM_RoomDecomposition       = 30812;  //  房间分解-返回
+message SC_DORM_RoomDecomposition {
+    ErrorCode ret = 1;
+    PrefabUpdate data = 2;
+}
+// MSG_CS_DORM_DormPurchase            = 30813;  //  宿舍购买
+message CS_DORM_DormPurchase {
+    int32 houseId = 1;
+}
+// MSG_SC_DORM_DormPurchase            = 30814;  //  宿舍购买-返回
+message SC_DORM_DormPurchase {
+    ErrorCode ret = 1;
+}
+// MSG_CS_DORM_HouseEdit               = 30815;  //  宿舍编辑
+message CS_DORM_HouseEdit {
+    int32 houseId = 1;
+    message behavior {
+        bool store = 1; // true-收纳,false-移位
+        // 操作为移位时,参数为新坐标
+        uint32 param = 2;
+    }
+    map<uint32, behavior> posResult = 2; // 原地图上的房间结果 // key 坐标
+    map<uint32, uint32> newRoom = 3; // 从背包新增的房间 key-坐标, value-房间id
+    map<uint32, uint32> installPrefab = 4; // 操作预制件 key-预制id,value-坐标
+}
+// MSG_SC_DORM_HouseEdit               = 30816;  //  宿舍编辑-返回
+message SC_DORM_HouseEdit {
+    ErrorCode ret = 1;
+    PrefabUpdate data = 2;
+}
+// MSG_CS_DORM_GlobalDetail            = 30817;  //  宿舍全局数据
+message CS_DORM_GlobalDetail {
+}
+// MSG_SC_DORM_GlobalDetail            = 30818;  //  宿舍全局数据-返回
+message SC_DORM_GlobalDetail {
+    map<int32, proto_object.DormHouse> house = 1; // 宿舍id - 宿舍数据 接设置
+    map<uint32, proto_object.DormRoom> prefab = 2;
+    int32 comfort = 3;
+}
+// MSG_CS_DORM_RoomEdit                = 30819;  //  房间编辑
+message CS_DORM_RoomEdit {
+    int32 houseId = 1;
+    uint32 roomPos = 2;
+    repeated proto_object.DormRoomElem data = 3; // 数据
+}
+// MSG_SC_DORM_RoomEdit                = 30820;  //  房间编辑-返回
+message SC_DORM_RoomEdit {
+    ErrorCode ret = 1;
+}
+// MSG_CS_DORM_BindUnbindHero          = 30821;  //  角色绑定解绑操作
+message CS_DORM_BindUnbindHero {
+    uint32 heroId = 1; // 角色id
+    bool bindHero = 2; // true-绑定，false-解绑
+    int32 houseId = 3; // 宿舍id
+    uint32 roomPos = 4; // 房间坐标
+    int32 elemIdx = 5; // 房间内数据索引 0开始 repeated proto_object.DormRoomElem  这个的索引
+}
+// MSG_SC_DORM_BindUnbindHero          = 30822;  //  角色绑定解绑操作-返回
+message SC_DORM_BindUnbindHero {
+    ErrorCode ret = 1;
+}

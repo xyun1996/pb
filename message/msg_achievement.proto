@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/achievement.proto";
+
+package proto_csmsg;
+
+//   // achievement  
+//   MSG_CS_ACHIEVEMENT_Detail           = 30501;  //  请求成就数据 
+message CS_ACHIEVEMENT_Detail {
+}
+//   MSG_SC_ACHIEVEMENT_Detail           = 30502;  //  请求成就数据-返回
+message SC_ACHIEVEMENT_Detail {
+    ErrorCode                                   ret         = 1;
+    proto_object.Achievement                    data        = 2;
+} 
+//   MSG_CS_ACHIEVEMENT_LevelReward      = 30503;  //  请求领取等级奖励
+message CS_ACHIEVEMENT_LevelReward {
+    uint32                                      lv          = 1;
+}
+//   MSG_SC_ACHIEVEMENT_LevelReward      = 30504;  //  请求领取等级奖励-返回
+message SC_ACHIEVEMENT_LevelReward {
+    ErrorCode                                   ret         = 1;
+    map<uint32,uint32>                          rewards     = 2;
+}
+//   MSG_SC_ACHIEVEMENT_SyncUpdateDiff   = 30505;  //  差异同步
+message SC_ACHIEVEMENT_SyncUpdateDiff  {
+    map<uint32, bool>           levelRewradsPicked          = 1; // key对应等级的奖励
+    map<uint32, int64>          questFinishedRecords        = 2; // 成就完成数据 key-成就id value-完成时间
+}

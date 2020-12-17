@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+import "object/counter.proto";
+
+package proto_object;
+
+// 副本历史挑战次数
+message DungeonCount {
+    map<uint32, uint32> count = 1; // key-副本id | value-通关次数
+}
+
+message DungeonDailyCount {
+    // proto_object.CounterGroup cg = 1; --废弃
+    message elem {
+        map<uint32, uint32> data = 1; // key-副本id | value-挑战次数
+    } 
+    map<uint32, elem> dailyCounter = 2; // key-模块功能id | value-每日挑战数据
+}
+
+message DungeonStatic {
+    DungeonCount totalCount = 1;
+    DungeonDailyCount dailyCount = 2;
+}
+
+message MonsterAtlas {
+    map<uint32, bool> data = 1;
+}

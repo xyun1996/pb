@@ -1,0 +1,319 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+package proto_csmsg;
+
+enum ErrorCode {
+  None             = 0;
+  CodeDefault      = -10001;
+  UserNotFound     = -10002; 
+  CmdNotValid      = -10003;
+
+  LOGIN_USER_NOT_FOUNT              = -10011;   //  角色不存在，需要创建角色
+  LOGIN_USER_CREATE_DUPLICATE_NAME  = -10012;   //  角色随机名重复
+  LOGIN_DUPLICATE_PROTO             = -10013;   //  重复发起登录
+  LOGIN_USER_ACCOUNT_NIL            = -10014;   //  角色账号id为空
+  LOGIN_USER_EXIST                  = -10015;   //  角色已存在
+  LOGIN_USER_NAME_INVALID           = -10016;   //  名字异常
+  LOGIN_SDK_ERROR                   = -10017;   //  SDK登录异常
+  INVALID_CHARACTER_INPUT           = -10018;   //  输入字符非法
+
+
+  FUNCTION_NOT_OPEN                 = -10100;   //  功能未开放
+  CONFIG_ITEM_ID_ERROR              = -10101;   //  物品ID错误
+  ITEM_NOT_EXPEIRENCECOST_TYPE      = -10102;   //  不是经验道具
+  CONFIG_HERO_ID_ERROR              = -10103;   //  角色ID错误
+  USER_STM_NOT_ENOUGH               = -10104;   //  体力不足  
+  INVALID_STRING                    = -10105;   //  敏感字
+  
+  BACKPACK_ITEM_OVERFLOW      = -10201;   //  物品超出持有上限溢出
+  BACKPACK_NO_ITEM_ENEITY     = -10202;   //  没有拥有当前物品
+  BACKPACK_NO_ENOUGH_ITEM     = -10203;   //  物品数量不足
+
+  HERO_NO_HERO_ENTITY           = -10301; //  没有拥有当前角色 
+  HERO_NO_NEED_TO_UPGRADE       = -10302; //  当前角色没有无法添加经验
+  HERO_HAD_HERO_ENTITY          = -10303; //  已经拥有当前角色
+  HERO_ADDEXP_CONFIG_ERROR      = -10304; //  角色加经验配置错误
+  HERO_SKILL_ID_ERROR           = -10305; //  无效的技能id
+  HERO_SKILL_ID_LOCKED          = -10306; //  当前技能未解锁
+  HERO_SKILL_LEVEL_LIMITED      = -10307; //  技能达到等级上限
+  HERO_SKILL_LEVEL_TABLE_ERROR  = -10308; //  角色技能升级配置错误
+  HERO_STAR_MAX                 = -10309; //  角色已达到最高星级
+  HERO_FORMATION_LENGTH_LIMIT   = -10310; //  编队成员超过上限
+  HERO_FORMATION_SAME_ID        = -10311; //  编队含有重复成员
+  HERO_FORMATION_ID_ERROR       = -10312; //  编队id错误
+  HERO_FORMATION_SKILL_SLOT     = -10313; //  编队技能槽位错误
+  HERO_FORMATION_NO_USER_SKILL  = -10314; //  编队技能不存在
+  HERO_FORMATION_HERO_SLOT      = -10315; //  编队角色槽位错误
+  HERO_ULTIMATE_SKILL_NO_Upgrade= -10316; //  大招不能升级
+
+  LOTTERY_POOL_NOT_OPEN         = -10331; //  卡池未开放
+
+  BUILDING_SAME_ID_LIMIT        = -10361; //  该类建筑达到数量上限
+  BUILDING_LEVEL_CONFIG         = -10362; //  建筑等级配置异常
+  BUILDING_POSITION_COLLISION   = -10363; //  当前位置冲突
+  BUILDING_QUEUE_LIMIT          = -10364; //  建造队列达到上限
+  BUILDING_CREATE_CONDITION     = -10365; //  建造条件不满足
+  BUILDING_NO_UID               = -10366; //  建筑不存在
+  BUILDING_NO_CONFIG_ID         = -10367; //  建筑配置错误
+  BUILDING_MAX_LEVEL            = -10368; //  建筑达到最高等级
+  BUILDING_SAME_POSITION        = -10369; //  相同位置不需要移动
+  BUILDING_ERROR_STATE          = -10370; //  当前状态下无法执行操作
+  BUILDING_SECTOR_BAN_MOVE      = -10371; //  扇区建筑禁止移动
+  BUILDING_UPGRADE_NOT_OVER     = -10372; //  建筑升级没有结束
+  BUILDING_NOT_IN_BUILDING      = -10373; //  建筑不在建造中
+  BUILDING_NO_NEED_ACCELERATE   = -10374; //  建造不需要加速
+  
+  BUILDING_COLLECT_NO_UID         = -10381; //  当前建筑无法采集
+  BUILDING_COLLECT_LEAST_PERIOD   = -10382; //  至少等待一个周期
+  BULIDING_COLLECT_STORAGE_LIMIT  = -10383; //  资源达到仓库可采集上限
+
+  REWARD_NO_CONFIG_ID             = -10401; //  奖励id不存在
+  REWARD_NO_PRE_REWARD            = -10402; //  奖励缺少预结算
+
+  FACTORY_LINE_NUM_LIMIT          = -10411; //  流水线数量达到上限
+  FACTORY_LINE_CONFIG_ID          = -10412; //  流水线配置id错误
+  FACTORY_LINE_NO_UID             = -10413; //  流水线不存在
+  FACTORY_LINE_NO_REWARD          = -10414; //  流水线没有大奖可领
+  FACTORY_LINE_CONDITION_LOCKED   = -10415; //  当前流水线未解锁
+  FACTORY_LINE_NOT_FINAL_LINE     = -10416; //  当前流水线不需要手动领取
+  FACTORY_LINE_IS_WORKING         = -10417; //  当前流水线工作中
+  FACTORY_LINE_IS_IDLE            = -10418; //  当前流水线空闲中
+  FACTORY_ORDER_TIMEOUT           = -10419; //  订单超时
+  FACTORY_HERO_IS_WORKING         = -10420; //  人型已在工作中
+  FACTORY_ORDER_CAT_NON_CONFORMANT= -10421; //  订单类型不统一
+  FACTORY_ORDER_CONFIG_ERROR      = -10422; //  订单配置不存在
+  FACTORY_LINE_REWARD_PICKED      = -10423; //  流水线奖励已领取
+  FACTORY_ORDER_NUM_ERROR         = -10424; //  订单数量错误
+  FACTORY_ORDER_PRODUCT_CONSUME   = -10425; //  订单产出与消耗不等
+  FACTORY_HERO_DISPATCH_LIMIT     = -10426; //  人型派遣超出上限
+  FACTORY_ORDER_CONDITION_ERR     = -10427; //  订单条件不满足
+
+  TRAINING_SLOT_IN_USING          = -10431; //  当前位置已经有角色
+  TRAINING_SLOT_IDX               = -10432; //  当前位置不存在
+  TRAINING_SLOT_LOCKED            = -10433; //  当前位置未解锁
+  TRAINING_HERO_EXP_FULL          = -10434; //  当前角色经验已满
+  TRAINING_SLOT_LV                = -10435; //  角色等级超过当前位置等级限定
+  TRAINING_NO_COST_STYLE          = -10436; //  训练消耗类型不存在
+  TRAINING_EXP_POOL_NOT_ENOUGH    = -10437; //  经验池经验不足
+  TRAINING_SLOT_NO_HERO           = -10438; //  当前插槽没有角色
+  TRAINING_HERO_IN_SLOT           = -10439; //  当前角色已经在训练中
+
+  QUEST_NO_CONFIG_ID              = -10451; //  任务配置id不存在
+  QUEST_RECEIVED                  = -10452; //  任务已接取
+  QUEST_COMPLETED                 = -10453; //  任务已完成
+  QUEST_NOT_IN_STEP               = -10454; //  任务阶段不符
+  QUEST_NO_CONFIG_STEP            = -10455; //  任务配置的阶段不存在
+  QUEST_NOT_RECEIVED              = -10456; //  任务未接取
+  QUEST_EXPIRED                   = -10457; //  任务已过期
+  QUEST_STEP_NOT_COMPLETED        = -10458; //  任务当前阶段未完成
+  QUEST_STATE_NOT_IN_RECEIVED     = -10459; //  任务不在执行阶段
+  QUEST_CANNOT_RECEIVE            = -10460; //  当前任务不可接取
+  QUEST_STEP_COMMITED             = -10461; //  任务阶段已经提交过
+
+  STORE_NO_CONFIG_ID              = -10481; //  商店配置id不存在
+  STORE_NO_STORE_DATA             = -10482; //  商店不存在
+  STORE_NO_SHELF_DATA             = -10483; //  货架不存在
+  STORE_SHELF_DATA_SOLDOUT        = -10484; //  货架物品已售罄
+  STORE_NOT_REFRESHABLE_STORE     = -10485; //  不是刷新商店 
+  STORE_FRESH_LIMIT               = -10486; //  达到刷新上限
+  STORE_RANDOM_LIMIT_PURCHASE     = -10487; //  随机商店限制叠加购买上限为1
+  STORE_PURCHSE_LIMIT_1           = -10488; //  商店购买堆至少为1
+  STORE_HERO_STORE_CONDITION      = -10489; //  角色商店货架购买不符条件
+
+  MONSTER_NO_ROOM_CONFIG          = -10501; //  怪物房间不存在
+  MONSTER_NO_GROUP_ID             = -10502; //  怪物组不存在
+
+  SECTOR_NO_BOX_REWARD            = -10551; //  扇区成就宝箱不存在
+  SECTOR_BOX_PICKED               = -10552; //  扇区成就宝箱已经领取
+  SECTOR_BOX_NOT_AVAILABLE        = -10553; //  扇区成就宝箱领取不符合条件按
+
+  DUNGEON_NO_SECTOR_STAGE         = -10601; //  扇区关卡id不存在
+  DUNGEON_NOT_FINISHED            = -10602; //  扇区关卡未完成
+  DUNGEON_REWARD_PICKED           = -10603; //  扇区首通奖励已领取
+  DUNGEON_RESTART_NO_ID           = -10604; //  扇区当前关卡不存在，无法重新开始
+  DUNGEON_PRESTAGE_NOT_FINISHED   = -10605; //  扇区当前关卡的前置关卡未开启
+
+  EXPLORATION_DUNGEON_EXIST       = -11001; //  先结束之前的关卡再开启
+  EXPLORATION_GRAPH_CONFIG        = -11002; //  探索地图不存在
+  EXPLORATION_ROOM_CAT            = -11003; //  房间类型不存在
+  EXPLORATION_GRID_CHILDREN       = -11004; //  只能选择当前节点的后置连线房间
+  EXPLORATION_POSTION_CHECK       = -11005; //  探索位置校验失败
+  EXPLORATION_BATTLE_ALG_SELECT   = -11006; //  战斗房芯片选择失败
+  EXPLORATION_ITEM_SELECT         = -11007; //  宝箱房选择失败
+  EXPLORATION_ITEM_LOCKUNLOCK     = -11008; //  宝箱房锁定解锁失败
+  EXPLORATION_ITEM_FRESH          = -11009; //  宝箱房刷新失败
+  EXPLORATION_ROOM_BOSS_OVER      = -11010; //  已经boss房结束
+  EXPLORATION_DUNGEON_OVER        = -11011; //  探索关卡已结束
+  EXPLORATION_LAST_FLOOR          = -11012; //  探索关卡已经最后一层
+  EXPLORATION_NOT_BOSS_ROOM       = -11013; //  不是boss房
+  EXPLORATION_BOSS_ROOM_NEED_OVER = -11014; //  boss房还没结束
+  EXPLORATION_IN_PROCESSING       = -11015; //  探索进行中
+  EXPLORATION_FORMATION_LEAST_ONE = -11016; //  编队中至少一个角色
+  EXPLORATION_FORMATION_LEN       = -11017; //  编队长度不符
+  EXPLORATION_FORMTAION_NO_HERO   = -11018; //  编队角色不存在
+  EXPLORATION_EVENT_LEN           = -11019; //  事件选择索引异常
+  EXPLORATION_STORE_NO_DATA       = -11020; //  商店房数据不存在
+  EXPLORATION_STORE_LEN           = -11021; //  商店房物品索引失败
+  EXPLORATION_STORE_PURCHASED     = -11022; //  商店房此物品已售罄
+  EXPLORATION_STORE_NOT_ENOUGH    = -11023; //  商店房购买道具不足
+  EXPLORATION_RECONSTITUTION_NO_DATA    = -11024; //  重构房数据不存在
+  EXPLORATION_RECONSTITUTION_NO_CONFIG  = -11025; //  重构房配置不存在
+  EXPLORATION_RECONSTITUTION_NOT_ENOUGH = -11026; //  重构房购买道具不足
+  EXPLORATION_RECONSTITUTION_NO_ALG     = -11027; //  重构房函数不存在
+  EXPLORATION_RECONSTITUTION_NO_HERO    = -11028; //  重构房角色不存在
+  EXPLORATION_RECONSTITUTION_FUSION_NUM = -11029; //  重构房融合数量不符
+  EXPLORATION_RECONSTITUTION_FUSION_CAT = -11030; //  重构房融合品质不一致
+  EXPLORATION_EVENT_CONSUME_NOT_ENOUGH  = -11031; //  事件选择消耗不足
+  EXPLORATION_OVERCLOCK_LOCKED          = -11032; //  超频id未解锁
+  EXPLORATION_OVERCLOCK_NO_ID           = -11033; //  超频id不存在
+  EXPLORATION_OVERCLOCK_ALG_LOCKED      = -11034; //  超频函数未解锁
+  EXPLORATION_FOCUS_FULL_ALREADY        = -11035; //  不需要专注改判
+  EXPLORATION_POINT_NOT_FULL            = -11036; //  点数未满，无法开始
+  EXPLORATION_FLOOR_CANNOT_OVER         = -11037; //  当前层未结束 
+  EXPLORATION_NOT_NORMAL_EVENT          = -11038; //  不是通用事件
+  EXPLORATION_NO_EVENT_DATA             = -11039; //  事件房数据不存在
+  EXPLORATION_NO_PARAM                  = -11040; //  事件房参数不存在
+  EXPLORATION_PARAM_IDX_DATA            = -11041; //  事件房参数索引异常
+  EXPLORATION_PARAM_NOT_ALGUPGRADE      = -11042; //  事件房当前不是函数升级逻辑
+  EXPLORATION_ALGUPGRADE_NO_ALG         = -11043; //  事件房函数升级-函数不存在
+  EXPLORATION_ALGUPGRADE_NO_COST        = -11044; //  事件房函数升级-消耗不足
+  EXPLORATION_ALGUPGRADE_NO_CFG         = -11045; //  事件房函数升级-配置不存在
+  EXPLORATION_ALGUPLIMMIT_NO_NEED_SELL  = -11046; //  不需要抛弃函数
+  EXPLORATION_NO_ALG                    = -11047; //  函数不存在
+  EXPLORATION_STORE_NO_ID               = -11048; //  探索商店id不存在
+  EXPLORATION_STORE_REFRESH_COST        = -11049; //  探索商店刷新消耗不足
+  EXPLORATION_ALGUPGRADE_MAX_LEVEL      = -11050; //  事件房函数升级-最大等级
+  EXPLORATION_EVENT_JUMP_NOT_EXIST	  	= -11051; //  事件房房间跳转类型不存在
+
+  EXPLORATION_CUR_GRID_STATE_Selected         = -11052; //  当前格子状态错误
+  EXPLORATION_CUR_GRID_STATE_HalfOver         = -11053; //  当前处于HalfOver状态
+  EXPLORATION_CUR_GRID_STATE_DropAlg          = -11054; //  当前处于函数掉落状态
+  EXPLORATION_CUR_GRID_STATE_BattleAlgWaiting = -11055; //  当前处于战斗函数掉落等待状态
+  EXPLORATION_CUR_GRID_STATE_Unknown          = -11056; //  当前处于未知状态
+  EXPLORATION_CUR_GRID_STATE_None             = -11057; //  当前处于None状态
+  EXPLORATION_CUR_GRID_STATE_Over             = -11058; //  当前处于Over状态
+  EXPLORATION_CUR_GRID_STATE_BattleFailure    = -11059; //  当前处于战败状态
+  EXPLORATION_ENDLESSFIRST_NO_REWARD_SHOW     = -11060; //  无尽模式免体力模式无法查看失败奖励
+
+  EXPLORATION_CAMP_FETTER_SKILL_CD        = -11061; //  羁绊技能冷却中
+  EXPLORATION_CAMP_FETTER_CONFIG_ERROR    = -11062; //  羁绊配置错误
+  EXPLORATION_CAMP_FETTER_SKILL_NOT_EXIST = -11063; //  羁绊技能不存在
+
+  EXPLORATION_ENDLESS_DUNGEON_UNFINISHED      = -11066; // 无尽模式副本未通关
+  EXPLORATION_ENDLESS_NO_DUNGEON              = -11067; // 无尽模式副本不存在
+
+  ACHIEVEMENT_LEVEL_REWARD_LV     = -12001; //  成就奖励等级错误
+  ACHIEVEMENT_LEVEL_REWARD_PICKED = -12002; //  该等级成就奖励已领取
+
+  QUESTPERIOD_CAT                 = -12031; //  日常周常类型错误
+  QUESTPERIOD_REWARDS_PICKED      = -12032; //  日常周常活跃奖励已领取
+  QUESTPERIOD_REWARDS_IDX         = -12033; //  日常周常索引错误
+
+  MAIL_NO_MAIL_DATA               = -12101; //  邮件数据不存在
+  MAIL_NO_MAIL_CONFIG             = -12102; //  邮件配置数据不存在
+  MAIL_STATUS_READ                = -12103; //  邮件已阅读
+  MAIL_STATUS_REWARDS_RECEIVED    = -12104; //  邮件奖励已领取
+  MAIL_STATUS_UNREAD              = -12105; //  邮件未读
+  MAIL_NO_ATTACHMENT              = -12106; //  邮件附件不存在
+  MAIL_NOT_NEED_ONECLICK_PICKUP   = -12107; //  邮件不需要一键领取
+  MAIL_NOT_NEED_ONEKEY_DELETE     = -12108; //  邮件不需要一键删除
+
+  ATH_INSTALL_OVERLOAD            = -12301; //  算法装配超载
+  ATH_INSTALL_SLOT_NOT_FIX        = -12302; //  算法槽位不符
+  ATH_INSTALL_INSTALLED           = -12303; //  算法已经安装过了
+  ATH_NO_UID                      = -12304; //  算法实体不存在
+  ATH_NO_CFG                      = -12305; //  算法配置不存在
+  ATH_UNINSTALL_NOT_BIND          = -12306; //  算法为装载
+  ATH_UNINSTALL_SELF_NO_NEED      = -12307; //  自身同槽算法无需替换
+  ATH_SLOT_IN_MAXLEVEL            = -12308; //  当前槽位已经满级
+  ATH_SLOT_LV_NO_CFG              = -12309; //  当前槽位等级配置不存在
+  ATH_AFFIX_IDX                   = -12310; //  词条选择索引异常  
+  ATH_AFFIX_QUALITY               = -12311; //  词条优化品质限制  
+  ATH_AFFIX_NO_CFG                = -12312; //  词条配置不存在
+  ATH_AFFIX_VALUE_LIMIT           = -12313; //  词条优化已达上限 
+  ATH_AFFIX_OPTIMIZE_NO_CFG       = -12314; //  词条优化配置不存在
+  ATH_QUALITY_LIMIT               = -12315; //  算法品质限制
+  ATH_INHERIT_SAME_QUALITY        = -12316; //  继承需要同品质算法
+  ATH_INHERIT_DUPLICATE_AFFIX     = -12317; //  重复类型的词条
+  ATH_LOCK                        = -12318; //  操作算法已上锁
+  ATH_INSTALL_DUPLICATE_ID        = -12319; //  同一个槽位重复的id
+  ATH_INSTALL_GRID_CONFLICT       = -12320; //  算法格子冲突
+  ATH_REPLACE_LOAD                = -12321; //  算法替换size不符
+  ATH_NOT_BINDED                  = -12322; //  算法未绑定角色
+  ATH_AFFIX_LEVEL_LIMIT           = -12323; //  算法达到等级上限
+  ATH_OP_SAME_UID                 = -12324; //  算法操作同一个uid
+  ATH_AFFIX_ALL_LOCKED            = -12325; //  算法所有词条都上锁了
+  ATH_RECONSITUTION_HOLD          = -12326; //  算法处于重构确认状态
+
+  DORM_NO_HOUSE                   = -12401; //  宿舍不存在
+  DORM_NO_HOUSE_CFG               = -12402; //  宿舍配置不存在
+  DORM_ROOM_COLLISION             = -12403; //  房间冲突
+  DORM_NO_COOR                    = -12404; //  房间坐标异常
+  DORM_NO_PREFAB                  = -12405; //  预制房间不存在
+  DORM_HOUSE_LIMIT                = -12406; //  宿舍房间数量限制
+  DORM_HOUSE_GOT                  = -12407; //  宿舍已经获取
+  DORM_HOUSE_LOCK_LIMIT           = -12408; //  宿舍解锁限制
+  DORM_HOUSE_EDIT_NUM             = -12409; //  宿舍编辑新旧房间数量不一致  
+  DORM_HOUSE_EDIT_DATA            = -12410; //  宿舍编辑数据异常-重复编辑老房间
+  DORM_FURNITURE_NO_CFG           = -12411; //  家具配置不存在
+  DORM_FURNITURE_NOT_FT           = -12412; //  不是家具类型
+  DORM_FURNITURE_COLLISION        = -12413; //  家具编辑冲突
+  DORM_ROOM_NO_CFG                = -12414; //  房间配置不存在
+  DORM_ROOM_GRAPH_LEVEL           = -12415; //  房间层级异常
+  DORM_ROOM_DUPLICATE_HERO        = -12416; //  重复的角色
+  DORM_FT_NOT_BIND                = -12417; //  不是可绑定的家具
+  DORM_WALL_MAX_NUM               = -12418; //  墙数异常
+  DORM_HERO_NOT_BINDED            = -12419; //  角色未绑定无法卸载
+
+  STATION_HERO_INSTALLED          = -12501; //  角色已入驻
+  STATION_SLOT_NUM_LIMIT          = -12502; //  建筑槽位数量限制
+  STATION_SLOT_COMP_LIMIT         = -12503; //  建筑槽位企业限制
+  STATION_HERO_NOT_INSTALL        = -12504; //  角色未入驻
+
+  INTIMACY_NO_GIFT_CFG            = -12505; //  礼物配置异常
+  INTIMACY_NOT_HERO_LINE          = -12506; //  不是当前角色的养成线
+  INTIMACY_HERO_LINE_LIMIT        = -12507; //  养成线等级限制
+  INTIMACY_LINE_HERO_LV_LIMIT     = -12508; //  养成线角色等级限制
+  INTIMACY_LINE_INTIMACY_LIMIT    = -12509; //  养成线亲密度等级限制
+  INTIMACY_INTIMACY_LIMIT         = -12510; //  角色亲密度等级上限
+
+  CHAPTER_NO_CFG                  = -12601; //  关卡配置不存在
+  CHAPTER_ENTER_CONDITION         = -12602; //  关卡进入条件限制
+  CHAPTER_ENTER_COUNT_LIMIT       = -12603; //  关卡进入次数限制
+  CHAPTER_IN_CHAPTER              = -12604; //  角色已经进入关卡
+  CHAPTER_SETTLE_NOT_IN_CHAPTER   = -12605; //  角色未在关卡中
+  CHAPTER_MODULE_LIMIT            = -12606; //  该类型副本挑战次数上限
+
+  GAMEPLAY_DUNGEON_NOT_IN_DUNGEON = -15001; //  不在副本中
+  GAMEPLAY_DUNGEON_BATTLE_STATUS  = -15002; //  战斗波次状态异常
+  GAMEPLAY_DUNGEON_BATTLE_FORM    = -15003; //  副本阵容校验异常
+  GAMEPLAY_DUNGEON_IN_DUNGEON     = -15004; //  已经在副本中
+  GAMEPLAY_DUNGEON_NO_DUNGEONID   = -15005; //  副本不存在
+  GAMEPLAY_DUNGEON_TIMES_LIMIT    = -15006; //  次数限制
+  GAMEPLAY_DUNGEON_FORM           = -15007; //  编队异常
+  GAMEPLAY_DUNGEON_COND_LIMIT     = -15008; //  进入副本条件限制
+  GAMEPLAY_DUNGEON_ALG_IDX        = -15009; //  函数索引
+
+  AVG_COMPLETED = -15021; // AVG已完成
+  AVG_NO_CONFIG = -15022; // AVG配置不存在
+
+  COMMANDSKILL_NO_TREE_CFG = -15031; // 指挥官技能树配置不存在
+  COMMANDSKILL_TREE_LOCKED = -15032; // 指挥官技能树未解锁
+  COMMANDSKILL_NO_SKILL_CFG = -15033; // 指挥官主动技能不存在
+  COMMANDSKILL_SKILL_CAT = -15034; // 指挥官技能类型不符
+  COMMANDSKILL_SKILL_LEVEL_LIMIT = -15035; // 指挥官技能等级限制
+  COMMANDSKILL_SKILL_SLOT = -15036; // 指挥官技能槽位异常
+  COMMANDSKILL_PROFICIENT_OVERFLOW = -15037; // 专精点数溢出
+  COMMANDSKILL_TREE_UNLOCKED = -15038 ; //指挥官技能树已解锁
+  COMMANDSKILL_SHEET_ERROR = -15039; // 指挥官技能树页签不符
+
+  ErrorMax         = -19999;
+}
+
+
+enum SysErrorCode {
+  SysErrorNone = 0;
+  SysErrorDefault     = -20001; 
+}

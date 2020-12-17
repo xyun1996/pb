@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+
+message Item {
+	uint32 id     = 1; //id
+	uint32 count  = 2; //数量
+	uint32 sheet  = 3; //所属页签
+}
+
+message Backpack {
+	map<uint32, Item> data = 1; 	// key-物品id
+}

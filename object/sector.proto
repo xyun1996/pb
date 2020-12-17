@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+import "object/enum.proto";
+
+package proto_object;
+
+message Sector {
+    map<uint32, bool>               completed       = 1;
+    map<uint32, bool>               boxPicked       = 2;
+}
+
+message SectorGroup {
+    map<uint32, Sector>             sectorData      = 1;
+    map<uint32, bool>               chipData        = 2;
+    map<uint32, DungeonStageState>               dungeonSet      = 3;      
+}
+
+message Endless {
+    map<uint32, bool> completed = 1; // 已经完成的 key-关卡id
+    map<uint32, uint32> processing = 2; // 尚处于进行中的 // key-关卡id value-当前通过了第几层 0， 1， 2， 3等
+}

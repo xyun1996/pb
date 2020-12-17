@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message Overclock {
+    message elem {
+        uint32 id = 1; // 超频id
+        uint32 curFreeCnt = 2; // 当前免费第几次了
+        // int64 freshTm = 4; // 下次免费时间
+    }
+    map<uint32, elem> data = 1; // key-超频id
+}

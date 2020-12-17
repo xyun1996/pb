@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message Counter {
+    uint32                      counterId   = 1;
+    uint32                      cat         = 2; 
+    uint32                      value       = 3;
+    int64                       since       = 4;
+}
+
+message CounterGroup {
+    map<uint32, Counter>        data        = 1;
+}
+
+message CounterElem {
+    uint32 moduleId = 1; // CounterModule
+    uint64 specifyId = 2; // 特殊id
+    uint32 times = 3; // 次数
+    int64 nextExpiredTm = 4; // 下次过期时间
+    //bool serverHold = 5; // 服务器持有的，不进入前端定时器队列，前端最多只做数据使用
+}
+
+message CounterSeries {
+    map<uint64, CounterElem> data = 1; // key -- CounterModule << 54 | spcifyId
+}
+
+enum CounterModule {
+    CounterModuleNone = 0;
+
+    CounterModuleDailyQuest = 1; // 日常任务 --specifyId 0
+    CounterModuleWeeklyQuest = 2; // 周常任务 --specifyId 0
+    CounterModuleDungeonModuleCount = 3; // 通用副本模块计数 -- specifyid 模块id
+    CounterModuleExplorationOverclock = 4; // 探索超频计数 --specifyid 0
+    CounterModuleGlobalDailyFlush = 5; // 游戏全局的唯一刷新 -- specifyId 0 游戏中周几唯一指定过期时间
+    // 小于 200  是进入进入前端定时器队列
+
+    CounterModuleSeperate = 200;
+
+    // 大于 200  是服务器持有的，不进入前端定时器队列，前端最多只做数据使用
+    CounterModuleStorePurchaseResetTimes = 201; // 商店购买刷新次数 --specifyId 商店id
+    CounterModuleStoreSystemReset = 202; // 商店系统刷新 --specifyId 商店id
+    CounterModuleStoreShelfPurchaseLimit = 203; // 商店货架限购刷新逻辑 --specifyId 商店id << 27 | 货架id
+    
+
+    CounterModuleLotteryFreeCd = 204; // 抽卡免费cd -- specifyid 抽卡活动id 
+    CounterModuleLotteryNum = 205; // 抽卡次数 -- specifyid 抽卡活动id 
+}    
+   

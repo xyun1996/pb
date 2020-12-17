@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/factory.proto";
+
+package proto_csmsg;
+
+message LineGroup {
+    map<uint32, proto_object.LineBase> linesInfo = 1;
+}
+
+//  MSG_CS_FACTORY_Detail               = 30107;  //  流水线全部数据
+message CS_FACTORY_Detail {
+}
+//  MSG_SC_FACTORY_Detail               = 30108;  //  流水线全部数据-返回
+message SC_FACTORY_Detail {
+    ErrorCode                                   ret     = 1;
+    proto_csmsg.LineGroup                       detail  = 2;
+}
+//  MSG_CS_FACTORY_LineAccelerate          = 30101;  //  流水线加速
+message CS_FACTORY_LineAccelerate {
+    uint32                                      id          = 1;    //line Id
+}
+//  MSG_SC_FACTORY_LineAccelerate          = 30102;  //  流水线加速-返回
+message SC_FACTORY_LineAccelerate {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_FACTORY_LinePlaceOrder        = 30103;  //  流水线下单
+message CS_FACTORY_LinePlaceOrder {
+    uint32                                      id           = 1;    //line id
+    map<uint32, uint32>                         assistOrders = 2;    // 辅助订单(出现在生产订单中)<orderId, circle>
+    uint32                                      order        = 3;    //目标订单
+    uint32                                      orderNum     = 4;    //订单数量
+    repeated uint32                             helpList     = 5;    //帮助列表
+}
+//  MSG_SC_FACTORY_LinePlaceOrder         = 30104;  //  流水线下单-返回
+message SC_FACTORY_LinePlaceOrder {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_FACTORY_LineRewardPick  = 30105;  //  流水线产出领取
+message CS_FACTORY_LineRewardPick {
+    uint32                                      id          = 1; // lineId
+}
+//  MSG_SC_FACTORY_LineRewardPick  = 30106;  //  流水线产出领取-返回
+message SC_FACTORY_LineRewardPick {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_SC_FACTORY_SyncUpdateDiff  = 30109;  //  同步差异信息
+message SC_FACTORY_SyncUpdateDiff {
+    map<uint32, proto_object.LineBase> update = 1;
+    repeated uint32                    reset  = 2;
+}
+//  CS_FACTORY_DispatchHero  = 30110;  //  派遣人型
+message CS_FACTORY_DispatchHero {
+    uint32                                          lineId      = 1;
+    repeated uint32                                 helpList    = 2;
+}
+//  CS_FACTORY_DispatchHero  = 30111;  //  派遣人型-返回
+message SC_FACTORY_DispatchHero {
+    ErrorCode                                   ret         = 1;
+}

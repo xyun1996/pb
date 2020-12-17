@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+import "object/enum.proto";
+package proto_object;
+
+message QuestStep {
+    uint32                              stepIdx     = 1; // 阶段索引
+    uint32                              schedule    = 2; // 当前进度
+    uint32                              aim         = 3; // 目标进度
+}
+
+message Quest {
+    uint32                              id          = 1; // 任务id
+    map<uint32,QuestStep>               steps       = 2; // key 进度索引
+    QuestState                          state       = 3; // 当前状态
+    uint32                              acceptedTm  = 4; // 接受时间
+    uint32                              expiredTm   = 5; // 过期时间
+    uint32                              disappearTm = 6; // 消逝时间
+}
+
+message QuestGroup {
+    map<uint32, Quest>                  received    = 1; // key-任务id
+}
+
+
+message QuestPeriod {
+    repeated uint32                     daily           =   1; // 完成的日常任务id
+    repeated uint32                     weekly          =   2; // 完成的周常任务id
+    map<uint32, bool>                   dailyRewards    =   3; // 领取的日常任务奖励id
+    map<uint32, bool>                   weeklyRewards   =   4; // 领取的周常任务奖励id
+}

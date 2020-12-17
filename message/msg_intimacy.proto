@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/intimacy.proto";
+
+package proto_csmsg;
+
+// MSG_CS_INTIMACY_Detail              = 31001;  //  亲密度详情
+message CS_INTIMACY_Detail {
+}
+// MSG_SC_INTIMACY_Detail              = 31002;  //  亲密度详情-返回
+message SC_INTIMACY_Detail {
+    map<uint32, proto_object.IntimacyHeroElem> heroIntimacy = 1;
+}
+// MSG_CS_INTIMACY_Presentation        = 31003;  //  赠礼
+message CS_INTIMACY_Presentation {
+    uint32 heroId = 1;
+    map<uint32, uint32> data = 2;
+}
+// MSG_SC_INTIMACY_Presentation        = 31004;  //  赠礼-返回
+message SC_INTIMACY_Presentation {
+    ErrorCode ret = 1;
+}
+// MSG_CS_INTIMACY_UpgradeLine         = 31005;  //  亲密度养成线升级
+message CS_INTIMACY_UpgradeLine {
+    uint32 heroId = 1;
+    uint32 lineId = 2;
+}
+// MSG_SC_INTIMACY_UpgradeLine         = 31006;  //  亲密度养成线升级-返回
+message SC_INTIMACY_UpgradeLine {
+    ErrorCode ret = 1;
+}

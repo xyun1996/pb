@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+package proto_csmsg;
+
+// MSG_CS_DUNGEON_STATIC_Detail               = 31171;  //  副本基础数据
+message CS_DUNGEON_STATIC_Detail {
+}
+// MSG_SC_DUNGEON_STATIC_Detail               = 31172;  //  副本基础数据
+message SC_DUNGEON_STATIC_Detail {
+    message elem {
+        map<uint32, uint32> data = 1; // key-副本id | value-今日挑战次数
+    } 
+    map<uint32, elem> dailyBattleTimes = 1; // key-模块功能id | value-每日挑战数据
+    map<uint32, uint32> totalBattleTimes = 3; // key 副本id value-历史挑战次数
+}

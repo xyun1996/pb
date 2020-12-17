@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message IntimacyHeroElem {
+    uint32 heroId = 1; // 角色id
+    uint32 lv = 2; // 亲密度等级
+    uint32 exp = 3; // 亲密度经验
+    map<uint32, uint32> lineData = 4; // 养成线数据 key-线id | value-线等级
+    uint32 times = 5; // 出战次数
+}
+
+message Intimacy {
+    map<uint32, IntimacyHeroElem> heroIntimacy = 1; // key-角色id
+}

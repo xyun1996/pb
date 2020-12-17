@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+//import "message/error_code.proto";
+
+package proto_csmsg;
+
+message BattlePosition {
+    uint32      x   = 1;
+    uint32      z   = 2;
+}
+
+message Monster {
+    uint32                      monsterId       = 1;
+    uint32                      level           = 2;
+    repeated uint32             skillList       = 3;
+    map<uint32, uint32>         attr            = 4;
+    BattlePosition              position        = 5;
+    uint32                      exp             = 6;
+}
+
+message MonsterGroup {
+    repeated Monster            data            = 1;               
+}

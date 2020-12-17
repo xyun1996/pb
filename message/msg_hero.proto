@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+
+import "object/hero.proto";
+import "message/error_code.proto";
+
+package proto_csmsg;
+
+//  MSG_CS_HERO_AddExp           = 30031;  // 请求通过道具添加经验
+message CS_HERO_AddExp {
+    uint32                                      hero        = 1;
+    map<uint32, uint32>                         items       = 2;
+}
+//  MSG_SC_HERO_AddExp          = 30032;  // 返回结果
+message SC_HERO_AddExp {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_SC_HERO_SyncUpdateDiff          = 30033;  // 同步差异的英雄列表
+message SC_HERO_SyncUpdateDiff {
+    map<uint32, proto_object.Hero> update = 1;
+}
+
+//  MSG_CS_HERO_AddStar                 = 30034;  // 请求升星
+message CS_HERO_AddStar {
+    uint32                                      hero        = 1;
+}
+//  MSG_SC_HERO_AddStar                 = 30035;  // 请求升星-返回
+message SC_HERO_AddStar {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_HERO_SkillUpgrade            = 30036;  // 请求技能升级
+message CS_HERO_SkillUpgrade {
+    uint32                                      hero        = 1;
+    uint32                                      skill       = 2;
+}
+//  MSG_SC_HERO_SkillUpgrade            = 30037;  // 请求技能升级-返回
+message SC_HERO_SkillUpgrade {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_HERO_FormationFresh          = 30038;  //  请求编队更新
+message CS_HERO_FormationFresh {
+    uint32                                      id          = 1;
+    map<uint32, uint32>                         data        = 2;
+}
+//  MSG_SC_HERO_FormationFresh          = 30039;  //  请求编队更新-返回
+message SC_HERO_FormationFresh {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_HERO_FormationPickSkill      = 30040;  // 指挥官技能选择
+message CS_HERO_FormationPickSkill {
+    uint32                                      id          = 1;
+    map<uint32, uint32>                         userSkill   = 2;
+}
+//  MSG_SC_HERO_FormationPickSkill      = 30041;  // 指挥官技能选择-返回 
+message SC_HERO_FormationPickSkill {
+    ErrorCode                                   ret         = 1;
+}
+
+// MSG_CS_HERO_FormationNameFresh      = 30042;  // 编队名字更新
+message CS_HERO_FormationNameFresh {
+    uint32 id = 1;
+    string name = 2;
+}
+// MSG_SC_HERO_FormationNameFresh      = 30043;  // 编队名字更新
+message SC_HERO_FormationNameFresh {
+    ErrorCode                                   ret         = 1;
+}
+

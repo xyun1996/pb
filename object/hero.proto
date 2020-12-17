@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+import "object/command_skill.proto";
+
+package proto_object;
+
+
+message HeroBase {
+    uint32                          id      = 1;
+    uint32                          level   = 2;
+    uint32                          exp     = 3;
+    uint32                          star    = 4;
+    uint32                          ts      = 5; //获取时的时间戳
+    uint32                          career  = 6; // 职业
+    uint32                          company = 7; // 企业
+}
+message HeroSkill {
+    // 技能ID-技能等级， 角色基础技能
+    map<uint32, uint32>             data    = 1;  
+}
+message HeroAttr {
+    // 属性ID-属性值
+    map<uint32, uint64>             data    = 1;
+}
+message Hero {
+    HeroBase                            basic   = 1; // 角色基础数据
+    HeroSkill                           skill   = 2; // 角色技能数据                 
+}
+
+message Formation {
+    uint32                          id          = 1;
+    map<uint32, uint32>             data        = 2; // 编队角色 key-编号|value-角色id
+    string                          name        = 3; 
+    map<uint32, uint32>             userSkill   = 4; // key-索引 | value-技能id       
+    message comandSkillSaving {      
+        uint32 treeId = 2; // 技能树id
+        CSTSaving saving = 3; // 技能树数据
+    }       
+    comandSkillSaving cst = 5;        
+}
+
+message HeroGroup {
+    map<uint32, Hero>                   hero        = 1; // 角色列表
+    map<uint32,Formation>               formation   = 2; // 编队信息
+}

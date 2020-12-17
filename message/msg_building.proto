@@ -1,0 +1,95 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/building.proto";
+
+package proto_csmsg;
+
+//  MSG_CS_BUILDING_Detail              = 30077;  //  请求全体建筑信息
+message CS_BUILDING_Detail {
+}
+//  MSG_SC_BUILDING_Detail              = 30078;  //  请求全体建筑信息-返回
+message SC_BUILDING_Detail {
+    repeated proto_object.BuildingBase          data       = 1;
+}
+//  MSG_SC_BUILDING_SyncUpdateDiff      = 30079;  //  同步差异建筑信息
+message SC_BUILDING_SyncUpdateDiff {
+    repeated proto_object.BuildingBase          update              = 1;
+    map<uint32, bool>                           delete              = 2;
+}
+//  MSG_CS_BUILDING_Construct           = 30071;  //  请求建造
+message CS_BUILDING_Construct {
+    uint32                                      id          = 1; // config id
+    int32                                       x           = 2;
+    int32                                       y           = 3;
+    int32                                       area        = 4;
+}
+//  MSG_SC_BUILDING_Construct           = 30071;  //  请求建造-返回
+message SC_BUILDING_Construct {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_BUILDING_Upgrade             = 30073;  //  请求升级
+message CS_BUILDING_Upgrade {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_Upgrade             = 30074;  //  请求升级-返回
+message SC_BUILDING_Upgrade {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_BUILDING_Move                = 30075;  //  请求移动
+message CS_BUILDING_Move {
+    uint32                                      id          = 1; // config id
+    int32                                       x           = 2;
+    int32                                       y           = 3;
+    int32                                       area        = 4;
+}
+//  MSG_SC_BUILDING_Move                = 30076;  //  请求移动-返回
+message SC_BUILDING_Move  {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_BUILDING_Collect             = 30080;  //  采集
+message CS_BUILDING_Collect {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_Collect             = 30081;  //  采集-返回
+message SC_BUILDING_Collect {
+    ErrorCode                                   ret         = 1;
+    map<uint32, uint32>                         data        = 2; 
+}
+//  MSG_CS_BUILDING_Cancel              = 30082;  //  取消
+message CS_BUILDING_Cancel {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_Cancel              = 30083;  //  取消-返回
+message SC_BUILDING_Cancel {
+    ErrorCode                                   ret         = 1;
+}
+
+//  MSG_CS_BUILDING_CollectGroup        = 30084;  //  群体采集
+message CS_BUILDING_CollectGroup {
+    map<uint32, bool>                           gruop       = 1;
+}
+//  MSG_SC_BUILDING_CollectGroup        = 30085;  //  群体采集-返回
+message SC_BUILDING_CollectGroup {
+    ErrorCode                                   ret         = 1;
+    map<uint32, uint32>                         data        = 2; 
+}
+//  MSG_CS_BUILDING_ConfirmOver         = 30086;  //  确认建筑升级/建造结束
+message CS_BUILDING_ConfirmOver {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_ConfirmOver         = 30087;  //  确认建筑升级/建造结束-返回
+message SC_BUILDING_ConfirmOver {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_BUILDIN_Accelerate           = 30088;  //  建筑加速
+message CS_BUILDIN_Accelerate {
+    uint32                                      id          = 1; // config id
+    map<uint32, uint32> cost = 2; // key-物品id|value-物品数量
+}
+// MSG_SC_BUILDIN_Accelerate           = 30089;  //  建筑加速
+message SC_BUILDIN_Accelerate {
+    ErrorCode                                   ret         = 1;
+}

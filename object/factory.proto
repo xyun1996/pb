@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+import "object/enum.proto";
+package proto_object;
+
+message LineBase {
+    uint32                      id           = 1;    //line id
+    map<uint32,bool>            heroIds      = 2;    //人型帮助列表
+}
+
+
+message LineGroup {
+    map<uint32, LineBase> linesInfo = 1;
+    FactoryIntro          intro     = 2;
+}
+
+message FactoryIntro {
+    map<uint32,bool> lineOpenning = 1;  //开放的流水线
+}

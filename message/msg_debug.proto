@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+
+import "object/hero.proto";
+
+package proto_csmsg;
+//  MSG_CS_HERO_Debug_Attr              = 20001;  // 属性请求 
+message CS_HERO_Debug_Attr  {
+  map<uint32, bool> hero = 1; // key-heroid
+}
+//   MSG_SC_HERO_Debug_Attr              = 20002;  // 属性请求 
+message SC_HERO_Debug_Attr  {
+  map<uint32, proto_object.HeroAttr> data = 1; // key-heroid | value- hero attribution
+}

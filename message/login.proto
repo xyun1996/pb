@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "message/define.proto";
+
+package proto_csmsg;
+
+message CS_Login {
+  string open_id = 1;
+  string token = 2;
+}
+
+message SC_Login {
+  ErrorCode                                   ret         = 1;
+  RoleBrief                                   role        = 2;
+  AntiAddictionCode                           code        = 3; //--废弃
+  bool firstLogin = 4; // 同步首次登录标记
+}
+// MSG_SC_Logout         = 10003;
+// 登出，一般是服务器踢人
+enum UserStatus{
+  StatusNormal = 0;    //正常状态
+  // 网关
+  StatusServerMaintain = 1;  //服务器维护
+  StatusServerReadTimeOut = 2; //客户端太不活跃了，tcp超时，服务器主动断开连接
+  StatusMessageMaxFrequency = 3; //客户端太活跃了，在刷吧，消息超过每分钟上限
+  StatusUserNotLogin = 4; //玩家未登录，只能请求登录
+  StatusUserLogining = 5; //玩家正在登录，禁止其他请求
+  StatusForbinDevLogin = 6; //禁用开发环境下的登录
+  StatusUserLogined = 7; //玩家已经登录，禁止登录请求
+
+  StatusGateRemain = 20; //小于20的为gate保留吧
+  // 游戏服
+  StatusOtherDeviceLogin = 22; // 其他设备登录
+  StatusHeatbeatOvertime = 23; // 心跳超时
+
+  // 平台
+  StatusInvalidGuest = 30;		// 非法游客账号
+	StatusInvalidGuestToken = 31;	// 非法游客token
+	StatusInvalidUser = 32;		// 非法账号
+	StatusUserRealnameErr = 33;	// 用户实名信息错误
+  StatusInvalidUserToken = 34;	// 非法用户token
+  StatusOpenidNotSame = 35;		// openid与token解析出的不一致
+	StatusInvalidToken = 36;		// token无法解析
+	StatusIsFreeze = 37;			// 封禁
+
+  // 防沉迷
+  StatusAntiAddictionCode_T_1hLimit     = 101; // 游客1h限制
+  StatusAntiAddictionCode_C_228Keep     = 201; // 未成年22-8不提供游戏服务
+  StatusAntiAddictionCode_C_15Limit     = 202; // 未成年工作日1.5h游戏体验上限
+  StatusAntiAddictionCode_C_3Limit      = 203; // 未成年节假日3h游戏体验上限
+}
+message SC_Logout{
+  UserStatus reason = 1;
+}
+message RoleBrief {
+  string    name                      = 1;    // 名字
+  uint64    id     	                  = 2;    // ID
+  int32     timezone_offset           = 3;    // 时区
+  int64     timestamp                 = 4;    // 
+  uint32    curActiveTime             = 5;    // curActiveTime  
+}
+
+
+
+
+// MSG_CS_PING                         = 10101; 
+message CS_PING {
+}
+// MSG_SC_PONG                         = 10102;
+message SC_PONG {
+  int64 tk = 1;
+  AntiAddictionCode code = 2;
+}
+// MSG_CS_SYS_NtfLoginOver                     = 10015;  // 通知登录完成
+message CS_SYS_NtfLoginOver {}
+// MSG_SC_SYS_NtfLoginOver                     = 10016;  // 通知登录完成-返回
+message SC_SYS_NtfLoginOver {}

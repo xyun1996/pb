@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message TrainingSlotBase {
+    uint32                                      idx             = 1;
+    uint32                                      hero            = 2;
+    uint32                                      effectiveness   = 3;    //效率
+    uint32                                      overTm          = 4;    //结束时间
+    uint32                                      startTm         = 5;   
+    uint32                                      extraNum        = 6;    //
+}
+
+message Training {
+    // uint64                                      curExpPool          = 1;    //  后续迁移，暂放 废弃
+    uint32                                      lastEffIdx          = 2;
+    map<uint32, TrainingSlotBase>               trainingSlotBase    = 3;
+}

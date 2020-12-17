@@ -1,0 +1,184 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "object/function.proto";
+import "object/backpack.proto";
+import "object/quest.proto";
+import "object/object.proto";
+import "object/hero.proto";
+import "object/avg.proto";
+import "object/dungeon.proto";
+import "object/counter.proto";
+
+import "message/error_code.proto";
+
+
+package proto_csmsg;
+
+message ClientResource {
+  map<uint32, uint32>         currency      = 1;
+  proto_object.Backpack       backpack      = 2;
+  // uint64                      globalExp     = 3;
+}
+
+message QuestData {
+  map<uint32, bool> mainLineQuest = 1; // key-任务id
+}
+
+/////////// 主角的基本数据推送
+//  MSG_SC_SyncUserData   = 10005;
+message SC_SyncUserData {
+  proto_object.Function       function      = 1;
+  proto_object.HeroGroup      heroGroup     = 2;
+  ClientResource              resource      = 3;
+  proto_object.QuestGroup     questGroup    = 4;
+  proto_object.UserBase       userBase      = 5;
+  proto_object.AvgGroup       avg = 6; 
+  QuestData quest = 7;
+  proto_object.MonsterAtlas monsterAtlas = 8;
+  GlobalLogic logic = 9; // 全局逻辑  --只针对客户端无法获取到logic的模块
+}
+
+message ResourceCurrencyDiff {
+  map<uint32, uint64>               data      = 1;  //  货币id-数量
+}
+message ResourceBackpackDiff {
+  map<uint32, proto_object.Item>    updates   = 1;
+  map<uint32, bool>                 deletes   = 2;
+}
+message ResourceLineResourceDiff {
+  map<uint32, uint32>               data      = 2;  //  原料id-数量
+}
+message ResourceGlobalExpDiff {
+  uint64                            data      = 1;
+}
+
+//  MSG_SC_RESOURCE_SyncUpdateDiff      = 30012;  //  同步资源（货币，背包道具，流水线原材料）差异
+message SC_RESOURCE_SyncUpdateDiff {
+  ResourceCurrencyDiff              currency      = 1;
+  ResourceBackpackDiff              backpack      = 2;
+  // ResourceGlobalExpDiff             globalExp     = 3;
+}
+
+// //  backpack
+// //  MSG_SC_BACKPACK_SyncUpdateDiff      = 30011;
+// message SC_BACKPACK_SyncUpdateDiff {
+//   map<uint32, proto_object.Item>    updates   = 1;
+//   map<uint32, bool>                 deletes   = 2;
+// }
+
+//  function
+//  MSG_SC_FUNCTION_SyncUpdateDiff      = 30021;
+message SC_FUNCTION_SyncUpdateDiff {
+  map<uint32, bool>     updates   = 1;  
+  map<uint32, bool>     deletes   = 2;  
+}
+
+message RewardCommonElem {
+  uint32                            id          = 1;
+  uint32                            num         = 2;
+  uint32                            stacking    = 3;
+}
+
+message RewardCommon {
+  repeated RewardCommonElem         data        = 1;
+}
+
+message UserLevelDiff {
+  uint32                            level       = 1;
+  uint32                            exp         = 2;
+}
+
+message UserStmDiff {
+  proto_object.Stamina              stm         = 1;
+}
+
+message UserSKillDiff {
+  map<uint32, uint32>               updates     = 1;
+  //  map<uint32, bool>                 deletes     = 2; 技能删除待定
+}
+
+//  MSG_SC_SyncUserBaseDiff             = 10006;
+message SC_SyncUserBaseDiff {
+  UserLevelDiff                     level       = 1;
+  UserStmDiff                       stm         = 2;
+  UserSKillDiff                     skill       = 3;
+}
+
+
+// MSG_CS_User_UserNameModify = 33301; // 用户修改名字
+message CS_User_UserNameModify {
+  string name = 1;
+}
+// MSG_SC_User_UserNameModify = 33302; // 用户修改名字
+message SC_User_UserNameModify {
+  ErrorCode ret = 1;
+}
+
+// MSG_CS_User_ModifyShowGirl = 33303; // 看板娘设置
+message CS_User_ModifyShowGirl {
+  uint32 id = 1;
+}
+// MSG_SC_User_ModifyShowGirl = 33304; // 看板娘设置
+message SC_User_ModifyShowGirl {
+  ErrorCode ret = 1;
+}
+
+// MSG_CS_User_ClientLastSectorMention = 33305; // 客户端上一次扇区聚焦提醒ID
+message CS_User_ClientLastSectorMention {
+  uint32 id = 1;
+}
+// MSG_SC_User_ClientLastSectorMention = 33306; // 客户端上一次扇区聚焦提醒ID
+message SC_User_ClientLastSectorMention {
+  ErrorCode ret = 1;
+}
+  // 引导
+  // MSG_CS_GUIDE_TriggerComplete = 33401; // 触发式引导完成
+  message CS_GUIDE_TriggerComplete {
+    uint32 id = 1;
+  }
+  // MSG_SC_GUIDE_TriggerComplete = 33402; // 触发式引导完成
+  message SC_GUIDE_TriggerComplete {
+    ErrorCode ret = 1;
+  }
+
+  // 通用过期时间
+  // MSG_CS_COUNTER_Detail = 33321; // 通用计数器数据
+  message CS_COUNTER_Detail {}
+  // MSG_SC_COUNTER_Detail = 33322; // 通用计数器数据
+  message SC_COUNTER_Detail {
+    ErrorCode ret = 1;
+    proto_object.CounterSeries data = 2;
+  }
+  // MSG_SC_COUNTER_SyncUpdateDiff = 33323; // 通用计数器差异更新
+  message SC_COUNTER_SyncUpdateDiff {
+    map<uint64, proto_object.CounterElem> update = 1;
+    map<uint64, bool> delete = 2;
+  }
+
+  message GlobalLogic {
+    message singleLogic {
+      repeated uint32 data = 1; // [logicId, param1, param2 ...] param 是可变参数
+    }
+    repeated singleLogic logic = 1;
+  }
+
+  // MSG_CS_User_SystemOverDay = 33307; // 客户端请求模块默认过天点 -- 上线不请求
+  message CS_User_SystemOverDay {}
+  // MSG_SC_User_SystemOverDay = 33308; // 客户端请求模块默认过天点 -- 差异返回
+  message SC_User_SystemOverDay {
+    ErrorCode ret = 1;
+  }
+
+    // // 扫荡
+    // MSG_CS_BLITZ_Blitz = 33331; // 扫荡
+    message CS_BLITZ_Blitz {
+      uint32 cnt = 1; // 次数
+      uint32 dungeonId = 2; // 副本id
+    }
+    // MSG_SC_BLITZ_Blitz = 33332; // 扫荡-返回
+    message SC_BLITZ_Blitz {
+      ErrorCode ret = 1;
+      repeated proto_object.CommonReward rewards = 2; // 奖励
+    }

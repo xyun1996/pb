@@ -1,0 +1,171 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+package proto_csmsg;
+
+enum ItemType {
+    ItemTypeNone                    = 0;
+    ItemTypeCurrency                = 1; // 货币
+    ItemTypeDevelopmentConsume      = 2; // 可消耗的养成道具-类似经验道具
+    ItemTypeBattleCost              = 3; // --废弃
+    ItemTypeHero                    = 5; // 角色道具
+    ItemTypeExplorationBuff         = 6; // --废弃
+    ItemTypeAlg                     = 7; // 函数类
+    ItemTypePackage                 = 8; // 包裹
+    ItemTypeResource                = 9; // 资源产出类
+    ItemTypeLineConsume             = 10; // 工厂消耗道具
+    ItemTypeAth                     = 11; // 算法
+    ItemTypeHouse                   = 12; // 宿舍
+    ItemTypeFurniture               = 13; // 家具
+    ItemTypeAutoResource            = 14; // 自动产出类资源
+}
+
+enum ItemActionType {
+    ItemActionTypeNone              = 0;
+    ItemActionTypeExperience        = 2001; // 角色升级经验消耗道具
+    ItemActionTypeCommanderSkillExperience = 3001; // 指挥官经验消耗道具
+    ItemActionTypeBuildingAccelerateItem = 5001; // 建筑加速卡
+    ItemActionTypeAthSlotUpgradeExp = 6001; // 算法槽位升级消耗
+    ItemActionTypeFixedItem = 801; // 固定礼包
+    ItemActionTypeRandomReward = 802; // 随机库掉落礼包
+    
+}
+
+enum GMType {
+    GMTypeNone                    = 0;
+    GMTypeAddItem                 = 1; // `1:100|2:400` 物品id:数量|物品id:数量
+    GMTypeMinusItem               = 2;
+    GMTypeEmptyBackpack           = 3; //               任意参数
+    GMTypeFinishQuestSchedule     = 4; // `1`           任务id
+    GMTypeAddAchievementChipSet   = 5; // `1|2|3`       芯片id|芯片id 
+    GMTypeMinusStamina            = 6; // `1`           体力值
+    GMTypeAddBuilding             = 7; // `1:10|2:10`   建筑id:等级|建筑id:等级
+    GMTypeDungeon                 = 8; // `1101|1102|`  关卡|关卡
+    GMTypeGlobalExp               = 9; // `100`         加减全局经验
+    GMTypeEplAlg                  = 10; // `1|2|3`      加函数
+    GMTypeEplBuff                 = 11; // `1|2|3`      加buff
+    GMTypeMail                    = 12; // `content`    邮件
+    GMTime                        = 13; // `2006-01-02 15:04:05` 格式
+    GMTYPEAlgEmpty                = 14; // 清空函数
+}
+
+// enum SystemFunctionID {
+//     SystemFunctionID_None                    = 0;
+//     SystemFunctionID_PlaySpeed               = 201;
+//     SystemFunctionID_AutoDeploy              = 202;
+//     SystemFunctionID_Skada                   = 204;
+//     SystemFunctionID_Building                = 300;
+//     SystemFunctionID_HeroGroup               = 500;
+//     SystemFunctionID_Lottery                 = 600;
+//     SystemFunctionID_Store                   = 610;
+//     SystemFunctionID_Backpack                = 800;
+//     SystemFunctionID_Factory                 = 900;
+//     SystemFunctionID_Training                = 901;
+// }
+
+
+enum AntiAddictionCode {
+    AntiAddictionCode_Normal        = 0;
+    AntiAddictionCode_T_1hLimit     = 101; // 游客1h限制
+    AntiAddictionCode_C_228Keep     = 201; // 未成年22-8不提供游戏服务
+    AntiAddictionCode_C_15Limit     = 202; // 未成年工作日1.5h游戏体验上限
+    AntiAddictionCode_C_3Limit      = 203; // 未成年节假日3h游戏体验上限
+
+    AntiAddictionCode_T_PayLimit    = 110; // 游客充值限制
+    AntiAddictionCode_C_8AgeLimit   = 210; // 8岁以下充值限制
+    AntiAddictionCode_C_S50Limit    = 211; // 8-16岁单笔50限制
+    AntiAddictionCode_C_M200Limit   = 212; // 8-16岁单月200限制
+    AntiAddictionCode_C_S100Limit   = 213; // 16-18岁单笔100限制
+    AntiAddictionCode_C_M400Limit   = 214; // 16-18岁单月400限制
+}
+
+message PairU32 {
+    uint32 first = 1;
+    uint32 second = 2;
+}
+
+enum  AlgModule {
+    AlgModuleNone = 0;
+    AlgModuleDungeon = 1;
+    AlgModuleExploration = 2;
+}
+
+enum ResourceModifyReason {
+    ResourceModifyReasonNone = 0;
+    ResourceModifyReason_Achievement_LevelReward = 11001; // 成就等级奖励
+    ResourceModifyReason_Ath_OneKeyDeco = 12001; // 算法一键分解返还
+    ResourceModifyReason_Ath_Deco = 12002; // 算法分解
+    ResourceModifyReason_Ath_Optimize = 12003; // 算法优化
+    ResourceModifyReason_Ath_Inherit = 12004; // 算法继承
+    ResourceModifyReason_Ath_SlotUpgrade = 12005; // 算法-区域升级
+    ResourceModifyReason_Ath_Reconsitution = 12006; // 算法-重构
+    ResourceModifyReason_Avg_Complete = 13001; // avg完成奖励
+    ResourceModifyReason_ResCollect_Single = 14001; // 资源单采
+    ResourceModifyReason_ResCollect_Group = 15002; // 资源群采
+    ResourceModifyReason_Building_CancelBack = 16001; // 建筑取消升级，取消建筑返还
+    ResourceModifyReason_Building_Construct = 16002; // 建筑构建
+    ResourceModifyReason_Building_Accelerate = 16003; // 建筑加速
+    ResourceModifyReason_Building_Upgrade = 16004; // 建筑升级
+    ResourceModifyReason_Dorm_RoomEdit = 17001; // 宿舍房间编辑
+    ResourceModifyReason_Dorm_RoomDeco = 17002; // 宿舍房间分解
+    ResourceModifyReason_Dorm_DromPurchase = 17003; // 宿舍购买
+    ResourceModifyReason_Dorm_HouseEdit = 17004; // 宿舍编辑
+    ResourceModifyReason_Factory_LineDestruct = 18001; // 工厂流水线卸载
+    ResourceModifyReason_Factory_FinalRewadPick = 18002; // 工厂流水线最终建立获取
+    ResourceModifyReason_Factory_PlaceOrder = 18003; //工厂流水线下单
+    ResourceModifyReason_Factory_OrderReward = 18004; //工厂订单奖励
+    ResourceModifyReason_Factory_Accelerate = 18005; //工厂加速
+    ResourceModifyReason_Factory_Unlock = 18006; //工厂解锁
+    ResourceModifyReason_Intimacy_LineUpgrade = 19001; // 亲密度养成线升级
+    ResourceModifyReason_Intimacy_Presentation = 19002; // 亲密度赠礼
+    ResourceModifyReason_GM_Operator = 20001; // gm操作
+    ResourceModifyReason_DailyQuest_RewardPick = 21001; // 日常任务奖励获取
+    ResourceModifyReason_WeeklyQuest_RewardPick = 22001; // 周常任务奖励获取
+    ResourceModifyReason_Sector_StarReward = 23001; // 扇区星数奖励
+    ResourceModifyReason_Sector_FirstClearReward = 23002; // 扇区首通奖励
+    ResourceModifyReason_Training_SettleBack = 24001; // 训练场结算返还
+    ResourceModifyReason_Training_SlotHero = 24002; // 训练场-插入角色
+    ResourceModifyReason_Backpack_SysntemOpen = 25001; // 背包功能开放
+    ResourceModifyReason_Dungeon_Over = 26001; // 副本结算
+    ResourceModifyReason_Dungeon_Enter = 26002; // 副本-进入
+    ResourceModifyReason_Dungeon_FailureBack = 26003; //副本-失败返还
+    ResourceModifyReason_Exploration_Battle = 27001; // 探索战斗获得
+    ResourceModifyReason_Exploration_OverClock = 27002; // 探索-超频
+    ResourceModifyReason_Exploration_QuitBack = 27003; // 探索-退出返还
+    ResourceModifyReason_Lottery_Once = 28001; // 单抽
+    ResourceModifyReason_Lottery_Ten = 28002; // 十连抽
+    ResourceModifyReason_Mail_Attachment = 29001; // 邮件附件
+    ResourceModifyReason_Quest_Complete = 30001; // 任务奖励
+    ResourceModifyReason_Store_Purchase = 31001; // 商店购买
+    ResourceModifyReason_Store_Refresh = 32002; // 商店刷新
+    ResourceModifyReason_CommanderSkill_Upgrade = 33001; // 指挥官技能升级
+    ResourceModifyReason_CommanderSkill_Unlock = 33002; // 指挥官技能解锁
+    ResourceModifyReason_User_NameModify = 34001; // 用户-修改名字  
+    ResourceModifyReason_Hero_AddExp = 35001; // 角色-添加经验
+    ResourceModifyReason_Hero_AddStar = 35002; // 角色-添加星级
+    ResourceModifyReason_Hero_SkillUpgrade = 35003; // 角色-技能升级
+    ResourceModifyReason_Endless_FloorReward = 36001; // 无尽模式-层奖励
+    ResourceModifyReason_Endless_ClearReward = 36002; // 无尽模式-通关奖励
+    ResourceModifyReason_Endless_QuitBack = 36003; // 无尽模式-退出返还
+    ResourceModifyReason_Blitz_Blitz = 37001; // 扫荡
+}
+
+enum OssBehavior{
+    OssBehavior_None = 0;
+    OssBehavior_Hero_Upgrade = 10001; // 角色-升级
+    OssBehavior_Hero_RankUpgrade = 10002; // 角色-rank提升
+    OssBehavior_Hero_SkillUpgrade = 10003; // 角色-技能升级
+    OssBehavior_Hero_Add = 10004; // 角色-获取
+    OssBehavior_Exploration_BattleDungeonSettle = 20001; // 探索-战斗副本结算
+    OssBehavior_Training_Settle = 30001;// 训练场-结算
+    OssBehavior_GM = 40001; // GM 
+    OssBehavior_Dungeon_Settle = 50001; // 副本-结算
+    OssBehavior_Ath_Eff = 60001; // 算法-效率提升 
+}
+
+enum AthRefillOperator {
+    AthRefillOperatorNone = 0;
+    AthRefillOperatorInstall = 1;
+    AthRefillOperatorReplace = 2;
+}

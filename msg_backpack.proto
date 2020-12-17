@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+package proto_csmsg;
+
+enum ItemUseType {
+    Use             = 0;    //使用
+    Synthesis       = 1;    //合成
+    Recycle         = 2;    //回收
+}
+
+message Item {
+    int32  id     	= 1; //id
+    int32 count  	= 2; //数量
+}
+
+message Backpack {
+    map<uint64, Item> data = 1;
+}
+
+message Bag {
+    Backpack				backPack 		= 1;
+    map<int32, int32>		dailyDuraMax	= 2;	//每日使用次数
+    map<int32, int64>		LastUseTime		= 3;	//上次使用时间
+    map<uint64, int64>		expire			= 4;	//过期时间
+}
+
+
+
+//使用道具
+message CS_BACKPACK_USE_ITEM {
+    uint64  guid    = 1;
+    int32   count   = 2;
+    int32   type    = 3;    //值为ItemUseType的枚举
+}
+
+message SC_BACKPACK_USE_ITEM {
+}
+
+//item发生变化时 服务器推出去的
+message SC_BACKPACK_ITEM_CHANGE {
+    map<uint64, Item>    itemsChanges     = 1;
+}
+
+//资源变化
+message SC_ResourceChanges {
+    map<int32, int64>  resources 	= 	1; 	//<type,num>
+}
+

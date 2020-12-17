@@ -1,0 +1,166 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/arithmetic.proto";
+import "message/define.proto";
+
+package proto_csmsg;
+
+
+// MSG_CS_ATH_Detail                   = 30701;  //  请求算法整体数据
+message CS_ATH_Detail {
+
+}
+// MSG_SC_ATH_Detail                   = 30702;  //  请求算法整体数据-返回
+message SC_ATH_Detail  {
+    map<uint64, proto_object.ArithmeticElem> data    = 1;       //  算法整体数据 ***废弃***
+    map<uint32, proto_object.ArithmeticSlotElem> slots = 2;     // 角色槽位数据 ***废弃***
+    int32 failure = 3; // 失败次数
+    proto_object.ArithmeticAutoDecomposition autoDeco = 4;
+    map<uint32, proto_object.ArithmeticGroup.slotInfo> heroSlot = 5; // 角色id-槽位等级
+    uint32 batchSize = 6; //  算法整体数据 共几批
+    proto_object.ArithmeticReconsitution  reconsitution = 7; // 重构保留
+}
+// MSG_SC_ATH_SyncUpdateDiff           = 30703;  //  算法差异同步
+message SC_ATH_SyncUpdateDiff {
+    map<uint64, proto_object.ArithmeticElem> updateAth = 1;
+    map<uint64, bool>  deleteAth = 2;
+    map<uint32, proto_object.ArithmeticSlotElem> slots = 3; // 同步一个角色的整体槽位变更 ***废弃***
+    map<uint32, proto_object.ArithmeticGroup.slotInfo> heroSlot = 4; // 差异的角色id-差异的槽位等级
+}
+// MSG_CS_ATH_AthRefillOp              = 30704;  //  请求算法填充操作
+message CS_ATH_AthRefillOp {
+    uint32 heroId = 1;
+    uint32 slotIdx = 2;
+    uint64 uid = 3; // 算法唯一id
+    uint32 gridId = 4; // 区域内id 1-16
+    map<uint64, uint32> oldMove = 5; // 旧算法的移动
+
+    AthRefillOperator op = 6;
+}
+// MSG_SC_ATH_AthRefillOp              = 30705;  //  请求算法填充操作-返回
+message SC_ATH_AthRefillOp {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_AthUninstall             = 30706;  //  请求算法卸载
+message CS_ATH_AthUninstall {
+    uint64 uid = 1;
+}
+// MSG_SC_ATH_AthUninstall             = 30707;  //  请求算法卸载-返回
+message SC_ATH_AthUninstall {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_SlotUpgrade              = 30710;  //  请求算法槽位升级
+message CS_ATH_SlotUpgrade {
+    uint32 heroId = 1; // 角色id
+    uint32 slotId = 2; //***废弃***
+    map<uint32, uint32> item = 3; // id-数量
+    map<uint64, bool> ath = 4; // 算法uid
+}
+// MSG_SC_ATH_SlotUpgrade              = 30711;  //  请求算法槽位升级-返回
+message SC_ATH_SlotUpgrade {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_AthOptimize              = 30712;  //  请求算法优化
+message CS_ATH_AthOptimize {
+    uint64 uid = 1;
+    uint32 idx = 2; // 词缀索引 0开始
+    uint32 sect = 3; // 第几密度区域
+}
+// MSG_SC_ATH_AthOptimize              = 30713;  //  请求算法优化-返回
+message SC_ATH_AthOptimize {
+    ErrorCode ret = 1;
+    int32 failure = 2; // 失败次数仅通过这个同步
+    bool result = 3; // true成功
+}
+// MSG_CS_ATH_AthLock                  = 30716;  //  算法上锁
+message CS_ATH_AthLock {
+    uint64 uid = 1;
+}
+// MSG_SC_ATH_AthLock                  = 30717;  //  算法上锁-返回
+message SC_ATH_AthLock {
+    ErrorCode ret = 1;
+}
+// MSG_CS_Ath_AutoDecoSetting          = 30718;  //  自动分解设置
+message CS_Ath_AutoDecoSetting {
+    proto_object.ArithmeticAutoDecomposition setting = 1;
+}
+// MSG_SC_Ath_AutoDecoSetting          = 30719;  //  自动分解设置-返回
+message SC_Ath_AutoDecoSetting {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_OneKeyDeco               = 30720;  //  一键分解
+message CS_ATH_OneKeyDeco {
+    map<uint64, bool> uids = 1;
+}
+// MSG_SC_ATH_OneKeyDeco               = 30721;  //  一键分解-返回
+message SC_ATH_OneKeyDeco {
+    ErrorCode ret = 1;
+    map<uint32, uint32> data = 2;
+}
+// MSG_CS_ATH_Move                     = 30722;  //  算法移动
+message CS_ATH_Move {
+    uint64 uid = 1; // 算法唯一id
+    uint32 gridId = 2; // 区域内id 1-16
+}
+// MSG_SC_ATH_Move                     = 30723;  //  算法移动-返回
+message SC_ATH_Move {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_OneKeyInstall            = 30724;  //  一键安装
+message CS_ATH_OneKeyInstall {
+    uint32 heroId = 1; // 角色id
+    uint32 slotId = 2; // 槽位id
+    map<uint64, uint32> athGroup = 3; // 算法组
+}
+// MSG_SC_ATH_OneKeyInstall            = 30725;  //  一键安装-返回
+message SC_ATH_OneKeyInstall {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_OneKeyUninstall          = 30726;  //  一键卸载
+message CS_ATH_OneKeyUninstall {
+    uint32 heroId = 1; // 角色id
+    uint32 slotId = 2; // 槽位id
+}
+// MSG_SC_ATH_OneKeyUninstall          = 30727;  //  一键卸载-返回
+message SC_ATH_OneKeyUninstall {
+    ErrorCode ret = 1;
+}
+// MSG_SC_ATH_DetailBatch              = 30728;  //  请求算法整体数据分批-返回
+message SC_ATH_DetailBatch {
+    map<uint64, proto_object.ArithmeticElem> data    = 1;       //  算法整体数据
+}
+
+// MSG_CS_ATH_ReconsitutionExec        = 30729;  //  算法重构执行
+message CS_ATH_ReconsitutionExec {
+    uint64 aimUid = 1; // 目标对象
+    uint64 dogFoodUid = 2; // 狗粮 
+}
+// MSG_SC_ATH_ReconsitutionExec        = 30730;  //  算法重构执行
+message SC_ATH_ReconsitutionExec {
+    ErrorCode ret = 1;
+    proto_object.ArithmeticReconsitution  reconsitution = 2; // 重构保留
+}
+// MSG_CS_ATH_AffixLockUnlock          = 30731;  //  算法词条上锁解锁
+message CS_ATH_AffixLockUnlock {
+    uint64 uid = 1; // 算法uid
+    uint32 affixIdx = 2; //  算法词条索引0开始
+}
+// MSG_SC_ATH_AffixLockUnlock          = 30732;  //  算法词条上锁解锁
+message SC_ATH_AffixLockUnlock {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_ReconsitutionSave        = 30733;  //  算法重构保存
+message CS_ATH_ReconsitutionSave {}
+// MSG_SC_ATH_ReconsitutionSave        = 30734;  //  算法重构保存
+message SC_ATH_ReconsitutionSave {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_ReconsitutionDrop        = 30735;  //  算法重构抛弃
+message CS_ATH_ReconsitutionDrop {}
+// MSG_SC_ATH_ReconsitutionDrop        = 30736;  //  算法重构抛弃
+message SC_ATH_ReconsitutionDrop {
+    ErrorCode ret = 1;
+}

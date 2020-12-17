@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message Achievement {
+    map<uint32, bool>           levelRewradsPicked      = 1; // key对应等级的奖励
+    map<uint32, int64>          questFinishedRecords    = 2; // 成就完成数据 key-成就id value-完成时间
+}

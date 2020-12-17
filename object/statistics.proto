@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+package proto_object;
+
+
+message QuestStatistics {
+    map<uint32,bool>                  mainline      = 1; // 主线任务id key-任务id
+    map<uint32,bool>                  side          = 2; // 支线任务id key-任务id
+}
+
+message Statistics {
+    map<uint32, uint32>  resident = 1; // 常驻数据
+}

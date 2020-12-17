@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+import "object/enum.proto";
+
+message BuildingBase {
+    uint32                                      id              = 1; // 建筑配置id
+    uint32                                      level           = 2; // 建筑等级
+    BuildingState                               state           = 3; // 建筑状态
+    int32                                       x               = 4; // 坐标x
+    int32                                       y               = 5; // 坐标y
+    int64                                       over            = 6; // 结束时间戳
+    int32                                       area            = 7; // 所属区域
+    bool                                        fix             = 8; // 地图异常后需要重新编辑的标记
+}
+
+
+
+message BuildingGroup {
+    map<uint32, BuildingBase>                   data            = 1;
+}

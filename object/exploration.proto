@@ -1,0 +1,279 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+import "object/enum.proto";
+import "object/object.proto";
+
+package proto_object;
+
+message BattleRecord {
+    enum recordIdx {
+        recordIdxNone = 0;
+        recordIdxInjury = 1;
+        recordIdxdamage = 2;
+        recordIdxHeroSelf = 3;
+        recordIdxHeroOther = 4;
+        recordIdxMax = 5;
+    }
+    repeated uint32 record = 1; // 长度为recordIdxMax的数组
+}
+
+// 怪物单位数据
+message EplGridMonsterElem {
+    uint32                                  coordination = 1;   // 战场地图坐标 row << 16 | col
+    uint32                                  templateId   = 2;
+    uint32                                  level        = 3;
+    map<uint32, uint32>                     skillGroup   = 4;
+    map<uint32, uint32>                     attr         = 5;
+    uint32                                  exp          = 6;
+    uint32                                  hpPer        = 7;   // 当前血量万分比
+    uint32                                  cat          = 8;   // 
+}
+
+// 怪物格子数据
+message EplGridMonsterGroup {
+    uint32                                  coordination    = 1;   //  探索地图坐标 row << 16 | col
+    map<uint32, EplGridMonsterElem>         data            = 2;   //  key-战场地图坐标
+    repeated uint32                         monsterAlg      = 3;   //  怪物自身
+    // 奖励
+    CommonReward                            rewards         = 4;    //  奖励
+    uint32                                  algShow         = 5;    //  预览展示
+    repeated uint32                         alg             = 6;    //  战斗成功后填充
+    uint32                                  battleId        = 7;    //  战斗组
+    uint32                                  dungeonType     = 8;    // 副本类型
+    uint32                                  ambush          = 9;    // 伏击   ((职业id << 4 | 判定次数) << 16) | 判定数据 判定数据为十进制进制数据 111 121 101 000 0-表示失败 1-表示普通成功 2-表示幸运成功  
+    uint32                                  stealth         = 10;   // 潜行   (职业id << 4 | 判定次数) << 16) | 判定数据 判定数据为十进制进制数据 111 121 101 000 0-表示失败 1-表示普通成功 2-表示幸运成功  
+    map<uint32, uint32>                     grids           = 11;   // key-坐标 | val-格子id key row << 16 | col
+}
+
+// 道具房数据
+
+message EplGridItem {
+    uint32                                  coordination    = 1;   //  探索地图坐标 row << 16 | col
+    uint32                                  boxId           = 2;
+    uint32                                  logic           = 3;   //  宝箱逻辑类型
+    uint32                                  freshCnt        = 4;   //  刷新次数
+    message Alg {
+        uint32                              id              = 1;
+        enum algState {
+            algStateNone        = 0;
+            algStateSelected    = 1;
+        }
+        algState                            state           = 2;
+    }                            
+    repeated Alg                            data            = 5;
+}
+
+message EplGridStore {
+    uint32                                  coordination    = 1;   //  探索地图坐标 row << 16 | col    
+    message elem {
+        uint32                              id              = 1;
+        uint32                              discount        = 2;
+        bool                                saled           = 3;
+    }     
+    repeated elem                           data            = 2; 
+    uint32                                  currency        = 3;  
+    uint32                                  storeId         = 4; 
+    uint32                                  refreshTimes    = 5; // 商店刷新次数    
+    uint32 purchaseTimes = 6; // 购买次数
+    uint32 discCountLimitTimes = 7; // 折扣购买限购次数 0 表示没有限制
+    uint32 freeRefreshTimes = 8;    //免费刷新次数
+}
+
+message EplGridEvent {
+    uint32                                         coordination    = 1;
+    uint32                                         eventId         = 2;
+    // repeated uint32                                choice          = 3;
+    message ChoiceElem {
+        uint32 id = 1; // 事件id或者随机id
+        bool random = 2; // 是否是随机的--废弃
+        enum category {
+            categoryNone = 0;
+            categoryNormalEvent = 1;
+            categoryRandomEvent = 2;
+            categoryAlgUpgradeEvent = 3;
+            categoryRoomJumpEvent = 4;
+            categoryMax = 5;
+        }
+        category cat = 3;
+    }
+    repeated ChoiceElem data = 4;
+    uint32 selectedRandomId = 5; // 是否研究进入随机流程--废弃
+    uint32 judge = 6;    // --废弃
+    message ChoiceParam {
+        uint32 p1 = 1; // 选项索引。 从0开始
+        uint32 p2 = 2; // 随机逻辑-随机id       |  升级逻辑-id
+        uint32 p3 = 3; // 随机逻辑-判定         |  购买次数-当前次数
+        //判定 ((职业id << 4 | 判定次数) << 16) | 判定数据 判定数据为十进制进制数据 111 121 101 000 0-表示失败 1-表示普通成功 2-表示幸运成功 
+    } 
+    ChoiceParam param = 7;
+
+}
+
+message EplGridReconstitution {
+    uint32                                         coordination    = 1;  
+    map<uint32, uint32>                            record          = 2; // 操作次数记录      
+}
+
+// 可探索的各自预备数据
+message Exploration_Grid_Detail {
+    map<uint32, EplGridMonsterGroup>        monster         = 1;    // 普通怪物房，精英房，挑战房，boss房 key-position
+    map<uint32, EplGridItem>                item            = 2;    // 道具房 key-position
+    map<uint32, EplGridEvent>               evt             = 3;    // 事件房，恢复房 key-position
+    map<uint32, EplGridStore>               store           = 4;    // 商店房 key-position
+    map<uint32, EplGridReconstitution>      reconstitution  = 5;    // 重构房 key-position
+    message buffEffective {
+        map<uint32, uint32>                 data            = 1;    // 当前有效buff-只对当前房间生效 key-buffid
+    }
+    buffEffective                           buffData        = 6;
+}
+
+// 角色操作数据
+message Exploration_Operator_Detail {
+    uint32                                  curPostion      = 1; // 当前位置
+    ExplorationCurGridState                 state           = 2; // 当前节点状态
+    repeated uint32                         path            = 3; // 路径
+    uint32                                  idx             = 4; // 0开始
+    bool                                    canFloorOver    = 5; // 可结束
+    uint32                                  jumpCat         = 6; // 跳转房间类型
+    // 装饰器
+    message decoration {
+        enum decorationId {
+            decorationIdNone = 0;
+            decorationIdSaveMoney = 1; // 储蓄
+            decorationIdBanCommanderSkill = 2; // 禁用指挥官技能
+        }
+        decorationId id = 1;
+        // 存钱-按层清楚 id=1 arrParams 步数_钱总数_倍率 步数_钱总数_倍率 ...3个一组
+        // 屏蔽技能-按战斗轮次清楚 id=2 mapParams=屏蔽技能id|数战斗轮次
+        repeated uint32 arrParams = 2; // 
+        map<uint32, uint32> mapParams = 3;
+    }
+    map<uint32, decoration> deco = 7;
+}
+
+// 地图数据
+message EXPLORATION_Map_Detail {
+    uint32                                       dungeonId   = 1;
+    uint32                                       floorIdx    = 2; // 层索引 0 开始
+    map<uint32, uint32>                          data        = 3; // 当前层地图 key = row << 16 | col; value = 房间类型  a2 << 5| a1     用例: t = v >> ( 5 * idx) & 0b1111 if  0 == t 结束
+    map<uint32, bool>                            hidden      = 4; // 隐藏房间 key = row << 16 | col;
+    uint32                                       width       = 5;
+    uint32                                       depth       = 6; // 指中间层的深度 - 除去终始
+    uint32                                       floor       = 7; // 总层数
+    uint32                                       logic       = 8; // 地图逻辑类型
+    message lineGraph {
+        uint32 cat = 1; // 类型
+        uint32 mode = 2; // 模式 - 1正常-2隐藏 3正常显示boss 4 隐藏显示boss
+    }
+    map<uint32, lineGraph>                       lineData     = 9; // 线性地图数据 key = row << 16 | col;
+    uint32                                       moduleId     = 10; // 功能模块id
+    uint32                                       floorId      = 11; // 层id
+    uint32                                       discardId    = 12; // 函数上限逻辑id
+    repeated uint32 skeleton = 13; //仅后端使用
+ }
+
+
+
+ message EXPLORATION_NextMap_Brief {
+     message elem {
+         uint32                                     idx             = 1;         
+     }
+     map<uint32, elem>                              data            = 1; // key-自定义id，仅作标识用
+ }
+
+ message EXPLORATION_Backpack_Detail {
+     map<uint32, uint32>                            item            = 1;  // 探索道具
+     message alg {
+         map<uint32, uint32>                        data            = 1;  // 函数 key-id|val-数量
+     }
+     alg                                            global          = 2;  // 全局函数
+     map<uint32, alg>                               specify         = 3;  // 角色绑定的函数 key-角色|val-函数集合
+     alg                                            temporary       = 4;  // 临时函数
+     uint32 focusLimit = 5; // 专注点上限
+     message Alg {
+        map<uint64, uint32> alg = 1; // key=algid << 32 | heroId, heroId = 0 则表示通用
+        map<uint32, uint32> tmpAlg = 3; // 临时芯片
+        map<uint32, uint32> hiddenAlg = 4; // 隐藏芯片
+     }
+     Alg algData = 6;
+     uint32 algUpperLimit = 7; // 算法类型上限
+ }
+
+
+ message Exploration_Grid_Inner {
+     message alg {
+         repeated uint32                            data    = 1;
+     }
+     message monster {
+         uint32                                     roomId  = 1;
+         alg                                        data    = 2;
+         uint32 repeatCnt = 3;
+     }
+     // 房间准备时候就随好数据
+     map<uint32,monster>                            innerMonser     = 1;
+    //  map<uint32, uint32>                            rewardsRecord   = 2; // -- 废弃
+ }
+
+ message Exploration_Formation_Detail {
+     message elem {
+         uint32                                     id              = 1;
+         uint32                                     hpPer           = 2;    // 血量万分比
+         uint32                                     position        = 3;    // 默认都是0，自行适配
+         uint32                                     idx             = 4;    // 阵容索引序
+         uint32                                     damage          = 5;    // 累计伤害
+         BattleRecord                               record          = 6;    // 战斗数据记录
+     }
+     uint32                                         formId          = 1;    // 阵容id
+     map<uint32, elem>                              data            = 2;    // 角色数据  key-角色|val-角色数据 
+     bool                                           initial         = 3;    // true=初始布阵，false=历史记录    
+     uint32                                         mp              = 4;    // 指挥官技能条 
+     uint32                                         hmp             = 5;    // 角色全局能量条--废弃
+ }
+
+ message Exploration_Resident_Detail {
+     message storeElem {
+        message elem {
+            uint32                              id              = 1;
+            uint32                              discount        = 2;
+            bool                                saled           = 3;
+        }     
+        repeated elem                           data            = 2; 
+        uint32                                  currency        = 3;   
+     }
+     storeElem                                  store           = 1;
+ }
+
+ message ExplorationMiscKeep {
+     int32 valueFix = 1;
+     int32 monsterMaxHpModifyFix = 2;
+     uint32 levelFloorFix = 3;
+     bool rewardBan = 4;
+     algData alg = 5;
+     uint32 heroDieNum = 6;
+     int32 monsterPowModifyFix = 7;
+     int32 monsterSkillModifyFix = 8;
+ }
+ message algData {
+    map<uint64, uint32> alg =1;
+    map<uint32, uint32> tmp = 2;
+    map<uint32, uint32> hidden = 3;
+}
+
+
+
+message ExplorationFloorMap {
+    EXPLORATION_Map_Detail                  epMap           = 1;
+    Exploration_Operator_Detail             epOp            = 2;
+    Exploration_Grid_Detail                 epGrid          = 3;
+    Exploration_Grid_Inner                  epInner         = 4;
+    Exploration_Formation_Detail            epForm          = 5;
+    EXPLORATION_NextMap_Brief               epNext          = 6;
+    EXPLORATION_Backpack_Detail             epBackpack      = 7;
+    BuffGroup                               epBuff          = 8;
+    Exploration_Resident_Detail             epResident      = 9;
+    ExplorationMiscKeep misc = 10;
+    string version = 11; // 版本
+}
+

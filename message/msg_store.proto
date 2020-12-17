@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+
+package proto_csmsg;
+
+// message RefreshableStoreShelf {
+//     uint32                              shelfId     = 1;
+//     uint32                              itemId      = 2;
+//     uint32                              itemNum     = 3;
+//     uint32                              payType     = 4;
+//     uint32                              discount    = 5;
+//     bool                                soldOut     = 6;
+// }
+
+// message RefreshableStore {
+//     uint32                              storeId     = 1;
+//     map<uint32, RefreshableStoreShelf>  data        = 2;
+// }
+
+// message NormalStoreShelf {
+//     uint32                              shelfId     = 1;
+//     uint32                              itemId      = 2;
+//     uint32                              itemNum     = 3;
+//     uint32                              payType     = 4;
+//     uint32                              discount    = 5;
+//     uint32                              FreshType   = 6;
+//     uint32                              purchases   = 7; //购买次数
+// }
+
+// message NormalStore {
+//     uint32                              storeId     = 1;
+//     map<uint32, NormalStoreShelf>       data        = 2;
+// }
+
+message CommonStoreShelf {
+    uint32                              shelfId     = 1;
+    uint32                              itemId      = 2;
+    uint32                              itemNum     = 3;
+    uint32                              payType     = 4;
+    uint32                              discount    = 5;
+    uint32                              FreshType   = 6;
+    uint32                              purchases   = 7; //购买次数
+    int64                               freshTm     = 8; //仅处理非0数据
+}
+
+message CommonStore {
+    uint32                              storeId     = 1;
+    map<uint32, CommonStoreShelf>       data        = 2;
+    uint32                              freshCount  = 3;
+    uint32                              freeFreshTm = 4; // 下次的刷新时间,只针对刷新商店生效
+}
+
+//  MSG_CS_STORE_Detail                 = 30251;  //  商店详情
+message CS_STORE_Detail {
+    uint32                              storeId     = 1;
+}
+//  MSG_SC_STORE_Detail                 = 30252;  //  商店详情-返回
+message SC_STORE_Detail {
+    ErrorCode                           ret         = 1;
+    CommonStore                         data        = 2;
+}
+//  MSG_CS_STORE_Purchase               = 30253;  //  购买
+message CS_STORE_Purchase {
+    uint32                              storeId     = 1;
+    uint32                              shelfId     = 2;
+    uint32                              cnt         = 3; // 购买次数
+}
+//  MSG_SC_STORE_Purchase               = 30254;  //  购买-返回
+message SC_STORE_Purchase {
+    ErrorCode                           ret         = 1;
+    CommonStoreShelf                    data        = 2;
+}
+//  MSG_CS_STORE_Fresh                  = 30255;  //  刷新
+message CS_STORE_Fresh {
+    uint32                              storeId     = 1;
+}
+//  MSG_SC_STORE_Fresh                  = 30256;  //  刷新-返回
+message SC_STORE_Fresh {
+    ErrorCode                           ret         = 1;
+    CommonStore                         data        = 2;
+}

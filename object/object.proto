@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+
+message Stamina {
+    uint32                  value       = 1; // 当前耐力
+    uint32                  recoveTm    = 2; // 上次计算回复的时间
+    uint32                  frag        = 3; // 不满一点体力的计算碎片   
+    uint32                  recoveSpeed = 4; // 缓存下次重新计算前的速度            
+}
+
+message UserSKill {
+    map<uint32, uint32>                 data    = 1; 
+}
+
+message UserBase {
+    uint32                              level       = 1;
+    uint32                              exp         = 2;
+    Stamina                             stm         = 3;    //废弃
+    UserSKill                           skill       = 4;     //---废弃
+    map<uint32, bool> triggerGuidance = 5; // 触发式引导
+    uint32                              showGirl    = 6; // 看板娘
+    uint32                              cliLastSecMent = 7; // 客户端上一次扇区聚焦提醒ID
+    uint32                              sectorExplorationSchedule = 8; // 主线探索进度 -- 仅服务器埋点记录使用
+    uint32                              guideSchedule = 9; // 引导进度 -- 仅服务器埋点记录使用
+    uint32                              mainQuestSchedule = 10; // 主线进度 -- 仅服务器埋点记录使用
+}
+
+message CommonReward {
+    message elem {
+        uint32                              id          = 1;
+        uint32                              num         = 2;
+        uint32                              stacking    = 3;  
+    }
+    repeated elem                           data        = 1;
+    map<uint32, int32>                      extra       = 2; // key-物品id value-物品数量
+}
+
+message BuffElem {
+    uint32  id = 1;
+    message expiredInfo {
+        int64   expireTm = 1; // 消逝时间 -1 表示不限时
+        int32   cnt = 2; // 剩余次数 -1 表示不限次
+        int32   durationLayer = 3; // 剩余层生效， 比如1当前层，2层， -1 所有层
+    }                         
+    expiredInfo info = 2;
+}
+
+message BuffLogicGroup {
+    uint32 logic = 1;
+    repeated BuffElem data = 2;
+}
+
+message BuffGroup {
+    map<uint32, BuffLogicGroup>     data        = 1; // key buff类型logic，value 该类型数据
+    map<uint64, uint32>             campFetter  = 2; // 企业羁绊 key camp<<32|num, value
+}
+
+// UserRealInfo 用来控制防沉迷的结构
+message UserRealInfo{
+    int64 create_tm = 1; // 创建时间
+    uint32 total_active_tm = 2; // 累计游戏时长
+    uint32 cur_active_tm = 3;    // 当日游戏时长
+    int64 last_check_tm = 4;  // 上次记录点
+    int64 last_login_tm = 5; // 上次登录时间
+    int64 last_offline_tm = 6; // 上次离线时间
+
+    message payDetail {
+        int32 total = 1; // 累计充值
+        int32 month = 2; // 月充值
+        int32 day = 3; // 日充值
+    }
+    payDetail pay = 7; // 充值数据
+    uint32 loginDaycount = 8;
+}
+
+message RoleBrief {
+    string name = 1; // 名字
+    uint64 id = 2; // ID
+    int32 timezone_offset = 3; // 时区
+    int64 timestamp = 4; // 
+    uint32 curActiveTime = 5; // curActiveTime 
+}

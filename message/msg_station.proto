@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "/proto/proto_csmsg";
+
+import "message/error_code.proto";
+import "object/station.proto";
+
+package proto_csmsg;
+
+// MSG_CS_STATION_Detail               = 30901;  //  角色入住详情
+message CS_STATION_Detail {
+}
+// MSG_SC_STATION_Detail               = 30902;  //  角色入住详情-返回
+message SC_STATION_Detail {
+    proto_object.Station data = 1;
+}
+// MSG_CS_STATION_Install              = 30903;  //  角色安装
+message CS_STATION_Install {
+    uint32 heroId = 1;
+    uint32 buildingId = 2;
+}
+// MSG_SC_STATION_Install              = 30904;  //  角色安装-返回
+message SC_STATION_Install {
+    ErrorCode ret = 1;
+}
+// MSG_CS_STATION_Uninstall            = 30905;  //  角色卸载
+message CS_STATION_Uninstall {
+    uint32 heroId = 1;
+}
+// MSG_SC_STATION_Uninstall            = 30906;  //  角色卸载-返回
+message SC_STATION_Uninstall {
+    ErrorCode ret = 1;
+}

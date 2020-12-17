@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message ArithmeticElem {
+    uint64 uid  = 1;    // cfgId << 32 | hashid
+    // message attrElem {
+    //     // uint32  id = 1; // 属性id // ****废弃****
+    //     // uint32  value = 2; // ****废弃****
+    //     uint32  cfgId = 3; // 算法属性库id
+    // }
+    // repeated attrElem attr  = 2;
+    uint32 mainAttrCfgId = 2; // 算法属性库id
+    message affixElem {
+        uint32 id  = 1; // 词条id
+        uint32 quality = 2; // 1-4
+        // uint32 value = 3;// ****废弃****
+        uint32 level = 4; // 等级
+        uint32 exp = 5; //经验
+        bool lock = 6; // 上锁标记
+    }
+    repeated affixElem affix   = 3;
+    message bindInfoElem {
+        uint32 id = 1; //   hero id 
+        uint32 idx = 2; //  slot id
+        int32 grid = 3; // grid id
+    }
+    bindInfoElem   bindInfo   = 4; 
+    bool lockUnlock = 5; // true = lock
+    int64 ts = 6; // 入手时间戳
+}
+
+message ArithmeticSlotElem {
+    // message elem {
+    //     uint32 lv = 1;
+    //     uint32 exp = 2;
+    // }
+    // map<uint32, elem> slots = 1;
+    
+    // 没有数据，默认为空，需要前端自己绑定1级数据
+    map<uint32, uint32> slots = 1; // key-slot value-level
+}
+
+message ArithmeticAutoDecomposition {
+    bool trigger = 1;
+    message elem {
+        bool white = 1; // 白色勾选
+        bool blue = 2; // 蓝色勾选
+        bool purple= 3; // 紫色勾选
+        map<uint32, bool> orange = 4; // 橙色勾选 
+    }
+    map<uint32, elem> data = 2;  // 1-2-3-4
+}
+
+message ArithmeticReconsitution {
+    message reconsitutionElem {
+        uint32 id  = 1; // 词条id
+        uint32 quality = 2; // 1-4
+    }
+    uint64 uid = 1; // 当前作用的uid
+    map<uint32, reconsitutionElem> reco = 2; // key affix 的索引
+}
+
+message ArithmeticGroup {
+    map<uint64, ArithmeticElem> data    = 1; // 算法uid - 数据
+    map<uint32, ArithmeticSlotElem> slots = 2; // 角色id - 角色 ***废弃***
+    int32 failure = 3; // 失败次数
+    map<uint32, uint32> extra = 4;
+    ArithmeticAutoDecomposition autoDeco = 5;
+    message slotInfo {
+        uint32 lv = 1;
+        uint32 exp = 2;
+    }
+    map<uint32, slotInfo> slotLv = 6;
+    ArithmeticReconsitution  reconsitution = 7; // 重构保留
+}

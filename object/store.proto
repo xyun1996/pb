@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+import "object/counter.proto";
+
+package proto_object;
+
+message RefreshableStoreShelf {
+    uint32                                  id          = 1; //货架id
+    uint32                                  shelfIdx    = 2; //物品类型索引--从0开始
+    uint32                                  goodId      = 3; //随机出的商品表索引id
+    uint32                                  purchases   = 4; //购买次数
+}
+
+message RefreshableStore {
+    uint32                                  id          = 1;
+    map<uint32, RefreshableStoreShelf>      shelves     = 2;
+    // uint32                                  freshCount  = 3;
+    // uint32                                  freeFreshTm = 4;
+}
+
+message NormalStoreShelf {
+    uint32                                  shelfId     = 1; //货架id
+    // uint32                                  purchases   = 2; //购买次数
+}
+
+message TimesStoreShelf {
+    uint32 shelfId = 1;
+    uint32 purchases = 2;
+}
+
+message HeroStore {
+    uint32 storeId = 1;
+    map<uint32, TimesStoreShelf> shelves = 2;
+}
+
+message NormalStore {
+    uint32                                  storeId     = 1;
+    map<uint32, NormalStoreShelf>           shelves     = 2;
+}
+
+message ResourrceStore {
+    uint32                                  storeId     = 1;
+    map<uint32, TimesStoreShelf>           shelves     = 2;
+    CounterGroup counter= 3;
+}
+
+message StoreGroup {
+    map<uint32, RefreshableStore>           refreshableStoreGroup       = 1;
+    map<uint32, NormalStore>                normalStoreGroup            = 2;
+    CounterGroup                            normal                      = 3;
+    CounterGroup                            refresh                     = 4;
+    map<uint32, HeroStore> heroStoreGroup = 5;
+    map<uint32, ResourrceStore> resourceStoreGroup = 6;
+}

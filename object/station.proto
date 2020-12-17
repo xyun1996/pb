@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option go_package = "proto/proto_object";
+
+package proto_object;
+
+message Station {
+    message elem {
+        map<uint32, bool> data = 1; // key = hero id
+    }
+    map<uint32, elem> data = 1; // building id, hero list
+}
