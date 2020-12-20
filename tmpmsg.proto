@@ -1,0 +1,2920 @@
+syntax="proto3";
+option go_package="/proto/proto_csmsg";
+package proto_csmsg;
+import "tmpobj.proto";
+
+
+
+enum ItemType {
+    ItemTypeNone                    = 0;
+    ItemTypeCurrency                = 1; // 货币
+    ItemTypeDevelopmentConsume      = 2; // 可消耗的养成道具-类似经验道具
+    ItemTypeBattleCost              = 3; // --废弃
+    ItemTypeHero                    = 5; // 角色道具
+    ItemTypeExplorationBuff         = 6; // --废弃
+    ItemTypeAlg                     = 7; // 函数类
+    ItemTypePackage                 = 8; // 包裹
+    ItemTypeResource                = 9; // 资源产出类
+    ItemTypeLineConsume             = 10; // 工厂消耗道具
+    ItemTypeAth                     = 11; // 算法
+    ItemTypeHouse                   = 12; // 宿舍
+    ItemTypeFurniture               = 13; // 家具
+    ItemTypeAutoResource            = 14; // 自动产出类资源
+}
+
+enum ItemActionType {
+    ItemActionTypeNone              = 0;
+    ItemActionTypeExperience        = 2001; // 角色升级经验消耗道具
+    ItemActionTypeCommanderSkillExperience = 3001; // 指挥官经验消耗道具
+    ItemActionTypeBuildingAccelerateItem = 5001; // 建筑加速卡
+    ItemActionTypeAthSlotUpgradeExp = 6001; // 算法槽位升级消耗
+    ItemActionTypeFixedItem = 801; // 固定礼包
+    ItemActionTypeRandomReward = 802; // 随机库掉落礼包
+    
+}
+
+enum GMType {
+    GMTypeNone                    = 0;
+    GMTypeAddItem                 = 1; // `1:100|2:400` 物品id:数量|物品id:数量
+    GMTypeMinusItem               = 2;
+    GMTypeEmptyBackpack           = 3; //               任意参数
+    GMTypeFinishQuestSchedule     = 4; // `1`           任务id
+    GMTypeAddAchievementChipSet   = 5; // `1|2|3`       芯片id|芯片id 
+    GMTypeMinusStamina            = 6; // `1`           体力值
+    GMTypeAddBuilding             = 7; // `1:10|2:10`   建筑id:等级|建筑id:等级
+    GMTypeDungeon                 = 8; // `1101|1102|`  关卡|关卡
+    GMTypeGlobalExp               = 9; // `100`         加减全局经验
+    GMTypeEplAlg                  = 10; // `1|2|3`      加函数
+    GMTypeEplBuff                 = 11; // `1|2|3`      加buff
+    GMTypeMail                    = 12; // `content`    邮件
+    GMTime                        = 13; // `2006-01-02 15:04:05` 格式
+    GMTYPEAlgEmpty                = 14; // 清空函数
+}
+
+// enum SystemFunctionID {
+//     SystemFunctionID_None                    = 0;
+//     SystemFunctionID_PlaySpeed               = 201;
+//     SystemFunctionID_AutoDeploy              = 202;
+//     SystemFunctionID_Skada                   = 204;
+//     SystemFunctionID_Building                = 300;
+//     SystemFunctionID_HeroGroup               = 500;
+//     SystemFunctionID_Lottery                 = 600;
+//     SystemFunctionID_Store                   = 610;
+//     SystemFunctionID_Backpack                = 800;
+//     SystemFunctionID_Factory                 = 900;
+//     SystemFunctionID_Training                = 901;
+// }
+
+
+enum AntiAddictionCode {
+    AntiAddictionCode_Normal        = 0;
+    AntiAddictionCode_T_1hLimit     = 101; // 游客1h限制
+    AntiAddictionCode_C_228Keep     = 201; // 未成年22-8不提供游戏服务
+    AntiAddictionCode_C_15Limit     = 202; // 未成年工作日1.5h游戏体验上限
+    AntiAddictionCode_C_3Limit      = 203; // 未成年节假日3h游戏体验上限
+
+    AntiAddictionCode_T_PayLimit    = 110; // 游客充值限制
+    AntiAddictionCode_C_8AgeLimit   = 210; // 8岁以下充值限制
+    AntiAddictionCode_C_S50Limit    = 211; // 8-16岁单笔50限制
+    AntiAddictionCode_C_M200Limit   = 212; // 8-16岁单月200限制
+    AntiAddictionCode_C_S100Limit   = 213; // 16-18岁单笔100限制
+    AntiAddictionCode_C_M400Limit   = 214; // 16-18岁单月400限制
+}
+
+message PairU32 {
+    uint32 first = 1;
+    uint32 second = 2;
+}
+
+enum  AlgModule {
+    AlgModuleNone = 0;
+    AlgModuleDungeon = 1;
+    AlgModuleExploration = 2;
+}
+
+enum ResourceModifyReason {
+    ResourceModifyReasonNone = 0;
+    ResourceModifyReason_Achievement_LevelReward = 11001; // 成就等级奖励
+    ResourceModifyReason_Ath_OneKeyDeco = 12001; // 算法一键分解返还
+    ResourceModifyReason_Ath_Deco = 12002; // 算法分解
+    ResourceModifyReason_Ath_Optimize = 12003; // 算法优化
+    ResourceModifyReason_Ath_Inherit = 12004; // 算法继承
+    ResourceModifyReason_Ath_SlotUpgrade = 12005; // 算法-区域升级
+    ResourceModifyReason_Ath_Reconsitution = 12006; // 算法-重构
+    ResourceModifyReason_Avg_Complete = 13001; // avg完成奖励
+    ResourceModifyReason_ResCollect_Single = 14001; // 资源单采
+    ResourceModifyReason_ResCollect_Group = 15002; // 资源群采
+    ResourceModifyReason_Building_CancelBack = 16001; // 建筑取消升级，取消建筑返还
+    ResourceModifyReason_Building_Construct = 16002; // 建筑构建
+    ResourceModifyReason_Building_Accelerate = 16003; // 建筑加速
+    ResourceModifyReason_Building_Upgrade = 16004; // 建筑升级
+    ResourceModifyReason_Dorm_RoomEdit = 17001; // 宿舍房间编辑
+    ResourceModifyReason_Dorm_RoomDeco = 17002; // 宿舍房间分解
+    ResourceModifyReason_Dorm_DromPurchase = 17003; // 宿舍购买
+    ResourceModifyReason_Dorm_HouseEdit = 17004; // 宿舍编辑
+    ResourceModifyReason_Factory_LineDestruct = 18001; // 工厂流水线卸载
+    ResourceModifyReason_Factory_FinalRewadPick = 18002; // 工厂流水线最终建立获取
+    ResourceModifyReason_Factory_PlaceOrder = 18003; //工厂流水线下单
+    ResourceModifyReason_Factory_OrderReward = 18004; //工厂订单奖励
+    ResourceModifyReason_Factory_Accelerate = 18005; //工厂加速
+    ResourceModifyReason_Factory_Unlock = 18006; //工厂解锁
+    ResourceModifyReason_Intimacy_LineUpgrade = 19001; // 亲密度养成线升级
+    ResourceModifyReason_Intimacy_Presentation = 19002; // 亲密度赠礼
+    ResourceModifyReason_GM_Operator = 20001; // gm操作
+    ResourceModifyReason_DailyQuest_RewardPick = 21001; // 日常任务奖励获取
+    ResourceModifyReason_WeeklyQuest_RewardPick = 22001; // 周常任务奖励获取
+    ResourceModifyReason_Sector_StarReward = 23001; // 扇区星数奖励
+    ResourceModifyReason_Sector_FirstClearReward = 23002; // 扇区首通奖励
+    ResourceModifyReason_Training_SettleBack = 24001; // 训练场结算返还
+    ResourceModifyReason_Training_SlotHero = 24002; // 训练场-插入角色
+    ResourceModifyReason_Backpack_SysntemOpen = 25001; // 背包功能开放
+    ResourceModifyReason_Dungeon_Over = 26001; // 副本结算
+    ResourceModifyReason_Dungeon_Enter = 26002; // 副本-进入
+    ResourceModifyReason_Dungeon_FailureBack = 26003; //副本-失败返还
+    ResourceModifyReason_Exploration_Battle = 27001; // 探索战斗获得
+    ResourceModifyReason_Exploration_OverClock = 27002; // 探索-超频
+    ResourceModifyReason_Exploration_QuitBack = 27003; // 探索-退出返还
+    ResourceModifyReason_Lottery_Once = 28001; // 单抽
+    ResourceModifyReason_Lottery_Ten = 28002; // 十连抽
+    ResourceModifyReason_Mail_Attachment = 29001; // 邮件附件
+    ResourceModifyReason_Quest_Complete = 30001; // 任务奖励
+    ResourceModifyReason_Store_Purchase = 31001; // 商店购买
+    ResourceModifyReason_Store_Refresh = 32002; // 商店刷新
+    ResourceModifyReason_CommanderSkill_Upgrade = 33001; // 指挥官技能升级
+    ResourceModifyReason_CommanderSkill_Unlock = 33002; // 指挥官技能解锁
+    ResourceModifyReason_User_NameModify = 34001; // 用户-修改名字  
+    ResourceModifyReason_Hero_AddExp = 35001; // 角色-添加经验
+    ResourceModifyReason_Hero_AddStar = 35002; // 角色-添加星级
+    ResourceModifyReason_Hero_SkillUpgrade = 35003; // 角色-技能升级
+    ResourceModifyReason_Endless_FloorReward = 36001; // 无尽模式-层奖励
+    ResourceModifyReason_Endless_ClearReward = 36002; // 无尽模式-通关奖励
+    ResourceModifyReason_Endless_QuitBack = 36003; // 无尽模式-退出返还
+    ResourceModifyReason_Blitz_Blitz = 37001; // 扫荡
+}
+
+enum OssBehavior{
+    OssBehavior_None = 0;
+    OssBehavior_Hero_Upgrade = 10001; // 角色-升级
+    OssBehavior_Hero_RankUpgrade = 10002; // 角色-rank提升
+    OssBehavior_Hero_SkillUpgrade = 10003; // 角色-技能升级
+    OssBehavior_Hero_Add = 10004; // 角色-获取
+    OssBehavior_Exploration_BattleDungeonSettle = 20001; // 探索-战斗副本结算
+    OssBehavior_Training_Settle = 30001;// 训练场-结算
+    OssBehavior_GM = 40001; // GM 
+    OssBehavior_Dungeon_Settle = 50001; // 副本-结算
+    OssBehavior_Ath_Eff = 60001; // 算法-效率提升 
+}
+
+enum AthRefillOperator {
+    AthRefillOperatorNone = 0;
+    AthRefillOperatorInstall = 1;
+    AthRefillOperatorReplace = 2;
+}
+
+
+
+enum ErrorCode {
+  None             = 0;
+  CodeDefault      = -10001;
+  UserNotFound     = -10002; 
+  CmdNotValid      = -10003;
+
+  LOGIN_USER_NOT_FOUNT              = -10011;   //  角色不存在，需要创建角色
+  LOGIN_USER_CREATE_DUPLICATE_NAME  = -10012;   //  角色随机名重复
+  LOGIN_DUPLICATE_PROTO             = -10013;   //  重复发起登录
+  LOGIN_USER_ACCOUNT_NIL            = -10014;   //  角色账号id为空
+  LOGIN_USER_EXIST                  = -10015;   //  角色已存在
+  LOGIN_USER_NAME_INVALID           = -10016;   //  名字异常
+  LOGIN_SDK_ERROR                   = -10017;   //  SDK登录异常
+  INVALID_CHARACTER_INPUT           = -10018;   //  输入字符非法
+
+
+  FUNCTION_NOT_OPEN                 = -10100;   //  功能未开放
+  CONFIG_ITEM_ID_ERROR              = -10101;   //  物品ID错误
+  ITEM_NOT_EXPEIRENCECOST_TYPE      = -10102;   //  不是经验道具
+  CONFIG_HERO_ID_ERROR              = -10103;   //  角色ID错误
+  USER_STM_NOT_ENOUGH               = -10104;   //  体力不足  
+  INVALID_STRING                    = -10105;   //  敏感字
+  
+  BACKPACK_ITEM_OVERFLOW      = -10201;   //  物品超出持有上限溢出
+  BACKPACK_NO_ITEM_ENEITY     = -10202;   //  没有拥有当前物品
+  BACKPACK_NO_ENOUGH_ITEM     = -10203;   //  物品数量不足
+
+  HERO_NO_HERO_ENTITY           = -10301; //  没有拥有当前角色 
+  HERO_NO_NEED_TO_UPGRADE       = -10302; //  当前角色没有无法添加经验
+  HERO_HAD_HERO_ENTITY          = -10303; //  已经拥有当前角色
+  HERO_ADDEXP_CONFIG_ERROR      = -10304; //  角色加经验配置错误
+  HERO_SKILL_ID_ERROR           = -10305; //  无效的技能id
+  HERO_SKILL_ID_LOCKED          = -10306; //  当前技能未解锁
+  HERO_SKILL_LEVEL_LIMITED      = -10307; //  技能达到等级上限
+  HERO_SKILL_LEVEL_TABLE_ERROR  = -10308; //  角色技能升级配置错误
+  HERO_STAR_MAX                 = -10309; //  角色已达到最高星级
+  HERO_FORMATION_LENGTH_LIMIT   = -10310; //  编队成员超过上限
+  HERO_FORMATION_SAME_ID        = -10311; //  编队含有重复成员
+  HERO_FORMATION_ID_ERROR       = -10312; //  编队id错误
+  HERO_FORMATION_SKILL_SLOT     = -10313; //  编队技能槽位错误
+  HERO_FORMATION_NO_USER_SKILL  = -10314; //  编队技能不存在
+  HERO_FORMATION_HERO_SLOT      = -10315; //  编队角色槽位错误
+  HERO_ULTIMATE_SKILL_NO_Upgrade= -10316; //  大招不能升级
+
+  LOTTERY_POOL_NOT_OPEN         = -10331; //  卡池未开放
+
+  BUILDING_SAME_ID_LIMIT        = -10361; //  该类建筑达到数量上限
+  BUILDING_LEVEL_CONFIG         = -10362; //  建筑等级配置异常
+  BUILDING_POSITION_COLLISION   = -10363; //  当前位置冲突
+  BUILDING_QUEUE_LIMIT          = -10364; //  建造队列达到上限
+  BUILDING_CREATE_CONDITION     = -10365; //  建造条件不满足
+  BUILDING_NO_UID               = -10366; //  建筑不存在
+  BUILDING_NO_CONFIG_ID         = -10367; //  建筑配置错误
+  BUILDING_MAX_LEVEL            = -10368; //  建筑达到最高等级
+  BUILDING_SAME_POSITION        = -10369; //  相同位置不需要移动
+  BUILDING_ERROR_STATE          = -10370; //  当前状态下无法执行操作
+  BUILDING_SECTOR_BAN_MOVE      = -10371; //  扇区建筑禁止移动
+  BUILDING_UPGRADE_NOT_OVER     = -10372; //  建筑升级没有结束
+  BUILDING_NOT_IN_BUILDING      = -10373; //  建筑不在建造中
+  BUILDING_NO_NEED_ACCELERATE   = -10374; //  建造不需要加速
+  
+  BUILDING_COLLECT_NO_UID         = -10381; //  当前建筑无法采集
+  BUILDING_COLLECT_LEAST_PERIOD   = -10382; //  至少等待一个周期
+  BULIDING_COLLECT_STORAGE_LIMIT  = -10383; //  资源达到仓库可采集上限
+
+  REWARD_NO_CONFIG_ID             = -10401; //  奖励id不存在
+  REWARD_NO_PRE_REWARD            = -10402; //  奖励缺少预结算
+
+  FACTORY_LINE_NUM_LIMIT          = -10411; //  流水线数量达到上限
+  FACTORY_LINE_CONFIG_ID          = -10412; //  流水线配置id错误
+  FACTORY_LINE_NO_UID             = -10413; //  流水线不存在
+  FACTORY_LINE_NO_REWARD          = -10414; //  流水线没有大奖可领
+  FACTORY_LINE_CONDITION_LOCKED   = -10415; //  当前流水线未解锁
+  FACTORY_LINE_NOT_FINAL_LINE     = -10416; //  当前流水线不需要手动领取
+  FACTORY_LINE_IS_WORKING         = -10417; //  当前流水线工作中
+  FACTORY_LINE_IS_IDLE            = -10418; //  当前流水线空闲中
+  FACTORY_ORDER_TIMEOUT           = -10419; //  订单超时
+  FACTORY_HERO_IS_WORKING         = -10420; //  人型已在工作中
+  FACTORY_ORDER_CAT_NON_CONFORMANT= -10421; //  订单类型不统一
+  FACTORY_ORDER_CONFIG_ERROR      = -10422; //  订单配置不存在
+  FACTORY_LINE_REWARD_PICKED      = -10423; //  流水线奖励已领取
+  FACTORY_ORDER_NUM_ERROR         = -10424; //  订单数量错误
+  FACTORY_ORDER_PRODUCT_CONSUME   = -10425; //  订单产出与消耗不等
+  FACTORY_HERO_DISPATCH_LIMIT     = -10426; //  人型派遣超出上限
+  FACTORY_ORDER_CONDITION_ERR     = -10427; //  订单条件不满足
+
+  TRAINING_SLOT_IN_USING          = -10431; //  当前位置已经有角色
+  TRAINING_SLOT_IDX               = -10432; //  当前位置不存在
+  TRAINING_SLOT_LOCKED            = -10433; //  当前位置未解锁
+  TRAINING_HERO_EXP_FULL          = -10434; //  当前角色经验已满
+  TRAINING_SLOT_LV                = -10435; //  角色等级超过当前位置等级限定
+  TRAINING_NO_COST_STYLE          = -10436; //  训练消耗类型不存在
+  TRAINING_EXP_POOL_NOT_ENOUGH    = -10437; //  经验池经验不足
+  TRAINING_SLOT_NO_HERO           = -10438; //  当前插槽没有角色
+  TRAINING_HERO_IN_SLOT           = -10439; //  当前角色已经在训练中
+
+  QUEST_NO_CONFIG_ID              = -10451; //  任务配置id不存在
+  QUEST_RECEIVED                  = -10452; //  任务已接取
+  QUEST_COMPLETED                 = -10453; //  任务已完成
+  QUEST_NOT_IN_STEP               = -10454; //  任务阶段不符
+  QUEST_NO_CONFIG_STEP            = -10455; //  任务配置的阶段不存在
+  QUEST_NOT_RECEIVED              = -10456; //  任务未接取
+  QUEST_EXPIRED                   = -10457; //  任务已过期
+  QUEST_STEP_NOT_COMPLETED        = -10458; //  任务当前阶段未完成
+  QUEST_STATE_NOT_IN_RECEIVED     = -10459; //  任务不在执行阶段
+  QUEST_CANNOT_RECEIVE            = -10460; //  当前任务不可接取
+  QUEST_STEP_COMMITED             = -10461; //  任务阶段已经提交过
+
+  STORE_NO_CONFIG_ID              = -10481; //  商店配置id不存在
+  STORE_NO_STORE_DATA             = -10482; //  商店不存在
+  STORE_NO_SHELF_DATA             = -10483; //  货架不存在
+  STORE_SHELF_DATA_SOLDOUT        = -10484; //  货架物品已售罄
+  STORE_NOT_REFRESHABLE_STORE     = -10485; //  不是刷新商店 
+  STORE_FRESH_LIMIT               = -10486; //  达到刷新上限
+  STORE_RANDOM_LIMIT_PURCHASE     = -10487; //  随机商店限制叠加购买上限为1
+  STORE_PURCHSE_LIMIT_1           = -10488; //  商店购买堆至少为1
+  STORE_HERO_STORE_CONDITION      = -10489; //  角色商店货架购买不符条件
+
+  MONSTER_NO_ROOM_CONFIG          = -10501; //  怪物房间不存在
+  MONSTER_NO_GROUP_ID             = -10502; //  怪物组不存在
+
+  SECTOR_NO_BOX_REWARD            = -10551; //  扇区成就宝箱不存在
+  SECTOR_BOX_PICKED               = -10552; //  扇区成就宝箱已经领取
+  SECTOR_BOX_NOT_AVAILABLE        = -10553; //  扇区成就宝箱领取不符合条件按
+
+  DUNGEON_NO_SECTOR_STAGE         = -10601; //  扇区关卡id不存在
+  DUNGEON_NOT_FINISHED            = -10602; //  扇区关卡未完成
+  DUNGEON_REWARD_PICKED           = -10603; //  扇区首通奖励已领取
+  DUNGEON_RESTART_NO_ID           = -10604; //  扇区当前关卡不存在，无法重新开始
+  DUNGEON_PRESTAGE_NOT_FINISHED   = -10605; //  扇区当前关卡的前置关卡未开启
+
+  EXPLORATION_DUNGEON_EXIST       = -11001; //  先结束之前的关卡再开启
+  EXPLORATION_GRAPH_CONFIG        = -11002; //  探索地图不存在
+  EXPLORATION_ROOM_CAT            = -11003; //  房间类型不存在
+  EXPLORATION_GRID_CHILDREN       = -11004; //  只能选择当前节点的后置连线房间
+  EXPLORATION_POSTION_CHECK       = -11005; //  探索位置校验失败
+  EXPLORATION_BATTLE_ALG_SELECT   = -11006; //  战斗房芯片选择失败
+  EXPLORATION_ITEM_SELECT         = -11007; //  宝箱房选择失败
+  EXPLORATION_ITEM_LOCKUNLOCK     = -11008; //  宝箱房锁定解锁失败
+  EXPLORATION_ITEM_FRESH          = -11009; //  宝箱房刷新失败
+  EXPLORATION_ROOM_BOSS_OVER      = -11010; //  已经boss房结束
+  EXPLORATION_DUNGEON_OVER        = -11011; //  探索关卡已结束
+  EXPLORATION_LAST_FLOOR          = -11012; //  探索关卡已经最后一层
+  EXPLORATION_NOT_BOSS_ROOM       = -11013; //  不是boss房
+  EXPLORATION_BOSS_ROOM_NEED_OVER = -11014; //  boss房还没结束
+  EXPLORATION_IN_PROCESSING       = -11015; //  探索进行中
+  EXPLORATION_FORMATION_LEAST_ONE = -11016; //  编队中至少一个角色
+  EXPLORATION_FORMATION_LEN       = -11017; //  编队长度不符
+  EXPLORATION_FORMTAION_NO_HERO   = -11018; //  编队角色不存在
+  EXPLORATION_EVENT_LEN           = -11019; //  事件选择索引异常
+  EXPLORATION_STORE_NO_DATA       = -11020; //  商店房数据不存在
+  EXPLORATION_STORE_LEN           = -11021; //  商店房物品索引失败
+  EXPLORATION_STORE_PURCHASED     = -11022; //  商店房此物品已售罄
+  EXPLORATION_STORE_NOT_ENOUGH    = -11023; //  商店房购买道具不足
+  EXPLORATION_RECONSTITUTION_NO_DATA    = -11024; //  重构房数据不存在
+  EXPLORATION_RECONSTITUTION_NO_CONFIG  = -11025; //  重构房配置不存在
+  EXPLORATION_RECONSTITUTION_NOT_ENOUGH = -11026; //  重构房购买道具不足
+  EXPLORATION_RECONSTITUTION_NO_ALG     = -11027; //  重构房函数不存在
+  EXPLORATION_RECONSTITUTION_NO_HERO    = -11028; //  重构房角色不存在
+  EXPLORATION_RECONSTITUTION_FUSION_NUM = -11029; //  重构房融合数量不符
+  EXPLORATION_RECONSTITUTION_FUSION_CAT = -11030; //  重构房融合品质不一致
+  EXPLORATION_EVENT_CONSUME_NOT_ENOUGH  = -11031; //  事件选择消耗不足
+  EXPLORATION_OVERCLOCK_LOCKED          = -11032; //  超频id未解锁
+  EXPLORATION_OVERCLOCK_NO_ID           = -11033; //  超频id不存在
+  EXPLORATION_OVERCLOCK_ALG_LOCKED      = -11034; //  超频函数未解锁
+  EXPLORATION_FOCUS_FULL_ALREADY        = -11035; //  不需要专注改判
+  EXPLORATION_POINT_NOT_FULL            = -11036; //  点数未满，无法开始
+  EXPLORATION_FLOOR_CANNOT_OVER         = -11037; //  当前层未结束 
+  EXPLORATION_NOT_NORMAL_EVENT          = -11038; //  不是通用事件
+  EXPLORATION_NO_EVENT_DATA             = -11039; //  事件房数据不存在
+  EXPLORATION_NO_PARAM                  = -11040; //  事件房参数不存在
+  EXPLORATION_PARAM_IDX_DATA            = -11041; //  事件房参数索引异常
+  EXPLORATION_PARAM_NOT_ALGUPGRADE      = -11042; //  事件房当前不是函数升级逻辑
+  EXPLORATION_ALGUPGRADE_NO_ALG         = -11043; //  事件房函数升级-函数不存在
+  EXPLORATION_ALGUPGRADE_NO_COST        = -11044; //  事件房函数升级-消耗不足
+  EXPLORATION_ALGUPGRADE_NO_CFG         = -11045; //  事件房函数升级-配置不存在
+  EXPLORATION_ALGUPLIMMIT_NO_NEED_SELL  = -11046; //  不需要抛弃函数
+  EXPLORATION_NO_ALG                    = -11047; //  函数不存在
+  EXPLORATION_STORE_NO_ID               = -11048; //  探索商店id不存在
+  EXPLORATION_STORE_REFRESH_COST        = -11049; //  探索商店刷新消耗不足
+  EXPLORATION_ALGUPGRADE_MAX_LEVEL      = -11050; //  事件房函数升级-最大等级
+  EXPLORATION_EVENT_JUMP_NOT_EXIST	  	= -11051; //  事件房房间跳转类型不存在
+
+  EXPLORATION_CUR_GRID_STATE_Selected         = -11052; //  当前格子状态错误
+  EXPLORATION_CUR_GRID_STATE_HalfOver         = -11053; //  当前处于HalfOver状态
+  EXPLORATION_CUR_GRID_STATE_DropAlg          = -11054; //  当前处于函数掉落状态
+  EXPLORATION_CUR_GRID_STATE_BattleAlgWaiting = -11055; //  当前处于战斗函数掉落等待状态
+  EXPLORATION_CUR_GRID_STATE_Unknown          = -11056; //  当前处于未知状态
+  EXPLORATION_CUR_GRID_STATE_None             = -11057; //  当前处于None状态
+  EXPLORATION_CUR_GRID_STATE_Over             = -11058; //  当前处于Over状态
+  EXPLORATION_CUR_GRID_STATE_BattleFailure    = -11059; //  当前处于战败状态
+  EXPLORATION_ENDLESSFIRST_NO_REWARD_SHOW     = -11060; //  无尽模式免体力模式无法查看失败奖励
+
+  EXPLORATION_CAMP_FETTER_SKILL_CD        = -11061; //  羁绊技能冷却中
+  EXPLORATION_CAMP_FETTER_CONFIG_ERROR    = -11062; //  羁绊配置错误
+  EXPLORATION_CAMP_FETTER_SKILL_NOT_EXIST = -11063; //  羁绊技能不存在
+
+  EXPLORATION_ENDLESS_DUNGEON_UNFINISHED      = -11066; // 无尽模式副本未通关
+  EXPLORATION_ENDLESS_NO_DUNGEON              = -11067; // 无尽模式副本不存在
+
+  ACHIEVEMENT_LEVEL_REWARD_LV     = -12001; //  成就奖励等级错误
+  ACHIEVEMENT_LEVEL_REWARD_PICKED = -12002; //  该等级成就奖励已领取
+
+  QUESTPERIOD_CAT                 = -12031; //  日常周常类型错误
+  QUESTPERIOD_REWARDS_PICKED      = -12032; //  日常周常活跃奖励已领取
+  QUESTPERIOD_REWARDS_IDX         = -12033; //  日常周常索引错误
+
+  MAIL_NO_MAIL_DATA               = -12101; //  邮件数据不存在
+  MAIL_NO_MAIL_CONFIG             = -12102; //  邮件配置数据不存在
+  MAIL_STATUS_READ                = -12103; //  邮件已阅读
+  MAIL_STATUS_REWARDS_RECEIVED    = -12104; //  邮件奖励已领取
+  MAIL_STATUS_UNREAD              = -12105; //  邮件未读
+  MAIL_NO_ATTACHMENT              = -12106; //  邮件附件不存在
+  MAIL_NOT_NEED_ONECLICK_PICKUP   = -12107; //  邮件不需要一键领取
+  MAIL_NOT_NEED_ONEKEY_DELETE     = -12108; //  邮件不需要一键删除
+
+  ATH_INSTALL_OVERLOAD            = -12301; //  算法装配超载
+  ATH_INSTALL_SLOT_NOT_FIX        = -12302; //  算法槽位不符
+  ATH_INSTALL_INSTALLED           = -12303; //  算法已经安装过了
+  ATH_NO_UID                      = -12304; //  算法实体不存在
+  ATH_NO_CFG                      = -12305; //  算法配置不存在
+  ATH_UNINSTALL_NOT_BIND          = -12306; //  算法为装载
+  ATH_UNINSTALL_SELF_NO_NEED      = -12307; //  自身同槽算法无需替换
+  ATH_SLOT_IN_MAXLEVEL            = -12308; //  当前槽位已经满级
+  ATH_SLOT_LV_NO_CFG              = -12309; //  当前槽位等级配置不存在
+  ATH_AFFIX_IDX                   = -12310; //  词条选择索引异常  
+  ATH_AFFIX_QUALITY               = -12311; //  词条优化品质限制  
+  ATH_AFFIX_NO_CFG                = -12312; //  词条配置不存在
+  ATH_AFFIX_VALUE_LIMIT           = -12313; //  词条优化已达上限 
+  ATH_AFFIX_OPTIMIZE_NO_CFG       = -12314; //  词条优化配置不存在
+  ATH_QUALITY_LIMIT               = -12315; //  算法品质限制
+  ATH_INHERIT_SAME_QUALITY        = -12316; //  继承需要同品质算法
+  ATH_INHERIT_DUPLICATE_AFFIX     = -12317; //  重复类型的词条
+  ATH_LOCK                        = -12318; //  操作算法已上锁
+  ATH_INSTALL_DUPLICATE_ID        = -12319; //  同一个槽位重复的id
+  ATH_INSTALL_GRID_CONFLICT       = -12320; //  算法格子冲突
+  ATH_REPLACE_LOAD                = -12321; //  算法替换size不符
+  ATH_NOT_BINDED                  = -12322; //  算法未绑定角色
+  ATH_AFFIX_LEVEL_LIMIT           = -12323; //  算法达到等级上限
+  ATH_OP_SAME_UID                 = -12324; //  算法操作同一个uid
+  ATH_AFFIX_ALL_LOCKED            = -12325; //  算法所有词条都上锁了
+  ATH_RECONSITUTION_HOLD          = -12326; //  算法处于重构确认状态
+
+  DORM_NO_HOUSE                   = -12401; //  宿舍不存在
+  DORM_NO_HOUSE_CFG               = -12402; //  宿舍配置不存在
+  DORM_ROOM_COLLISION             = -12403; //  房间冲突
+  DORM_NO_COOR                    = -12404; //  房间坐标异常
+  DORM_NO_PREFAB                  = -12405; //  预制房间不存在
+  DORM_HOUSE_LIMIT                = -12406; //  宿舍房间数量限制
+  DORM_HOUSE_GOT                  = -12407; //  宿舍已经获取
+  DORM_HOUSE_LOCK_LIMIT           = -12408; //  宿舍解锁限制
+  DORM_HOUSE_EDIT_NUM             = -12409; //  宿舍编辑新旧房间数量不一致  
+  DORM_HOUSE_EDIT_DATA            = -12410; //  宿舍编辑数据异常-重复编辑老房间
+  DORM_FURNITURE_NO_CFG           = -12411; //  家具配置不存在
+  DORM_FURNITURE_NOT_FT           = -12412; //  不是家具类型
+  DORM_FURNITURE_COLLISION        = -12413; //  家具编辑冲突
+  DORM_ROOM_NO_CFG                = -12414; //  房间配置不存在
+  DORM_ROOM_GRAPH_LEVEL           = -12415; //  房间层级异常
+  DORM_ROOM_DUPLICATE_HERO        = -12416; //  重复的角色
+  DORM_FT_NOT_BIND                = -12417; //  不是可绑定的家具
+  DORM_WALL_MAX_NUM               = -12418; //  墙数异常
+  DORM_HERO_NOT_BINDED            = -12419; //  角色未绑定无法卸载
+
+  STATION_HERO_INSTALLED          = -12501; //  角色已入驻
+  STATION_SLOT_NUM_LIMIT          = -12502; //  建筑槽位数量限制
+  STATION_SLOT_COMP_LIMIT         = -12503; //  建筑槽位企业限制
+  STATION_HERO_NOT_INSTALL        = -12504; //  角色未入驻
+
+  INTIMACY_NO_GIFT_CFG            = -12505; //  礼物配置异常
+  INTIMACY_NOT_HERO_LINE          = -12506; //  不是当前角色的养成线
+  INTIMACY_HERO_LINE_LIMIT        = -12507; //  养成线等级限制
+  INTIMACY_LINE_HERO_LV_LIMIT     = -12508; //  养成线角色等级限制
+  INTIMACY_LINE_INTIMACY_LIMIT    = -12509; //  养成线亲密度等级限制
+  INTIMACY_INTIMACY_LIMIT         = -12510; //  角色亲密度等级上限
+
+  CHAPTER_NO_CFG                  = -12601; //  关卡配置不存在
+  CHAPTER_ENTER_CONDITION         = -12602; //  关卡进入条件限制
+  CHAPTER_ENTER_COUNT_LIMIT       = -12603; //  关卡进入次数限制
+  CHAPTER_IN_CHAPTER              = -12604; //  角色已经进入关卡
+  CHAPTER_SETTLE_NOT_IN_CHAPTER   = -12605; //  角色未在关卡中
+  CHAPTER_MODULE_LIMIT            = -12606; //  该类型副本挑战次数上限
+
+  GAMEPLAY_DUNGEON_NOT_IN_DUNGEON = -15001; //  不在副本中
+  GAMEPLAY_DUNGEON_BATTLE_STATUS  = -15002; //  战斗波次状态异常
+  GAMEPLAY_DUNGEON_BATTLE_FORM    = -15003; //  副本阵容校验异常
+  GAMEPLAY_DUNGEON_IN_DUNGEON     = -15004; //  已经在副本中
+  GAMEPLAY_DUNGEON_NO_DUNGEONID   = -15005; //  副本不存在
+  GAMEPLAY_DUNGEON_TIMES_LIMIT    = -15006; //  次数限制
+  GAMEPLAY_DUNGEON_FORM           = -15007; //  编队异常
+  GAMEPLAY_DUNGEON_COND_LIMIT     = -15008; //  进入副本条件限制
+  GAMEPLAY_DUNGEON_ALG_IDX        = -15009; //  函数索引
+
+  AVG_COMPLETED = -15021; // AVG已完成
+  AVG_NO_CONFIG = -15022; // AVG配置不存在
+
+  COMMANDSKILL_NO_TREE_CFG = -15031; // 指挥官技能树配置不存在
+  COMMANDSKILL_TREE_LOCKED = -15032; // 指挥官技能树未解锁
+  COMMANDSKILL_NO_SKILL_CFG = -15033; // 指挥官主动技能不存在
+  COMMANDSKILL_SKILL_CAT = -15034; // 指挥官技能类型不符
+  COMMANDSKILL_SKILL_LEVEL_LIMIT = -15035; // 指挥官技能等级限制
+  COMMANDSKILL_SKILL_SLOT = -15036; // 指挥官技能槽位异常
+  COMMANDSKILL_PROFICIENT_OVERFLOW = -15037; // 专精点数溢出
+  COMMANDSKILL_TREE_UNLOCKED = -15038 ; //指挥官技能树已解锁
+  COMMANDSKILL_SHEET_ERROR = -15039; // 指挥官技能树页签不符
+
+  ErrorMax         = -19999;
+}
+
+
+enum SysErrorCode {
+  SysErrorNone = 0;
+  SysErrorDefault     = -20001; 
+}
+
+
+
+
+enum SystemFunctionID{
+	SystemFunctionID_None = 0;    //
+	SystemFunctionID_BaseSystem = 100;    //基础系统
+	SystemFunctionID_Achievement = 101;    //成就
+	SystemFunctionID_ChangeName = 102;    //名称修改
+	SystemFunctionID_CombatSystem = 200;    //战斗系统
+	SystemFunctionID_PlaySpeed = 201;    //播放加速
+	SystemFunctionID_AutoDeploy = 202;    //自动部署
+	SystemFunctionID_EnemyDetail = 203;    //怪物详情
+	SystemFunctionID_Skada = 204;    //战斗统计
+	SystemFunctionID_BattleExit = 205;    //战斗撤退
+	SystemFunctionID_Building = 300;    //绿洲
+	SystemFunctionID_BuildingMask = 301;    //绿洲遮罩
+	SystemFunctionID_Exploration = 400;    //探索
+	SystemFunctionID_AutoEquip = 401;    //自动装备
+	SystemFunctionID_QuickFormat = 402;    //编队
+	SystemFunctionID_bench1 = 403;    //替补席1
+	SystemFunctionID_bench2 = 404;    //替补席2
+	SystemFunctionID_bench3 = 40401;    //替补席3
+	SystemFunctionID_Random = 405;    //战局随机性
+	SystemFunctionID_commander_skill = 406;    //指挥官技能
+	SystemFunctionID_SectorBuilding = 407;    //扇区建筑
+	SystemFunctionID_BattleDeploy = 408;    //布阵拖拽
+	SystemFunctionID_commander_skill_Ui = 409;    //指挥官技能Ui
+	SystemFunctionID_AutoExploration = 410;    //计划作战
+	SystemFunctionID_AutoBattle = 411;    //自动战斗
+	SystemFunctionID_HeroGroup = 500;    //角色列表
+	SystemFunctionID_HeroInfo = 501;    //角色资料
+	SystemFunctionID_HeroRank = 502;    //潜能突破
+	SystemFunctionID_SkillUp = 503;    //角色技能升级
+	SystemFunctionID_Lottery = 600;    //抽卡
+	SystemFunctionID_Store = 610;    //商店
+	SystemFunctionID_Social = 700;    //社交
+	SystemFunctionID_Backpack = 800;    //仓库
+	SystemFunctionID_Factory = 900;    //工厂
+	SystemFunctionID_Training = 901;    //训练场
+	SystemFunctionID_HeroEnter = 1000;    //角色入驻
+	SystemFunctionID_LifeSkill = 1001;    //生活技能
+	SystemFunctionID_Dorm = 1100;    //宿舍
+	SystemFunctionID_Algorithm = 1200;    //算法
+	SystemFunctionID_Algorithm_pro = 1201;    //算法进阶功能锁
+	SystemFunctionID_Algorithm_optimize = 1202;    //算法优化
+	SystemFunctionID_Algorithm_reconsitution = 1203;    //算法重构
+	SystemFunctionID_Mail = 1300;    //邮件
+	SystemFunctionID_friendship = 1400;    //亲密度
+	SystemFunctionID_friendship_sector_Ui = 1401;    //亲密度关卡UI解锁
+	SystemFunctionID_Task = 1500;    //任务逻辑
+	SystemFunctionID_DailyTask = 1501;    //日常任务
+	SystemFunctionID_TaskUi = 1502;    //任务UI解锁
+	SystemFunctionID_Avg = 1600;    //剧情
+	SystemFunctionID_MaterialDungeon = 1700;    //素材副本
+	SystemFunctionID_GoldDungeron = 1701;    //金币副本
+	SystemFunctionID_ExpDungeon = 1702;    //经验副本
+	SystemFunctionID_EquipDungeon = 1703;    //标准算法副本
+	SystemFunctionID_TestDungeon = 1704;    //测试算法副本
+	SystemFunctionID_Endless = 1800;    //无尽模式
+	SystemFunctionID_Hard = 1900;    //噩梦模式
+	SystemFunctionID_Guid = 2000;    //新手引导关
+	SystemFunctionID_ATHDungeon = 2100;    //算法素材副本
+}
+
+
+
+
+message CS_Login {
+  string open_id = 1;
+  string token = 2;
+}
+
+message SC_Login {
+  ErrorCode                                   ret         = 1;
+  RoleBrief                                   role        = 2;
+  AntiAddictionCode                           code        = 3; //--废弃
+  bool firstLogin = 4; // 同步首次登录标记
+}
+// MSG_SC_Logout         = 10003;
+// 登出，一般是服务器踢人
+enum UserStatus{
+  StatusNormal = 0;    //正常状态
+  // 网关
+  StatusServerMaintain = 1;  //服务器维护
+  StatusServerReadTimeOut = 2; //客户端太不活跃了，tcp超时，服务器主动断开连接
+  StatusMessageMaxFrequency = 3; //客户端太活跃了，在刷吧，消息超过每分钟上限
+  StatusUserNotLogin = 4; //玩家未登录，只能请求登录
+  StatusUserLogining = 5; //玩家正在登录，禁止其他请求
+  StatusForbinDevLogin = 6; //禁用开发环境下的登录
+  StatusUserLogined = 7; //玩家已经登录，禁止登录请求
+
+  StatusGateRemain = 20; //小于20的为gate保留吧
+  // 游戏服
+  StatusOtherDeviceLogin = 22; // 其他设备登录
+  StatusHeatbeatOvertime = 23; // 心跳超时
+
+  // 平台
+  StatusInvalidGuest = 30;		// 非法游客账号
+	StatusInvalidGuestToken = 31;	// 非法游客token
+	StatusInvalidUser = 32;		// 非法账号
+	StatusUserRealnameErr = 33;	// 用户实名信息错误
+  StatusInvalidUserToken = 34;	// 非法用户token
+  StatusOpenidNotSame = 35;		// openid与token解析出的不一致
+	StatusInvalidToken = 36;		// token无法解析
+	StatusIsFreeze = 37;			// 封禁
+
+  // 防沉迷
+  StatusAntiAddictionCode_T_1hLimit     = 101; // 游客1h限制
+  StatusAntiAddictionCode_C_228Keep     = 201; // 未成年22-8不提供游戏服务
+  StatusAntiAddictionCode_C_15Limit     = 202; // 未成年工作日1.5h游戏体验上限
+  StatusAntiAddictionCode_C_3Limit      = 203; // 未成年节假日3h游戏体验上限
+}
+message SC_Logout{
+  UserStatus reason = 1;
+}
+message RoleBrief {
+  string    name                      = 1;    // 名字
+  uint64    id     	                  = 2;    // ID
+  int32     timezone_offset           = 3;    // 时区
+  int64     timestamp                 = 4;    // 
+  uint32    curActiveTime             = 5;    // curActiveTime  
+}
+
+
+
+
+// MSG_CS_PING                         = 10101; 
+message CS_PING {
+}
+// MSG_SC_PONG                         = 10102;
+message SC_PONG {
+  int64 tk = 1;
+  AntiAddictionCode code = 2;
+}
+// MSG_CS_SYS_NtfLoginOver                     = 10015;  // 通知登录完成
+message CS_SYS_NtfLoginOver {}
+// MSG_SC_SYS_NtfLoginOver                     = 10016;  // 通知登录完成-返回
+message SC_SYS_NtfLoginOver {}
+
+
+
+enum MSG_ID {
+  MSG_NONE              = 0;
+
+  MSG_CS_Login          = 10001; 
+  MSG_SC_Login          = 10002;     
+  MSG_SC_Logout         = 10003;
+
+  MSG_SC_SyncUserData                 = 10005;
+  MSG_SC_SyncUserBaseDiff             = 10006;
+
+  MSG_CS_SYS_NtfLoginOver                     = 10015;  // 通知登录完成
+  MSG_SC_SYS_NtfLoginOver                     = 10016;  // 通知登录完成-返回
+
+  MSG_CS_PING                         = 10101; 
+  MSG_SC_PONG                         = 10102;
+
+  // debug
+  MSG_CS_HERO_Debug_Attr              = 20001;  // 属性请求 
+  MSG_SC_HERO_Debug_Attr              = 20002;  // 属性请求 
+
+  //GM
+  MSG_CS_GM_GMOperation               = 30001;
+  MSG_SC_GM_GMOperation               = 30002;
+
+  // backpack
+  MSG_SC_BACKPACK_SyncUpdateDiff      = 30011;
+  MSG_SC_RESOURCE_SyncUpdateDiff      = 30012;  //  同步资源（货币，背包道具，流水线原材料）差异
+  
+  // function
+  MSG_SC_FUNCTION_SyncUpdateDiff      = 30021;
+
+  // hero
+  MSG_CS_HERO_AddExp                  = 30031;  // 请求通过道具添加经验
+  MSG_SC_HERO_AddExp                  = 30032;  // 请求通过道具添加经验-返回
+  MSG_SC_HERO_SyncUpdateDiff          = 30033;  // 同步差异的英雄列表
+  MSG_CS_HERO_AddStar                 = 30034;  // 请求升星
+  MSG_SC_HERO_AddStar                 = 30035;  // 请求升星-返回
+  MSG_CS_HERO_SkillUpgrade            = 30036;  // 请求技能升级
+  MSG_SC_HERO_SkillUpgrade            = 30037;  // 请求技能升级-返回
+  MSG_CS_HERO_FormationFresh          = 30038;  // 请求编队更新
+  MSG_SC_HERO_FormationFresh          = 30039;  // 请求编队更新-返回
+  MSG_CS_HERO_FormationPickSkill      = 30040;  // 指挥官技能选择
+  MSG_SC_HERO_FormationPickSkill      = 30041;  // 指挥官技能选择-返回 
+  MSG_CS_HERO_FormationNameFresh      = 30042;  // 编队名字更新
+  MSG_SC_HERO_FormationNameFresh      = 30043;  // 编队名字更新
+
+  // lottery
+  MSG_CS_LOTTERY_ExecOnce             = 30051;  //  单抽
+  MSG_SC_LOTTERY_ExecOnce             = 30052;  //  单抽-返回
+  MSG_CS_LOTTERY_ExecTen              = 30053;  //  十连
+  MSG_SC_LOTTERY_ExecTen              = 30054;  //  十连-返回
+
+  // building
+  MSG_CS_BUILDING_Construct           = 30071;  //  请求建造
+  MSG_SC_BUILDING_Construct           = 30072;  //  请求建造-返回
+  MSG_CS_BUILDING_Upgrade             = 30073;  //  请求升级
+  MSG_SC_BUILDING_Upgrade             = 30074;  //  请求升级-返回
+  MSG_CS_BUILDING_Move                = 30075;  //  请求移动
+  MSG_SC_BUILDING_Move                = 30076;  //  请求移动-返回
+  MSG_CS_BUILDING_Detail              = 30077;  //  请求全体建筑信息
+  MSG_SC_BUILDING_Detail              = 30078;  //  请求全体建筑信息-返回
+  MSG_SC_BUILDING_SyncUpdateDiff      = 30079;  //  同步差异建筑信息
+  MSG_CS_BUILDING_Collect             = 30080;  //  采集
+  MSG_SC_BUILDING_Collect             = 30081;  //  采集-返回
+  MSG_CS_BUILDING_Cancel              = 30082;  //  取消
+  MSG_SC_BUILDING_Cancel              = 30083;  //  取消-返回
+  MSG_CS_BUILDING_CollectGroup        = 30084;  //  群体采集
+  MSG_SC_BUILDING_CollectGroup        = 30085;  //  群体采集-返回
+  MSG_CS_BUILDING_ConfirmOver         = 30086;  //  确认建筑升级/建造结束
+  MSG_SC_BUILDING_ConfirmOver         = 30087;  //  确认建筑升级/建造结束-返回
+  MSG_CS_BUILDIN_Accelerate           = 30088;  //  建筑加速
+  MSG_SC_BUILDIN_Accelerate           = 30089;  //  建筑加速
+
+
+  // factory
+  MSG_CS_FACTORY_LineAccelerate       = 30101;  //  流水线加速
+  MSG_SC_FACTORY_LineAccelerate       = 30102;  //  流水线加速-返回
+  MSG_CS_FACTORY_LinePlaceOrder       = 30103;  //  流水线下单
+  MSG_SC_FACTORY_LinePlaceOrder       = 30104;  //  流水线下单-返回
+  MSG_CS_FACTORY_LineRewardPick       = 30105;  //  流水线产出领取
+  MSG_SC_FACTORY_LineRewardPick       = 30106;  //  流水线产出领取-返回
+  MSG_CS_FACTORY_Detail               = 30107;  //  流水线全部数据
+  MSG_SC_FACTORY_Detail               = 30108;  //  流水线全部数据-返回
+  MSG_SC_FACTORY_SyncUpdateDiff       = 30109;  //  同步差异信息
+  MSG_CS_FACTORY_DispatchHero         = 30110;  //  派遣人型
+  MSG_SC_FACTORY_DispatchHero         = 30111;  //  派遣人型-返回
+
+  // training
+  MSG_CS_TRAINING_SlotHero            = 30211;  //  插入角色
+  MSG_SC_TRAINING_SlotHero            = 30212;  //  插入角色-返回
+  MSG_CS_TRAINING_Settle              = 30213;  //  结算
+  MSG_SC_TRAINING_Settle              = 30214;  //  结算-返回
+  MSG_CS_TRAINING_Detail              = 30215;  //  训练场数据
+  MSG_SC_TRAINING_Detail              = 30216;  //  训练场数据-返回
+
+  // QUEST
+  MSG_CS_QUEST_UpgradeSchedule         = 30231;  //  发起更新任务进度
+  MSG_SC_QUEST_UpgradeSchedule         = 30232;  //  发起更新任务进度-返回
+  MSG_CS_QUEST_CommitQuest             = 30233;  //  任务提交
+  MSG_SC_QUEST_CommitQuest             = 30234;  //  任务提交-返回
+  MSG_SC_QUEST_SyncUpdateDiff          = 30235;  //  同步差异信息
+
+  // store
+  MSG_CS_STORE_Detail                 = 30251;  //  商店详情
+  MSG_SC_STORE_Detail                 = 30252;  //  商店详情-返回
+  MSG_CS_STORE_Purchase               = 30253;  //  购买
+  MSG_SC_STORE_Purchase               = 30254;  //  购买-返回
+  MSG_CS_STORE_Fresh                  = 30255;  //  刷新
+  MSG_SC_STORE_Fresh                  = 30256;  //  刷新-返回
+
+  // sector 
+  MSG_CS_SECTOR_Achievement           = 30271;  //  成就数据
+  MSG_SC_SECTOR_Achievement           = 30272;  //  成就数据-返回
+  MSG_CS_SECTOR_ChipSet               = 30273;  //  芯片集合
+  MSG_SC_SECTOR_ChipSet               = 30274;  //  芯片集合-返回
+  MSG_CS_SECTOR_PickReward            = 30275;  //  领取星数奖励
+  MSG_SC_SECTOR_PickReward            = 30276;  //  领取星数奖励-返回
+  MSG_SC_SECTOR_SyncUpdateDiff        = 30277;  //  差异同步
+  MSG_CS_SECTOR_Detail                = 30278;  //  扇区关卡数据
+  MSG_SC_SECTOR_Detail                = 30279;  //  扇区关卡数据-返回
+  MSG_CS_SECTOR_BattleFirstRewardPick = 30280;  //  扇区关卡首通奖励领取
+  MSG_SC_SECTOR_BattleFirstRewardPick = 30281;  //  扇区关卡首通奖励领取-返回
+
+  // exploration 30301-30320
+  MSG_CS_EXPLORATION_Start            = 30301;  //  探索开始
+  MSG_SC_EXPLORATION_Start            = 30302;  //  探索开始-返回
+  MSG_CS_EXPLORATION_Select           = 30304;  //  选择
+  MSG_SC_EXPLORATION_Select           = 30305;  //  选择-返回
+  MSG_SC_EXPLORATION_SyncUpdateDiff   = 30306;  //  探索数据-差异同步
+  MSG_CS_EXPLORATION_NextFloor        = 30307;  //  下一层
+  MSG_SC_EXPLORATION_NextFloor        = 30308;  //  下一层-返回
+  MSG_CS_EXPLORATION_Settle           = 30309;  //  结算
+  MSG_SC_EXPLORATION_Settle           = 30310;  //  结算-返回
+  MSG_CS_EXPLORATION_Detail           = 30311;  //  探索数据-全量同步
+  MSG_SC_EXPLORATION_Detail           = 30312;  //  探索数据-全量同步--返回
+  MSG_CS_EXPLORATION_FreshFromation   = 30313;  //  调整编队
+  MSG_SC_EXPLORATION_FreshFromation   = 30314;  //  调整编队-返回
+  MSG_CS_EXPLORATION_NtfServerEnter   = 30315;  //  通知服务器进入探索
+  MSG_SC_EXPLORATION_NtfServerEnter   = 30316;  //  通知服务器进入探索
+  MSG_CS_EXPLORATION_SettleFloor      = 30317;  //  结算层
+  MSG_SC_EXPLORATION_SettleFloor      = 30318;  //  结算层-返回
+  MSG_CS_EXPLORATION_RewardsShow      = 30319;  //  失败奖励预览
+  MSG_SC_EXPLORATION_RewardsShow      = 30320;  //  失败奖励预览-返回
+  
+  // battle room  30321-30340
+  MSG_CS_EXPLORATION_BATTLE_Start     = 30321;  //  战斗房发起战斗
+  MSG_SC_EXPLORATION_BATTLE_Start     = 30322;  //  战斗房发起战斗-返回
+  MSG_CS_EXPLORATION_BATTLE_Settle    = 30323;  //  战斗房发起结算
+  MSG_SC_EXPLORATION_BATTLE_Settle    = 30324;  //  战斗房发起结算-返回
+  MSG_CS_EXPLORATION_BATTLE_Restart   = 30325;  //  战斗房战斗内重新开始
+  MSG_SC_EXPLORATION_BATTLE_Restart   = 30326;  //  战斗房战斗内重新开始-返回
+  MSG_CS_EXPLORATION_BATTLE_Quit      = 30327;  //  战斗房主动退出
+  MSG_SC_EXPLORATION_BATTLE_Quit      = 30328;  //  战斗房主动退出-返回
+  MSG_CS_EXPLORATION_BATTLE_ALGSelect = 30329;  //  战斗房结算后奖励领取
+  MSG_SC_EXPLORATION_BATTLE_ALGSelect = 30330;  //  战斗房结算后奖励领取-返回
+  MSG_CS_EXPLORATION_BATTLE_Ambush    = 30331;  //  伏击开始
+  MSG_SC_EXPLORATION_BATTLE_Ambush    = 30332;  //  伏击开始
+  MSG_CS_EXPLORATION_BATTLE_Stealth   = 30333;  //  潜行开始
+  MSG_SC_EXPLORATION_BATTLE_Stealth   = 30334;  //  潜行开始
+  MSG_CS_EXPLORATION_BATTLE_Focus     = 30335;  //  专注改判
+  MSG_SC_EXPLORATION_BATTLE_Focus     = 30336;  //  专注改判
+
+
+  // item room  30341-30360
+  MSG_CS_EXPLORATION_ITEM_Select      = 30341;  //  道具房选择
+  MSG_SC_EXPLORATION_ITEM_Select      = 30342;  //  道具房选择-返回
+  MSG_CS_EXPLORATION_ITEM_Quit        = 30343;  //  道具房放弃
+  MSG_SC_EXPLORATION_ITEM_Quit        = 30344;  //  道具房放弃-返回
+  MSG_CS_EXPLORATION_ITEM_LockUnlock  = 30345;  //  道具房物品锁定-解锁操作
+  MSG_SC_EXPLORATION_ITEM_LockUnlock  = 30346;  //  道具房物品锁定-解锁操作-返回
+  MSG_CS_EXPLORATION_ITEM_Fresh       = 30347;  //  道具房刷新
+  MSG_SC_EXPLORATION_ITEM_Fresh       = 30348;  //  道具房刷新-返回
+
+  // store room 30361-30380
+  MSG_CS_EXPLORATION_STORE_Purchase   = 30361;  //  商店房发起购买
+  MSG_SC_EXPLORATION_STORE_Purchase   = 30362;  //  商店房发起购买-返回
+  MSG_CS_EXPLORATION_STORE_Quit       = 30363;  //  商店房退出
+  MSG_SC_EXPLORATION_STORE_Quit       = 30364;  //  商店房退出-返回
+  MSG_CS_EXPLORATION_STORE_Sold       = 30365;  //  商店房售卖
+  MSG_SC_EXPLORATION_STORE_Sold       = 30366;  //  商店房售卖
+  MSG_CS_EXPLORATION_STORE_Refresh    = 30367;  //  商店房刷新
+  MSG_SC_EXPLORATION_STORE_Refresh    = 30368;  //  商店房刷新
+
+  // recover room 30381-30400
+  MSG_CS_EXPLORATION_RECOVER_Select   = 30381;  //  恢复房选择
+  MSG_SC_EXPLORATION_RECOVER_Select   = 30382;  //  恢复房选择-返回
+
+  // event room 30401-30420
+  MSG_CS_EXPLORATION_EVENT_Select     = 30401;  //  事件房选择
+  MSG_SC_EXPLORATION_EVENT_Select     = 30402;  //  事件房选择-返回
+  MSG_CS_EXPLORATION_EVENT_Focus      = 30403;  //  事件房专注改判
+  MSG_SC_EXPLORATION_EVENT_Focus      = 30404;  //  事件房专注改判
+  MSG_CS_EXPLORATION_EVENT_RandomConfirm      = 30405;  //  事件房随机逻辑确认
+  MSG_SC_EXPLORATION_EVENT_RandomConfirm      = 30406;  //  事件房随机逻辑确认
+  MSG_CS_EXPLORATION_EVENT_AlgUpgrade = 30407; // 事件房函数升级
+  MSG_SC_EXPLORATION_EVENT_AlgUpgrade = 30408; // 事件房函数升级
+  MSG_CS_EXPLORATION_EVENT_SpecifyExit = 30409; // 事件房特殊逻辑下退出
+  MSG_SC_EXPLORATION_EVENT_SpecifyExit = 30410; // 事件房特殊逻辑下退出
+
+  // reconstitution room 30421-30440
+  MSG_CS_EXPLORATION_RECONSTITUTION_Reproduction  = 30421;  //  重构房-复制
+  MSG_SC_EXPLORATION_RECONSTITUTION_Reproduction  = 30422;  //  重构房-复制-返回
+  MSG_CS_EXPLORATION_RECONSTITUTION_Fusion        = 30423;  //  重构房-融合
+  MSG_SC_EXPLORATION_RECONSTITUTION_Fusion        = 30424;  //  重构房-融合-返回
+  MSG_CS_EXPLORATION_RECONSTITUTION_Reconstitution= 30425;  //  重构房-重构
+  MSG_SC_EXPLORATION_RECONSTITUTION_Reconstitution= 30426;  //  重构房-重构-返回
+  MSG_CS_EXPLORATION_RECONSTITUTION_Quit          = 30427;  //  重构房-放弃
+  MSG_SC_EXPLORATION_RECONSTITUTION_Quit          = 30428;  //  重构房-放弃-返回
+
+  // resident 
+  // store 30441-40450
+  MSG_CS_EXPLORATION_RESIDENT_STORE_Purchase   = 30441;  //  常驻商店房发起购买
+  MSG_SC_EXPLORATION_RESIDENT_STORE_Purchase   = 30442;  //  常驻商店房发起购买-返回
+
+  // overclock
+  MSG_CS_EXPLORATION_OVERCLOCK_Detail = 30451; // 请求超频数据
+  MSG_SC_EXPLORATION_OVERCLOCK_Detail = 30452; // 请求超频数据
+
+  // drop-alg
+  MSG_CS_EXPLORATION_AlgUpperLimit_Sold = 30461; // 函数上限售卖 
+  MSG_SC_EXPLORATION_AlgUpperLimit_Sold = 30462; // 函数上限售卖
+  MSG_CS_EXPLORATION_AlgUpperLimit_PurchaseLimit = 30463; // 函数上限购买上限 
+  MSG_SC_EXPLORATION_AlgUpperLimit_PurchaseLimit = 30464; // 函数上限购买上限
+  MSG_CS_EXPLORATION_AlgUpperLimit_Exit = 30465; // 函数上限离开
+  MSG_SC_EXPLORATION_AlgUpperLimit_Exit = 30466; // 函数上限离开
+    //camp fetter
+    MSG_CS_EXPLORATION_CAMP_FETTER_USE = 30467; //使用羁绊技能
+    MSG_SC_EXPLORATION_CAMP_FETTER_USE = 30468; //使用羁绊技能
+
+  // achievement  
+  MSG_CS_ACHIEVEMENT_Detail           = 30501;  //  请求成就数据 
+  MSG_SC_ACHIEVEMENT_Detail           = 30502;  //  请求成就数据-返回
+  MSG_CS_ACHIEVEMENT_LevelReward      = 30503;  //  请求领取等级奖励
+  MSG_SC_ACHIEVEMENT_LevelReward      = 30504;  //  请求领取等级奖励-返回
+  MSG_SC_ACHIEVEMENT_SyncUpdateDiff   = 30505;  //  差异同步
+
+  // dailyQuest/weeklyQuest
+  MSG_CS_QUESTPERIOD_Detail           = 30521;  //  日常周常数据
+  MSG_SC_QUESTPERIOD_Detail           = 30522;  //  日常周常数据-返回
+  MSG_CS_QUESTPERIOD_RewardPicked     = 30523;  //  日常周常活跃奖励领取
+  MSG_SC_QUESTPERIOD_RewardPicked     = 30524;  //  日常周常活跃奖励领取-返回
+
+  // mail
+  MSG_SC_MAIL_Notify                  = 30601;  //  新邮件通知
+  MSG_CS_MAIL_Fetch                   = 30602;  //  仅针对30601前提下发起
+  MSG_SC_MAIL_Fetch                   = 30603;  //  仅针对30601前提下发起-返回
+  MSG_CS_MAIL_Read                    = 30604;  //  单邮件阅读
+  MSG_SC_MAIL_Read                    = 30605;  //  单邮件阅读-返回
+  MSG_CS_MAIL_ReceiveAttachment       = 30606;  //  单邮件附件领取
+  MSG_SC_MAIL_ReceiveAttachment       = 30607;  //  单邮件附件领取-返回
+  MSG_CS_MAIL_Delete                  = 30608;  //  单邮件删除
+  MSG_SC_MAIL_Delete                  = 30609;  //  单邮件删除-返回
+  MSG_CS_MAIL_OneClickPickUp          = 30610;  //  邮件一键领取
+  MSG_SC_MAIL_OneClickPickUp          = 30611;  //  邮件一键领取-返回
+  MSG_SC_MAIL_SyncUpdateDiff          = 30612;  //  邮件差异更新
+  MSG_CS_MAIL_Detail                  = 30613;  //  请求邮箱数据-登录请求
+  MSG_SC_MAIL_Detail                  = 30614;  //  请求邮箱数据-登录请求-返回
+  MSG_CS_MAIL_OneKeyDelete            = 30615;  //  邮件一键删除已读
+  MSG_SC_MAIL_OneKeyDelete            = 30616;  //  邮件一键删除已读-返回
+  // arithmetic
+  MSG_CS_ATH_Detail                   = 30701;  //  请求算法整体数据
+  MSG_SC_ATH_Detail                   = 30702;  //  请求算法整体数据-返回
+  MSG_SC_ATH_SyncUpdateDiff           = 30703;  //  算法差异同步
+  MSG_CS_ATH_AthRefillOp              = 30704;  //  请求算法填充操作
+  MSG_SC_ATH_AthRefillOp              = 30705;  //  请求算法填充操作-返回
+  MSG_CS_ATH_AthUninstall             = 30706;  //  请求算法卸载
+  MSG_SC_ATH_AthUninstall             = 30707;  //  请求算法卸载-返回
+  MSG_CS_ATH_SlotUpgrade              = 30710;  //  请求算法槽位升级
+  MSG_SC_ATH_SlotUpgrade              = 30711;  //  请求算法槽位升级-返回
+  MSG_CS_ATH_AthOptimize              = 30712;  //  请求算法优化
+  MSG_SC_ATH_AthOptimize              = 30713;  //  请求算法优化-返回
+  MSG_CS_ATH_AthLock                  = 30716;  //  算法上锁
+  MSG_SC_ATH_AthLock                  = 30717;  //  算法上锁-返回
+  MSG_CS_Ath_AutoDecoSetting          = 30718;  //  自动分解设置
+  MSG_SC_Ath_AutoDecoSetting          = 30719;  //  自动分解设置-返回
+  MSG_CS_ATH_OneKeyDeco               = 30720;  //  一键分解
+  MSG_SC_ATH_OneKeyDeco               = 30721;  //  一键分解-返回
+  MSG_CS_ATH_Move                     = 30722;  //  算法移动
+  MSG_SC_ATH_Move                     = 30723;  //  算法移动-返回
+  MSG_CS_ATH_OneKeyInstall            = 30724;  //  一键安装
+  MSG_SC_ATH_OneKeyInstall            = 30725;  //  一键安装-返回
+  MSG_CS_ATH_OneKeyUninstall          = 30726;  //  一键卸载
+  MSG_SC_ATH_OneKeyUninstall          = 30727;  //  一键卸载-返回
+  MSG_SC_ATH_DetailBatch              = 30728;  //  请求算法整体数据分批-返回
+  MSG_CS_ATH_ReconsitutionExec        = 30729;  //  算法重构执行
+  MSG_SC_ATH_ReconsitutionExec        = 30730;  //  算法重构执行
+  MSG_CS_ATH_AffixLockUnlock          = 30731;  //  算法词条上锁解锁
+  MSG_SC_ATH_AffixLockUnlock          = 30732;  //  算法词条上锁解锁
+  MSG_CS_ATH_ReconsitutionSave        = 30733;  //  算法重构保存
+  MSG_SC_ATH_ReconsitutionSave        = 30734;  //  算法重构保存
+  MSG_CS_ATH_ReconsitutionDrop        = 30735;  //  算法重构抛弃
+  MSG_SC_ATH_ReconsitutionDrop        = 30736;  //  算法重构抛弃
+  // dorm
+  MSG_CS_DORM_RoomDecomposition       = 30811;  //  房间分解
+  MSG_SC_DORM_RoomDecomposition       = 30812;  //  房间分解-返回
+  MSG_CS_DORM_DormPurchase            = 30813;  //  宿舍购买
+  MSG_SC_DORM_DormPurchase            = 30814;  //  宿舍购买-返回
+  MSG_CS_DORM_HouseEdit               = 30815;  //  宿舍编辑
+  MSG_SC_DORM_HouseEdit               = 30816;  //  宿舍编辑-返回
+  MSG_CS_DORM_GlobalDetail            = 30817;  //  宿舍全局数据
+  MSG_SC_DORM_GlobalDetail            = 30818;  //  宿舍全局数据-返回
+  MSG_CS_DORM_RoomEdit                = 30819;  //  房间编辑
+  MSG_SC_DORM_RoomEdit                = 30820;  //  房间编辑-返回
+  MSG_CS_DORM_BindUnbindHero          = 30821;  //  角色绑定解绑操作
+  MSG_SC_DORM_BindUnbindHero          = 30822;  //  角色绑定解绑操作-返回
+
+  // station
+  MSG_CS_STATION_Detail               = 30901;  //  角色入住详情
+  MSG_SC_STATION_Detail               = 30902;  //  角色入住详情-返回
+  MSG_CS_STATION_Install              = 30903;  //  角色安装
+  MSG_SC_STATION_Install              = 30904;  //  角色安装-返回
+  MSG_CS_STATION_Uninstall            = 30905;  //  角色卸载
+  MSG_SC_STATION_Uninstall            = 30906;  //  角色卸载-返回
+
+  // effector
+  MSG_CS_EFFECTOR_ResourceGenerator    = 30931;  //  资源产出详情
+  MSG_SC_EFFECTOR_ResourceGenerator    = 30932;  //  资源产出详情-返回
+  MSG_SC_EFFECTOR_RGSyncUpdateDiff     = 30933;  //  资源产出同步
+
+  // intimacy
+  MSG_CS_INTIMACY_Detail              = 31001;  //  亲密度详情
+  MSG_SC_INTIMACY_Detail              = 31002;  //  亲密度详情-返回
+  MSG_CS_INTIMACY_Presentation        = 31003;  //  赠礼
+  MSG_SC_INTIMACY_Presentation        = 31004;  //  赠礼-返回
+  MSG_CS_INTIMACY_UpgradeLine         = 31005;  //  亲密度养成线升级
+  MSG_SC_INTIMACY_UpgradeLine         = 31006;  //  亲密度养成线升级-返回
+
+  // avg 
+  MSG_CS_AVG_Complete = 31021; // 播放avg完成
+  MSG_SC_AVG_Complete = 31022; // 播放avg完成
+
+  // command skill
+  MSG_CS_COMMANDSKILL_Detail = 31041; // 技能树详情
+  MSG_SC_COMMANDSKILL_Detail = 31042; // 技能树详情
+  MSG_SC_COMMANDSKILL_SyncUpdate = 31047; // 技能树数据同步
+  MSG_CS_COMMANDSKILL_Upgrade = 31048; // 技能树升级
+  MSG_SC_COMMANDSKILL_Upgrade = 31049; // 技能树升级
+  MSG_CS_COMMANDSKILL_Unlock = 31050;// 解锁
+  MSG_SC_COMMANDSKILL_Unlock = 31051;// 解锁
+  MSG_CS_COMMANDSKILL_SaveSheet = 31052; // 技能页的修改保存
+  MSG_SC_COMMANDSKILL_SaveSheet = 31053; // 技能页的修改保存
+  MSG_CS_COMMANDSKILL_SaveFromFormation = 31054; // 编队的当前技能页的修改
+  MSG_SC_COMMANDSKILL_SaveFromFormation = 31055; // 编队的当前技能页的修改
+
+  // dungeon
+  MSG_CS_DUNGEON_STATIC_Detail               = 31171;  //  副本基础数据
+  MSG_SC_DUNGEON_STATIC_Detail               = 31172;  //  副本基础数据
+
+  // endless
+  MSG_CS_ENDLESS_Detail = 31201; // 无尽模式-基础数据
+  MSG_SC_ENDLESS_Detail = 31202; // 无尽模式-基础数据
+  MSG_SC_ENDLESS_SyncUpdateDiff = 31203; // 无尽模式-差异同步
+
+  // battle
+  MSG_CS_BATTLE_ReqHeroDetail         = 32001;  //  角色属性
+  MSG_SC_BATTLE_ReqHeroDetail         = 32002;  //  角色属性-返回
+  MSG_CS_BATTLE_ReqPlayerDetail       = 32003;  //  指挥官属性
+  MSG_SC_BATTLE_ReqPlayerDetail       = 32004;  //  指挥官属性-返回
+  
+  MSG_SC_BATTLE_NtfEnter              = 32501;  //  通知进入
+  MSG_SC_BATTLE_NtfWaveStep           = 32502;  //  通知阶段
+  MSG_SC_BATTLE_NtfOverRewards        = 32503;  //  通知奖励
+  MSG_CS_BATTLE_Quit                  = 32504;  //  通知退出副本
+  MSG_SC_BATTLE_Quit                  = 32505;  //  通知退出副本
+  MSG_CS_BATTLE_Restart               = 32506;  //  重新开始
+  MSG_SC_BATTLE_Restart               = 32507;  //  重新开始
+  MSG_CS_BATTLE_DungeonEnter          = 32508;  //  发起进入副本
+  MSG_SC_BATTLE_DungeonEnter          = 32509;  //  发起进入副本-返回
+
+  MSG_SC_BATTLE_NtfMonsterData        = 33001;  //  通知怪物展示数据
+  MSG_SC_BATTLE_NtfAlgData            = 33002;  //  通知函数展示数据
+  // MSG_SC_BATTLE_NtfEventData          = 33003;  //  通知事件展示数据
+  // MSG_SC_BATTLE_NtfTreasureData       = 33004;  //  通知宝箱数据
+  // MSG_SC_BATTLE_NtfStoreData          = 33005;  //  通知商店数据
+  // MSG_SC_BATTLE_SyncStepRewards       = 33006;  //  阶段奖励同步
+  MSG_SC_BATTLE_NtfAlgDiff            = 33007;  //  函数差异同步
+
+
+  MSG_CS_BATTLE_StartBattleWithForm   = 33101;  //  同步阵容数据且发起战斗
+  MSG_SC_BATTLE_StartBattleWithForm   = 33102;  //  同步阵容数据且发起战斗-返回
+  MSG_CS_BATTLE_BattleSettle          = 33103;  //  战斗结算
+  MSG_SC_BATTLE_BattleSettle          = 33104;  //  战斗结算-返回
+  MSG_CS_BATTLE_AlgSelect             = 33105;  //  函数选择
+  MSG_SC_BATTLE_AlgSelect             = 33106;  //  函数选择
+
+  // MSG_SC_BATTLE_EventSelect           = 33201;  //  事件选择
+  // MSG_CS_BATTLE_EventSelect           = 33202;  //  事件选择-返回
+  
+  // 用户
+  MSG_CS_User_UserNameModify = 33301; // 用户修改名字
+  MSG_SC_User_UserNameModify = 33302; // 用户修改名字
+  MSG_CS_User_ModifyShowGirl = 33303; // 看板娘设置
+  MSG_SC_User_ModifyShowGirl = 33304; // 看板娘设置
+  MSG_CS_User_ClientLastSectorMention = 33305; // 客户端上一次扇区聚焦提醒ID
+  MSG_SC_User_ClientLastSectorMention = 33306; // 客户端上一次扇区聚焦提醒ID
+  MSG_CS_User_SystemOverDay = 33307; // 客户端请求模块默认过天点 -- 上线不请求
+  MSG_SC_User_SystemOverDay = 33308; // 客户端请求模块默认过天点 -- 差异返回
+
+  // 通用过期时间
+
+  MSG_CS_COUNTER_Detail = 33321; // 通用计数器数据
+  MSG_SC_COUNTER_Detail = 33322; // 通用计数器数据
+  MSG_SC_COUNTER_SyncUpdateDiff = 33323; // 通用计数器差异更新
+
+  // 扫荡
+  MSG_CS_BLITZ_Blitz = 33331; // 扫荡
+  MSG_SC_BLITZ_Blitz = 33332; // 扫荡-返回
+  // 引导
+  MSG_CS_GUIDE_TriggerComplete = 33401; // 触发式引导完成
+  MSG_SC_GUIDE_TriggerComplete = 33402; // 触发式引导完成
+}
+
+
+
+
+//   // achievement  
+//   MSG_CS_ACHIEVEMENT_Detail           = 30501;  //  请求成就数据 
+message CS_ACHIEVEMENT_Detail {
+}
+//   MSG_SC_ACHIEVEMENT_Detail           = 30502;  //  请求成就数据-返回
+message SC_ACHIEVEMENT_Detail {
+    ErrorCode                                   ret         = 1;
+    proto_object.Achievement                    data        = 2;
+} 
+//   MSG_CS_ACHIEVEMENT_LevelReward      = 30503;  //  请求领取等级奖励
+message CS_ACHIEVEMENT_LevelReward {
+    uint32                                      lv          = 1;
+}
+//   MSG_SC_ACHIEVEMENT_LevelReward      = 30504;  //  请求领取等级奖励-返回
+message SC_ACHIEVEMENT_LevelReward {
+    ErrorCode                                   ret         = 1;
+    map<uint32,uint32>                          rewards     = 2;
+}
+//   MSG_SC_ACHIEVEMENT_SyncUpdateDiff   = 30505;  //  差异同步
+message SC_ACHIEVEMENT_SyncUpdateDiff  {
+    map<uint32, bool>           levelRewradsPicked          = 1; // key对应等级的奖励
+    map<uint32, int64>          questFinishedRecords        = 2; // 成就完成数据 key-成就id value-完成时间
+}
+
+
+
+
+
+// MSG_CS_ATH_Detail                   = 30701;  //  请求算法整体数据
+message CS_ATH_Detail {
+
+}
+// MSG_SC_ATH_Detail                   = 30702;  //  请求算法整体数据-返回
+message SC_ATH_Detail  {
+    map<uint64, proto_object.ArithmeticElem> data    = 1;       //  算法整体数据 ***废弃***
+    map<uint32, proto_object.ArithmeticSlotElem> slots = 2;     // 角色槽位数据 ***废弃***
+    int32 failure = 3; // 失败次数
+    proto_object.ArithmeticAutoDecomposition autoDeco = 4;
+    map<uint32, proto_object.ArithmeticGroup.slotInfo> heroSlot = 5; // 角色id-槽位等级
+    uint32 batchSize = 6; //  算法整体数据 共几批
+    proto_object.ArithmeticReconsitution  reconsitution = 7; // 重构保留
+}
+// MSG_SC_ATH_SyncUpdateDiff           = 30703;  //  算法差异同步
+message SC_ATH_SyncUpdateDiff {
+    map<uint64, proto_object.ArithmeticElem> updateAth = 1;
+    map<uint64, bool>  deleteAth = 2;
+    map<uint32, proto_object.ArithmeticSlotElem> slots = 3; // 同步一个角色的整体槽位变更 ***废弃***
+    map<uint32, proto_object.ArithmeticGroup.slotInfo> heroSlot = 4; // 差异的角色id-差异的槽位等级
+}
+// MSG_CS_ATH_AthRefillOp              = 30704;  //  请求算法填充操作
+message CS_ATH_AthRefillOp {
+    uint32 heroId = 1;
+    uint32 slotIdx = 2;
+    uint64 uid = 3; // 算法唯一id
+    uint32 gridId = 4; // 区域内id 1-16
+    map<uint64, uint32> oldMove = 5; // 旧算法的移动
+
+    AthRefillOperator op = 6;
+}
+// MSG_SC_ATH_AthRefillOp              = 30705;  //  请求算法填充操作-返回
+message SC_ATH_AthRefillOp {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_AthUninstall             = 30706;  //  请求算法卸载
+message CS_ATH_AthUninstall {
+    uint64 uid = 1;
+}
+// MSG_SC_ATH_AthUninstall             = 30707;  //  请求算法卸载-返回
+message SC_ATH_AthUninstall {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_SlotUpgrade              = 30710;  //  请求算法槽位升级
+message CS_ATH_SlotUpgrade {
+    uint32 heroId = 1; // 角色id
+    uint32 slotId = 2; //***废弃***
+    map<uint32, uint32> item = 3; // id-数量
+    map<uint64, bool> ath = 4; // 算法uid
+}
+// MSG_SC_ATH_SlotUpgrade              = 30711;  //  请求算法槽位升级-返回
+message SC_ATH_SlotUpgrade {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_AthOptimize              = 30712;  //  请求算法优化
+message CS_ATH_AthOptimize {
+    uint64 uid = 1;
+    uint32 idx = 2; // 词缀索引 0开始
+    uint32 sect = 3; // 第几密度区域
+}
+// MSG_SC_ATH_AthOptimize              = 30713;  //  请求算法优化-返回
+message SC_ATH_AthOptimize {
+    ErrorCode ret = 1;
+    int32 failure = 2; // 失败次数仅通过这个同步
+    bool result = 3; // true成功
+}
+// MSG_CS_ATH_AthLock                  = 30716;  //  算法上锁
+message CS_ATH_AthLock {
+    uint64 uid = 1;
+}
+// MSG_SC_ATH_AthLock                  = 30717;  //  算法上锁-返回
+message SC_ATH_AthLock {
+    ErrorCode ret = 1;
+}
+// MSG_CS_Ath_AutoDecoSetting          = 30718;  //  自动分解设置
+message CS_Ath_AutoDecoSetting {
+    proto_object.ArithmeticAutoDecomposition setting = 1;
+}
+// MSG_SC_Ath_AutoDecoSetting          = 30719;  //  自动分解设置-返回
+message SC_Ath_AutoDecoSetting {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_OneKeyDeco               = 30720;  //  一键分解
+message CS_ATH_OneKeyDeco {
+    map<uint64, bool> uids = 1;
+}
+// MSG_SC_ATH_OneKeyDeco               = 30721;  //  一键分解-返回
+message SC_ATH_OneKeyDeco {
+    ErrorCode ret = 1;
+    map<uint32, uint32> data = 2;
+}
+// MSG_CS_ATH_Move                     = 30722;  //  算法移动
+message CS_ATH_Move {
+    uint64 uid = 1; // 算法唯一id
+    uint32 gridId = 2; // 区域内id 1-16
+}
+// MSG_SC_ATH_Move                     = 30723;  //  算法移动-返回
+message SC_ATH_Move {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_OneKeyInstall            = 30724;  //  一键安装
+message CS_ATH_OneKeyInstall {
+    uint32 heroId = 1; // 角色id
+    uint32 slotId = 2; // 槽位id
+    map<uint64, uint32> athGroup = 3; // 算法组
+}
+// MSG_SC_ATH_OneKeyInstall            = 30725;  //  一键安装-返回
+message SC_ATH_OneKeyInstall {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_OneKeyUninstall          = 30726;  //  一键卸载
+message CS_ATH_OneKeyUninstall {
+    uint32 heroId = 1; // 角色id
+    uint32 slotId = 2; // 槽位id
+}
+// MSG_SC_ATH_OneKeyUninstall          = 30727;  //  一键卸载-返回
+message SC_ATH_OneKeyUninstall {
+    ErrorCode ret = 1;
+}
+// MSG_SC_ATH_DetailBatch              = 30728;  //  请求算法整体数据分批-返回
+message SC_ATH_DetailBatch {
+    map<uint64, proto_object.ArithmeticElem> data    = 1;       //  算法整体数据
+}
+
+// MSG_CS_ATH_ReconsitutionExec        = 30729;  //  算法重构执行
+message CS_ATH_ReconsitutionExec {
+    uint64 aimUid = 1; // 目标对象
+    uint64 dogFoodUid = 2; // 狗粮 
+}
+// MSG_SC_ATH_ReconsitutionExec        = 30730;  //  算法重构执行
+message SC_ATH_ReconsitutionExec {
+    ErrorCode ret = 1;
+    proto_object.ArithmeticReconsitution  reconsitution = 2; // 重构保留
+}
+// MSG_CS_ATH_AffixLockUnlock          = 30731;  //  算法词条上锁解锁
+message CS_ATH_AffixLockUnlock {
+    uint64 uid = 1; // 算法uid
+    uint32 affixIdx = 2; //  算法词条索引0开始
+}
+// MSG_SC_ATH_AffixLockUnlock          = 30732;  //  算法词条上锁解锁
+message SC_ATH_AffixLockUnlock {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_ReconsitutionSave        = 30733;  //  算法重构保存
+message CS_ATH_ReconsitutionSave {}
+// MSG_SC_ATH_ReconsitutionSave        = 30734;  //  算法重构保存
+message SC_ATH_ReconsitutionSave {
+    ErrorCode ret = 1;
+}
+// MSG_CS_ATH_ReconsitutionDrop        = 30735;  //  算法重构抛弃
+message CS_ATH_ReconsitutionDrop {}
+// MSG_SC_ATH_ReconsitutionDrop        = 30736;  //  算法重构抛弃
+message SC_ATH_ReconsitutionDrop {
+    ErrorCode ret = 1;
+}
+
+
+
+
+// MSG_CS_AVG_Complete = 31021; // 播放avg完成
+message CS_AVG_Complete {
+    uint32 avgId = 1;
+}
+// MSG_SC_AVG_Complete = 31022; // 播放avg完成
+message SC_AVG_Complete {
+    ErrorCode ret = 1;
+    map<uint32, uint32> rewards = 2;
+}
+
+
+
+
+// 副本
+// 用户                      服务器
+// 用户外部发起进去副本       
+//                          响应进入副本           
+// --- 内循环开始                         
+//                          同步数据
+// 根据数据类型布阵发起       
+//                          响应布阵  
+// 开始战斗
+// 战斗结算                 
+//                          响应结算
+//                          同步下一逻辑数据    
+
+// 探索
+// 用户                      服务器                   
+// 发起探索                   
+//                           响应进入探索
+//                           同步数据
+// 根据用户进入战斗
+// 布阵发起
+//                           响应布阵
+// 开始战斗
+// 战斗结算
+//                           响应结算
+//                           同步下一逻辑数据       
+
+message BattleMonster {
+    uint64 uid = 1; // 怪物唯一id
+    uint32 coordination = 2; // 战场地图坐标 row << 16 | col
+    uint32 templateId = 3; // 模板id
+    uint32 level = 4; // 等级
+    uint32 intensity = 5; // 强度
+    map<uint32, uint32> skillGroup = 6; // 技能列表
+    map<uint32, uint32> attr = 7; // 属性
+    uint32 hpPer = 8; // 当前血量万分比
+    uint32 cat = 9; // 单位类型
+}
+
+message BattleWave {
+    uint32 total = 1; // 总波数
+    uint32 cur = 2; // 当前波数
+    uint32 scene = 3; // 场景
+}
+
+// MSG_SC_BATTLE_NtfEnter              = 32501;  //  通知进入
+message SC_BATTLE_NtfEnter {
+    uint32 dungeonId = 1;
+    BattleWave wave = 2;
+    map<uint32, proto_object.HeroAttr> heroData = 3; // 角色数据  //--废弃
+    map<uint32, BattleHeroSt> battle = 4;
+    BattlePlayer player = 5; //指挥官属性
+}
+// MSG_SC_BATTLE_NtfWaveStep           = 32502;  //  通知阶段
+message SC_BATTLE_NtfWaveStep {
+    BattleWave wave = 1;
+}
+// MSG_SC_BATTLE_NtfOverRewards        = 32503;  //  通知奖励
+message SC_BATTLE_NtfOverRewards {
+    bool result = 1; // 输赢
+    map<uint32, uint32> innerRewards = 2; // 阶段奖励 key=itemId | value=num
+    map<uint32, uint32> overRewards = 3; // 结束奖励 key=itemId | value=num
+    map<uint32, uint32> firstClear = 4; // 首通奖励 key=itemId | value=num
+    uint32 totalExp = 5;
+}
+
+// MSG_SC_BATTLE_NtfMonsterData        = 33001;  //  通知怪物展示数据
+message SC_BATTLE_NtfMonsterData {
+    bool form = 1; // true=需要布阵，false则不需要布阵，立即开始
+    map<uint64, BattleMonster> data = 2;   //  key-uid
+    proto_object.CommonReward reward = 3; // 奖励
+    uint32 battleId = 4; //  战斗组
+    map<uint32, uint32> grids = 5;   // key-坐标 | val-格子id key row << 16 | col
+}
+// MSG_SC_BATTLE_NtfAlgData            = 33002;  //  通知函数展示数据
+message SC_BATTLE_NtfAlgData {
+    repeated uint32 alg = 1;
+}
+// MSG_SC_BATTLE_NtfEventData          = 33003;  //  通知事件展示数据
+// MSG_SC_BATTLE_NtfTreasureData       = 33004;  //  通知宝箱数据
+// MSG_SC_BATTLE_NtfStoreData          = 33005;  //  通知商店数据
+// MSG_SC_BATTLE_SyncStepRewards       = 33006;  //  阶段奖励同步
+// MSG_SC_BATTLE_NtfAlgDiff            = 33007;  //  函数差异同步
+
+message AlgDiffModule {
+    map<uint64, uint32> update = 1; // key=algid << 32 | heroId, heroId = 0 则表示通用
+    map<uint64, bool> delete = 2; // key = algId << 32 | heroId
+    map<uint32, uint32> tmpUpdate = 3; // 临时芯片的差异
+    map<uint32, bool> tmpDelete = 4; // 临时芯片的删除
+    map<uint32, uint32> hiddenUpdate = 5; // 隐藏芯片的差异
+    map<uint32, bool> hiddenDelete = 6; // 隐藏芯片的删除
+}
+message SC_BATTLE_NtfAlgDiff {
+    map<uint32, AlgDiffModule> diff = 1;// key-define.AlgFromModule
+}
+
+// MSG_CS_BATTLE_BattleSettle          = 33103;  //  战斗结算
+message CS_BATTLE_BattleSettle {
+    map<uint32, uint32> hero = 1; // 角色id-角色血量万分比
+    bool win = 2;
+}
+// MSG_SC_BATTLE_BattleSettle          = 33104;  //  战斗结算-返回
+message SC_BATTLE_BattleSettle {
+    ErrorCode ret = 1;
+}
+// MSG_CS_BATTLE_AlgSelect             = 33105;  //  函数选择
+message CS_BATTLE_AlgSelect {
+    uint32 idx = 1; // 0开始
+}
+// MSG_SC_BATTLE_AlgSelect             = 33106;  //  函数选择
+message SC_BATTLE_AlgSelect {
+    ErrorCode ret = 1;
+}
+
+
+// MSG_SC_BATTLE_EventSelect           = 33201;  //  事件选择
+// MSG_CS_BATTLE_EventSelect           = 33202;  //  事件选择-返回
+
+// MSG_CS_BATTLE_StartBattleWithForm   = 33101;  //  同步阵容数据且发起战斗
+message CS_BATTLE_StartBattleWithForm {
+    map<uint32, uint32> data = 1; // key-角色id | value-位置
+}
+// MSG_SC_BATTLE_StartBattleWithForm   = 33102;  //  同步阵容数据且发起战斗-返回
+message SC_BATTLE_StartBattleWithForm {
+    ErrorCode ret = 1;
+}
+
+// MSG_CS_BATTLE_Quit                  = 32504;  //  通知退出副本
+message CS_BATTLE_Quit {}
+// MSG_SC_BATTLE_Quit                  = 32505;  //  通知退出副本
+message SC_BATTLE_Quit {
+    ErrorCode ret = 1;
+}
+// MSG_CS_BATTLE_Restart               = 32506;  //  重新开始
+message CS_BATTLE_Restart {}
+// MSG_SC_BATTLE_Restart               = 32507;  //  重新开始
+message SC_BATTLE_Restart {
+    ErrorCode ret = 1;
+}
+// MSG_CS_BATTLE_DungeonEnter          = 32508;  //  发起进入副本
+message CS_BATTLE_DungeonEnter {
+    uint32 stageId = 1;
+    proto_object.Formation form = 2; // 编队数据逻辑
+}
+// MSG_SC_BATTLE_DungeonEnter          = 32509;  //  发起进入副本-返回
+message SC_BATTLE_DungeonEnter {
+    ErrorCode ret = 1;
+}
+
+
+// MSG_CS_BATTLE_ReqHeroDetail         = 32001;  //  角色属性
+message CS_BATTLE_ReqHeroDetail {
+    map<uint32, bool> data = 1; // 角色组
+}
+// MSG_SC_BATTLE_ReqHeroDetail         = 32002;  //  角色属性-返回
+message SC_BATTLE_ReqHeroDetail {
+    ErrorCode ret = 1;
+    map<uint32, proto_object.HeroAttr> data = 2;   //--废弃
+    map<uint32, BattleHeroSt> battle = 3;
+}
+// MSG_CS_BATTLE_ReqPlayerDetail       = 32003;  //  指挥官属性
+message CS_BATTLE_ReqPlayerDetail  {
+}
+// MSG_SC_BATTLE_ReqPlayerDetail       = 32004;  //  指挥官属性-返回
+message SC_BATTLE_ReqPlayerDetail {
+    ErrorCode ret = 1;
+    BattlePlayer player = 2;
+}
+
+message BattleHeroSt {
+    // 属性ID-属性值
+    map<uint32, uint64> attr = 1;
+    // 角色基础技能
+    // 技能ID-技能等级， 角色基础技能-配置表中的id非param，具体技能通过id去索引
+    map<uint32, uint32> baseSkill = 2; 
+    // 算法技能
+    repeated uint32 athSkill = 3;
+}
+
+message BattlePlayer {
+    // 属性ID-属性值
+    map<uint32, uint64> attr = 1;
+}
+
+
+
+
+//  MSG_CS_BUILDING_Detail              = 30077;  //  请求全体建筑信息
+message CS_BUILDING_Detail {
+}
+//  MSG_SC_BUILDING_Detail              = 30078;  //  请求全体建筑信息-返回
+message SC_BUILDING_Detail {
+    repeated proto_object.BuildingBase          data       = 1;
+}
+//  MSG_SC_BUILDING_SyncUpdateDiff      = 30079;  //  同步差异建筑信息
+message SC_BUILDING_SyncUpdateDiff {
+    repeated proto_object.BuildingBase          update              = 1;
+    map<uint32, bool>                           delete              = 2;
+}
+//  MSG_CS_BUILDING_Construct           = 30071;  //  请求建造
+message CS_BUILDING_Construct {
+    uint32                                      id          = 1; // config id
+    int32                                       x           = 2;
+    int32                                       y           = 3;
+    int32                                       area        = 4;
+}
+//  MSG_SC_BUILDING_Construct           = 30071;  //  请求建造-返回
+message SC_BUILDING_Construct {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_BUILDING_Upgrade             = 30073;  //  请求升级
+message CS_BUILDING_Upgrade {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_Upgrade             = 30074;  //  请求升级-返回
+message SC_BUILDING_Upgrade {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_BUILDING_Move                = 30075;  //  请求移动
+message CS_BUILDING_Move {
+    uint32                                      id          = 1; // config id
+    int32                                       x           = 2;
+    int32                                       y           = 3;
+    int32                                       area        = 4;
+}
+//  MSG_SC_BUILDING_Move                = 30076;  //  请求移动-返回
+message SC_BUILDING_Move  {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_BUILDING_Collect             = 30080;  //  采集
+message CS_BUILDING_Collect {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_Collect             = 30081;  //  采集-返回
+message SC_BUILDING_Collect {
+    ErrorCode                                   ret         = 1;
+    map<uint32, uint32>                         data        = 2; 
+}
+//  MSG_CS_BUILDING_Cancel              = 30082;  //  取消
+message CS_BUILDING_Cancel {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_Cancel              = 30083;  //  取消-返回
+message SC_BUILDING_Cancel {
+    ErrorCode                                   ret         = 1;
+}
+
+//  MSG_CS_BUILDING_CollectGroup        = 30084;  //  群体采集
+message CS_BUILDING_CollectGroup {
+    map<uint32, bool>                           gruop       = 1;
+}
+//  MSG_SC_BUILDING_CollectGroup        = 30085;  //  群体采集-返回
+message SC_BUILDING_CollectGroup {
+    ErrorCode                                   ret         = 1;
+    map<uint32, uint32>                         data        = 2; 
+}
+//  MSG_CS_BUILDING_ConfirmOver         = 30086;  //  确认建筑升级/建造结束
+message CS_BUILDING_ConfirmOver {
+    uint32                                      id          = 1; // config id
+}
+//  MSG_SC_BUILDING_ConfirmOver         = 30087;  //  确认建筑升级/建造结束-返回
+message SC_BUILDING_ConfirmOver {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_BUILDIN_Accelerate           = 30088;  //  建筑加速
+message CS_BUILDIN_Accelerate {
+    uint32                                      id          = 1; // config id
+    map<uint32, uint32> cost = 2; // key-物品id|value-物品数量
+}
+// MSG_SC_BUILDIN_Accelerate           = 30089;  //  建筑加速
+message SC_BUILDIN_Accelerate {
+    ErrorCode                                   ret         = 1;
+}
+
+
+
+
+
+// MSG_CS_COMMANDSKILL_Detail = 31041; // 技能树详情
+message CS_COMMANDSKILL_Detail {}
+// MSG_SC_COMMANDSKILL_Detail = 31042; // 技能树详情
+message SC_COMMANDSKILL_Detail {
+    proto_object.CommandSkill data = 1;
+}
+// MSG_SC_COMMANDSKILL_SyncUpdate = 31047; // 技能树数据同步
+message SC_COMMANDSKILL_SyncUpdate {
+    map<uint32, PairU32> update = 1; // key-树id | value first-等级 second-经验
+    PairU32 proficentUpdate = 2; // first-树专精等级 second-树专精经验
+}
+// MSG_CS_COMMANDSKILL_Upgrade = 31048; // 技能树升级
+message CS_COMMANDSKILL_Upgrade {
+    uint32 treeId = 1; // 技能树id
+    map<uint32, uint32> cost = 2; // key-消耗物品id | value-消耗物品数量
+}
+// MSG_SC_COMMANDSKILL_Upgrade = 31049; // 技能树升级
+message SC_COMMANDSKILL_Upgrade {
+    ErrorCode ret = 1;
+}
+// MSG_CS_COMMANDSKILL_Unlock = 31050;// 解锁
+message CS_COMMANDSKILL_Unlock {
+    uint32 treeId = 1;
+}
+// MSG_SC_COMMANDSKILL_Unlock = 31051;// 解锁
+message SC_COMMANDSKILL_Unlock {
+    ErrorCode ret = 1;
+}
+// MSG_CS_COMMANDSKILL_SaveSheet = 31052; // 技能页的修改保存
+message CS_COMMANDSKILL_SaveSheet {
+    uint32 treeId = 1; // 树id
+    uint32 sheetId = 2; // 页签id 默认1，2，3... 从1开始计数至配置上限
+    proto_object.CSTSaving data = 3; //保存数据
+}
+// MSG_SC_COMMANDSKILL_SaveSheet = 31053; // 技能页的修改保存
+message SC_COMMANDSKILL_SaveSheet {
+    ErrorCode ret = 1;
+}
+// MSG_CS_COMMANDSKILL_SaveFromFormation = 31054; // 编队的当前技能页的修改
+message CS_COMMANDSKILL_SaveFromFormation {
+    uint32 formId = 1;
+    uint32 treeId = 2;
+    proto_object.CSTSaving data = 3; //保存数据
+}
+// MSG_SC_COMMANDSKILL_SaveFromFormation = 31055; // 编队的当前技能页的修改
+message SC_COMMANDSKILL_SaveFromFormation {
+    ErrorCode ret = 1;
+}
+
+
+
+
+//  MSG_CS_HERO_Debug_Attr              = 20001;  // 属性请求 
+message CS_HERO_Debug_Attr  {
+  map<uint32, bool> hero = 1; // key-heroid
+}
+//   MSG_SC_HERO_Debug_Attr              = 20002;  // 属性请求 
+message SC_HERO_Debug_Attr  {
+  map<uint32, proto_object.HeroAttr> data = 1; // key-heroid | value- hero attribution
+}
+
+
+
+
+message PrefabUpdate {
+    map<uint32, proto_object.DormRoom> prefabUpdate = 1;
+    map<uint32, bool> prefabDelete = 2;
+}
+
+// // MSG_CS_DORM_HouseDetail             = 30801;  //  宿舍单体数据
+// message CS_DORM_HouseDetail {
+//     int32 houseId = 1;
+// }
+// // MSG_SC_DORM_HouseDetail             = 30802;  //  宿舍单体数据-返回
+// message SC_DORM_HouseDetail {
+//     ErrorCode ret = 1;
+//     proto_object.DormHouse data = 2; // 宿舍id - 宿舍数据 接设置
+// }
+// // MSG_CS_DORM_RoomInstall             = 30803;  //  房间安置
+// message CS_DORM_RoomInstall {
+//     uint32 roomId = 1;
+//     int32 houseId = 2;
+//     uint32 pos = 3;
+// }
+// // MSG_SC_DORM_RoomInstall             = 30804;  //  房间安置-返回
+// message SC_DORM_RoomInstall {
+//     ErrorCode ret = 1;
+// }
+// // MSG_CS_DORM_RoomMove                = 30805;  //  房间同宿舍迁移
+// message CS_DORM_RoomMove {
+//     int32 houseId = 1;
+//     uint32 fromPos = 2;
+//     uint32 toPos = 3;
+// }
+// // MSG_SC_DORM_RoomMove                = 30806;  //  房间同宿舍迁移-返回
+// message SC_DORM_RoomMove {
+//     ErrorCode ret = 1;
+// }
+// // MSG_CS_DORM_RoomStorage             = 30807;  //  房间收纳
+// message CS_DORM_RoomStorage {
+//     int32 houseId = 1;
+//     uint32 pos = 2;
+// }
+// // MSG_SC_DORM_RoomStorage             = 30808;  //  房间收纳-返回
+// message SC_DORM_RoomStorage {
+//     ErrorCode ret = 1;
+// }
+// // MSG_CS_DORM_RoomInstallFromPrefab   = 30809;  //  从预制房安装
+// message CS_DORM_RoomInstallFromPrefab {
+//     uint32 id = 1; // prefab id
+//     int32 houseId = 2;
+//     uint32 pos = 3;
+// } 
+// // MSG_SC_DORM_RoomInstallFromPrefab   = 30810;  //  从预制房安装-返回
+// message SC_DORM_RoomInstallFromPrefab {
+//     ErrorCode ret = 1; 
+// }
+// MSG_CS_DORM_RoomDecomposition       = 30811;  //  房间分解
+message CS_DORM_RoomDecomposition {
+    int32 houseId = 1;
+    uint32 param = 2;
+    bool pos = 3; // true 从原地图分解, false 从预制分解
+}
+// MSG_SC_DORM_RoomDecomposition       = 30812;  //  房间分解-返回
+message SC_DORM_RoomDecomposition {
+    ErrorCode ret = 1;
+    PrefabUpdate data = 2;
+}
+// MSG_CS_DORM_DormPurchase            = 30813;  //  宿舍购买
+message CS_DORM_DormPurchase {
+    int32 houseId = 1;
+}
+// MSG_SC_DORM_DormPurchase            = 30814;  //  宿舍购买-返回
+message SC_DORM_DormPurchase {
+    ErrorCode ret = 1;
+}
+// MSG_CS_DORM_HouseEdit               = 30815;  //  宿舍编辑
+message CS_DORM_HouseEdit {
+    int32 houseId = 1;
+    message behavior {
+        bool store = 1; // true-收纳,false-移位
+        // 操作为移位时,参数为新坐标
+        uint32 param = 2;
+    }
+    map<uint32, behavior> posResult = 2; // 原地图上的房间结果 // key 坐标
+    map<uint32, uint32> newRoom = 3; // 从背包新增的房间 key-坐标, value-房间id
+    map<uint32, uint32> installPrefab = 4; // 操作预制件 key-预制id,value-坐标
+}
+// MSG_SC_DORM_HouseEdit               = 30816;  //  宿舍编辑-返回
+message SC_DORM_HouseEdit {
+    ErrorCode ret = 1;
+    PrefabUpdate data = 2;
+}
+// MSG_CS_DORM_GlobalDetail            = 30817;  //  宿舍全局数据
+message CS_DORM_GlobalDetail {
+}
+// MSG_SC_DORM_GlobalDetail            = 30818;  //  宿舍全局数据-返回
+message SC_DORM_GlobalDetail {
+    map<int32, proto_object.DormHouse> house = 1; // 宿舍id - 宿舍数据 接设置
+    map<uint32, proto_object.DormRoom> prefab = 2;
+    int32 comfort = 3;
+}
+// MSG_CS_DORM_RoomEdit                = 30819;  //  房间编辑
+message CS_DORM_RoomEdit {
+    int32 houseId = 1;
+    uint32 roomPos = 2;
+    repeated proto_object.DormRoomElem data = 3; // 数据
+}
+// MSG_SC_DORM_RoomEdit                = 30820;  //  房间编辑-返回
+message SC_DORM_RoomEdit {
+    ErrorCode ret = 1;
+}
+// MSG_CS_DORM_BindUnbindHero          = 30821;  //  角色绑定解绑操作
+message CS_DORM_BindUnbindHero {
+    uint32 heroId = 1; // 角色id
+    bool bindHero = 2; // true-绑定，false-解绑
+    int32 houseId = 3; // 宿舍id
+    uint32 roomPos = 4; // 房间坐标
+    int32 elemIdx = 5; // 房间内数据索引 0开始 repeated proto_object.DormRoomElem  这个的索引
+}
+// MSG_SC_DORM_BindUnbindHero          = 30822;  //  角色绑定解绑操作-返回
+message SC_DORM_BindUnbindHero {
+    ErrorCode ret = 1;
+}
+
+
+
+// MSG_CS_DUNGEON_STATIC_Detail               = 31171;  //  副本基础数据
+message CS_DUNGEON_STATIC_Detail {
+}
+// MSG_SC_DUNGEON_STATIC_Detail               = 31172;  //  副本基础数据
+message SC_DUNGEON_STATIC_Detail {
+    message elem {
+        map<uint32, uint32> data = 1; // key-副本id | value-今日挑战次数
+    } 
+    map<uint32, elem> dailyBattleTimes = 1; // key-模块功能id | value-每日挑战数据
+    map<uint32, uint32> totalBattleTimes = 3; // key 副本id value-历史挑战次数
+}
+
+
+
+
+
+//   MSG_CS_EFFECTOR_ResouceGenerator    = 30931;  //  资源产出详情
+message CS_EFFECTOR_ResourceGenerator {
+}
+//   MSG_SC_EFFECTOR_ResouceGenerator    = 30932;  //  资源产出详情-返回
+message SC_EFFECTOR_ResourceGenerator {
+    proto_object.ResourceGeneratorGroup detail = 1;
+}
+//   MSG_SC_EFFECTOR_RGSyncUpdateDiff    = 30933;  //  资源产出同步
+message SC_EFFECTOR_RGSyncUpdateDiff {
+    repeated proto_object.ResourceGeneratorBase update = 1;
+    map<uint64, bool> rgDelete = 2;
+    //自动产出资源
+    repeated proto_object.AutoResourceGeneratorBase autoRg = 3;
+    map<uint32, bool> argDelete = 4;
+}
+
+
+
+
+//   MSG_CS_ENDLESS_Detail = 31201; // 无尽模式-基础数据
+message CS_ENDLESS_Detail {}
+//   MSG_SC_ENDLESS_Detail = 31202; // 无尽模式-基础数据
+message SC_ENDLESS_Detail {
+    ErrorCode ret = 1;
+    proto_object.Endless data = 2;
+}
+//   MSG_SC_ENDLESS_SyncUpdateDiff = 31203; // 无尽模式-差异同步
+message SC_ENDLESS_SyncUpdateDiff {
+    map<uint32, bool> completed = 1; // 关卡id
+    map<uint32, uint32> processingUpdate = 2; // 关卡id-进度
+}
+
+
+
+
+message OverClock {
+    message elem {
+        uint32 id = 1;
+        uint32 param = 2; // 参数-目前只针对自选芯片
+    }
+    map<uint32, elem> data = 1;
+}
+
+//   // exploration
+//   MSG_CS_EXPLORATION_Start            = 30301;  //  探索开始
+message CS_EXPLORATION_Start {
+    uint32                                          dungeonId   = 1;
+    uint32                                          formId      = 2;
+    OverClock                                       ocChoice    = 3; // 超频选项 
+    uint32                                          moduleId    = 4; // 功能模块id
+}
+//   MSG_SC_EXPLORATION_Start            = 30302;  //  探索开始-返回
+message SC_EXPLORATION_Start {
+    ErrorCode                                       ret         = 1;
+    proto_object.EXPLORATION_Map_Detail             epMap       = 2;
+    proto_object.Exploration_Operator_Detail        epOp        = 3;  
+    proto_object.Exploration_Grid_Detail            epGrid      = 4;
+    proto_object.Exploration_Formation_Detail       epForm      = 5;
+    proto_object.EXPLORATION_NextMap_Brief          epNext      = 6;
+    proto_object.EXPLORATION_Backpack_Detail        epBackpack  = 7;
+    proto_object.BuffGroup                          epBuff      = 8;
+    proto_object.Exploration_Resident_Detail        epResident  = 9;
+}
+// MSG_CS_EXPLORATION_Detail           = 30311;  //  探索数据-全量同步
+message CS_EXPLORATION_Detail {
+}
+// MSG_SC_EXPLORATION_Detail           = 30312;  //  探索数据-全量同步--返回
+message SC_EXPLORATION_Detail {    
+    proto_object.EXPLORATION_Map_Detail         epMap       = 1;
+    proto_object.Exploration_Operator_Detail    epOp        = 2;  
+    proto_object.Exploration_Grid_Detail        epGrid      = 3;    
+    proto_object.Exploration_Formation_Detail   epForm      = 4;  
+    proto_object.EXPLORATION_NextMap_Brief      epNext      = 5;  
+    proto_object.EXPLORATION_Backpack_Detail    epBackpack  = 6; 
+    proto_object.BuffGroup                      epBuff      = 7;    
+    proto_object.Exploration_Resident_Detail    epResident  = 8;                        
+}
+// MSG_SC_EXPLORATION_SyncUpdateDiff   = 30306;  //  探索数据-差异同步
+message SC_EXPLORATION_SyncUpdateDiff {
+    proto_object.EXPLORATION_Map_Detail         epMap       = 1;
+    proto_object.Exploration_Operator_Detail    epOp        = 2;  
+    proto_object.Exploration_Grid_Detail        epGrid      = 3; 
+    proto_object.Exploration_Formation_Detail   epForm      = 4;
+    proto_object.EXPLORATION_NextMap_Brief      epNext      = 5;
+    proto_object.EXPLORATION_Backpack_Detail    epBackpack  = 6;
+    proto_object.BuffGroup                      epBuff      = 7;
+    proto_object.Exploration_Resident_Detail    epResident  = 8;  
+}
+//   MSG_CS_EXPLORATION_Select           = 30304;  //  选择
+message CS_EXPLORATION_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_Select           = 30305;  //  选择-返回
+message SC_EXPLORATION_Select {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_NextFloor        = 30309;  //  下一层
+message CS_EXPLORATION_NextFloor {
+    uint32                                          id          = 1;        // brief中标识id
+}
+// MSG_SC_EXPLORATION_NextFloor        = 30310;  //  下一层-返回
+message SC_EXPLORATION_NextFloor {
+    ErrorCode                                       ret         = 1;
+}
+
+message ExplorationSettleReward {
+    uint32 exp = 1; // 角色经验
+    uint32 intimacy = 2; // 亲密度
+    uint32 cstExp = 3; // 指挥官技能树经验
+    uint32 exByte = 4; // 效能转换的比特
+    uint32 eplGold = 5; //缓存币
+}
+
+// MSG_CS_EXPLORATION_Settle           = 30309;  //  结算
+message CS_EXPLORATION_Settle {
+    uint32                                          position    = 1; //row << 16 | col;
+    bool costumeStm = 2; // 仅针对失败结算 true=消耗对应体力，获取奖励 false=扣除1点体力，离开
+}
+// MSG_SC_EXPLORATION_Settle           = 30310;  //  结算-返回
+message SC_EXPLORATION_Settle {
+    ErrorCode                                       ret         = 1;
+    // map<uint32, uint32> rewardsRecord = 2; // 物品记录 key-物品id | value-物品数量 --废弃
+    // map<uint32, uint32> back = 3; // 返还 -- 废弃
+    ExplorationSettleReward rewards = 4;
+}
+
+// MSG_CS_EXPLORATION_RewardsShow      = 30319;  //  失败奖励预览
+message CS_EXPLORATION_RewardsShow {}
+// MSG_SC_EXPLORATION_RewardsShow      = 30320;  //  失败奖励预览-返回
+message SC_EXPLORATION_RewardsShow {
+    ErrorCode                                       ret         = 1;
+    ExplorationSettleReward rewards = 2;
+}
+
+// MSG_CS_EXPLORATION_FreshFromation   = 30313;  //  调整编队
+message CS_EXPLORATION_FreshFromation {
+    map<uint32, uint32>                             data        = 1; // key-角色|val-位置
+}
+// MSG_SC_EXPLORATION_FreshFromation   = 30314;  //  调整编队-返回
+message SC_EXPLORATION_FreshFromation {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_SettleFloor      = 30317;  //  结算层 --后续废弃
+message CS_EXPLORATION_SettleFloor {
+    uint32                                          position    = 1; //row << 16 | col; 
+}
+// MSG_SC_EXPLORATION_SettleFloor      = 30318;  //  结算层-返回 --后续废弃
+message SC_EXPLORATION_SettleFloor {
+    ErrorCode                                       ret         = 1;
+    map<uint32, uint32> rewardsRecord = 2; // 物品记录 key-物品id | value-物品数量
+}
+
+//   // battle room
+//   MSG_CS_EXPLORATION_BATTLE_Start     = 30321;  //  战斗房发起战斗
+message CS_EXPLORATION_BATTLE_Start  {
+    uint32                                          position    = 1; //row << 16 | col;
+    map<uint32, uint32>                             data        = 2; // key-角色|val-位置
+}
+//   MSG_SC_EXPLORATION_BATTLE_Start     = 30322;  //  战斗房发起战斗-返回
+message SC_EXPLORATION_BATTLE_Start {
+    ErrorCode                                       ret         = 1;
+    // 预分配奖励 todo
+}
+//   MSG_CS_EXPLORATION_BATTLE_Settle    = 30323;  //  战斗房发起结算
+message CS_EXPLORATION_BATTLE_Settle {
+    uint32                                          position    = 1; //row << 16 | col;
+    enum battleSettleResult {
+        battleSettleResultNone                      = 0;
+        battleSettleResultWin                       = 1;
+        battleSettleResultLose                      = 2;
+        battleSettleResultTimeout                   = 3;
+    }
+    battleSettleResult                              result      = 2;
+    // 怪物数据 todo
+    message elem {
+        uint32                                      per         = 1; // 恢复后的血量per
+        uint32                                      injury      = 2; // 该场承伤
+        uint32                                      damage      = 4; // 该场造伤
+        bool                                        dead        = 3; // true-死亡
+        proto_object.BattleRecord                   record      = 5; // 记录
+    }
+    map<uint32, elem>                               monsterHpPer= 3; // 怪物血量万分比 key-坐标 val 怪物只需要血量
+    map<uint32, elem>                               charHpPer   = 4; // 角色血量万分比 key-角色id val
+    uint32                                          mp          = 5;
+    uint32                                          hmp         = 6;
+    bool                                            win         = 7; // true-赢
+}
+//   MSG_SC_EXPLORATION_BATTLE_Settle    = 30324;  //  战斗房发起结算-返回
+message SC_EXPLORATION_BATTLE_Settle {
+    ErrorCode                                       ret         = 1;
+    bool                                            over        = 2; // 当over为真时,表明探索立即终止
+    map<uint32, uint32> rewardsRecord = 3; // 物品记录 key-物品id | value-物品数量
+    map<uint32, uint32> back = 4; // 返还
+}
+//   MSG_CS_EXPLORATION_BATTLE_Restart   = 30325;  //  战斗房战斗内重新开始
+message CS_EXPLORATION_BATTLE_Restart {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_BATTLE_Restart   = 30326;  //  战斗房战斗内重新开始-返回
+message SC_EXPLORATION_BATTLE_Restart {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_BATTLE_Quit      = 30327;  //  战斗房主动退出
+message CS_EXPLORATION_BATTLE_Quit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_BATTLE_Quit      = 30328;  //  战斗房主动退出-返回
+message SC_EXPLORATION_BATTLE_Quit {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_BATTLE_ALGSelect = 30329;  //  战斗房结算后奖励领取
+message CS_EXPLORATION_BATTLE_ALGSelect {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; // 奖励索引 0开始
+}
+//   MSG_SC_EXPLORATION_BATTLE_ALGSelect = 30330;  //  战斗房结算后奖励领取-返回
+message SC_EXPLORATION_BATTLE_ALGSelect {
+    ErrorCode                                       ret         = 1;
+}
+
+// MSG_CS_EXPLORATION_BATTLE_Ambush    = 30331;  //  伏击开始
+message CS_EXPLORATION_BATTLE_Ambush {
+    uint32                                          position    = 1; //row << 16 | col;
+    map<uint32, uint32>                             data        = 2; // key-角色|val-位置
+}
+// MSG_SC_EXPLORATION_BATTLE_Ambush    = 30332;  //  伏击开始
+message SC_EXPLORATION_BATTLE_Ambush {
+    ErrorCode                                       ret         = 1;
+    uint32 alg = 2;
+}
+// MSG_CS_EXPLORATION_BATTLE_Stealth   = 30333;  //  潜行开始
+message CS_EXPLORATION_BATTLE_Stealth {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_BATTLE_Stealth   = 30334;  //  潜行开始
+message SC_EXPLORATION_BATTLE_Stealth {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_BATTLE_Focus     = 30335;  //  专注改判
+message CS_EXPLORATION_BATTLE_Focus {
+    uint32                                          position    = 1; //row << 16 | col;
+    bool ambush = 2; // true ambush false stealth
+}
+// MSG_SC_EXPLORATION_BATTLE_Focus     = 30336;  //  专注改判
+message SC_EXPLORATION_BATTLE_Focus {
+    ErrorCode                                       ret         = 1;
+    uint32 value = 2;
+}
+
+//   // item room  30341-30360
+//   MSG_CS_EXPLORATION_ITEM_Select      = 30341;  //  道具房选择
+message CS_EXPLORATION_ITEM_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //道具索引 0开始
+}
+//   MSG_SC_EXPLORATION_ITEM_Select      = 30342;  //  道具房选择-返回
+message SC_EXPLORATION_ITEM_Select {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_ITEM_Quit        = 30343;  //  道具房放弃
+message CS_EXPLORATION_ITEM_Quit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_ITEM_Quit        = 30344;  //  道具房放弃-返回
+message SC_EXPLORATION_ITEM_Quit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_ITEM_LockUnlock        = 30345;  //  道具房物品锁定-解锁操作
+message CS_EXPLORATION_ITEM_LockUnlock {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //道具索引 0开始
+}
+// MSG_SC_EXPLORATION_ITEM_LockUnlock        = 30346;  //  道具房物品锁定-解锁操作-返回
+message SC_EXPLORATION_ITEM_LockUnlock {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_ITEM_Fresh       = 30347;  //  道具房刷新
+message CS_EXPLORATION_ITEM_Fresh {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_ITEM_Fresh       = 30348;  //  道具房刷新-返回
+message SC_EXPLORATION_ITEM_Fresh {
+    ErrorCode                                       ret         = 1;
+}
+
+
+//   // store room 30361-30380
+//   MSG_CS_EXPLORATION_STORE_Purchase   = 30361;  //  商店房发起购买
+message CS_EXPLORATION_STORE_Purchase {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //商品索引 0开始  
+}
+//   MSG_SC_EXPLORATION_STORE_Purchase   = 30362;  //  商店房发起购买-返回
+message SC_EXPLORATION_STORE_Purchase {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_STORE_Quit       = 30363;  //  商店房退出
+message CS_EXPLORATION_STORE_Quit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+//   MSG_SC_EXPLORATION_STORE_Quit       = 30364;  //  商店房退出-返回
+message SC_EXPLORATION_STORE_Quit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_STORE_Sold       = 30365;  //  商店房售卖
+message CS_EXPLORATION_STORE_Sold {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32 algId = 2; // 函数id
+}
+// MSG_SC_EXPLORATION_STORE_Sold       = 30366;  //  商店房售卖
+message SC_EXPLORATION_STORE_Sold {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_STORE_Refresh    = 30367;  //  商店房刷新
+message CS_EXPLORATION_STORE_Refresh {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_STORE_Refresh    = 30368;  //  商店房刷新
+message SC_EXPLORATION_STORE_Refresh {
+    ErrorCode                                       ret         = 1;
+}
+//   // recover room 30381-30400
+//   MSG_CS_EXPLORATION_RECOVER_Select   = 30381;  //  恢复房选择
+message CS_EXPLORATION_RECOVER_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //事件索引 0开始  
+}
+//   MSG_SC_EXPLORATION_RECOVER_Select   = 30382;  //  恢复房选择-返回
+message SC_EXPLORATION_RECOVER_Select {
+    ErrorCode                                       ret         = 1;
+    map<uint32, uint32> result = 2; // 奖励 key-物品id | value-物品数量
+    map<uint32, uint32> buff = 3; // key-buffId | value-buff数量
+}
+
+//   // event room 30401-30421
+//   MSG_CS_EXPLORATION_EVENT_Select     = 30401;  //  事件房选择
+message CS_EXPLORATION_EVENT_Select {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32                                          idx         = 2; //事件索引 0开始 
+}
+//   MSG_SC_EXPLORATION_EVENT_Select     = 30402;  //  事件房选择-返回
+message SC_EXPLORATION_EVENT_Select {
+    ErrorCode                                       ret         = 1;
+    map<uint32, uint32> result = 2; // 奖励 key-物品id | value-物品数量
+    map<uint32, uint32> buff = 3; // key-buffId | value-buff数量
+}
+// MSG_CS_EXPLORATION_EVENT_Focus      = 30403;  //  事件房专注改判
+message CS_EXPLORATION_EVENT_Focus {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_EVENT_Focus      = 30404;  //  事件房专注改判
+message SC_EXPLORATION_EVENT_Focus {
+    ErrorCode                                       ret         = 1;
+    uint32 value = 2;// 改判后的值
+}
+// MSG_CS_EXPLORATION_EVENT_RandomConfirm      = 30405;  //  事件房随机逻辑确认
+message CS_EXPLORATION_EVENT_RandomConfirm {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_EVENT_RandomConfirm      = 30406;  //  事件房随机逻辑确认
+message SC_EXPLORATION_EVENT_RandomConfirm {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_EVENT_AlgUpgrade = 30407; // 事件房函数升级
+message CS_EXPLORATION_EVENT_AlgUpgrade {
+    uint32 position = 1; //row << 16 | col;
+    uint32 algId = 2; // 函数id
+}
+// MSG_SC_EXPLORATION_EVENT_AlgUpgrade = 30408; // 事件房函数升级
+message SC_EXPLORATION_EVENT_AlgUpgrade {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_EVENT_SpecifyExit = 30409; // 事件房特殊逻辑下退出
+message CS_EXPLORATION_EVENT_SpecifyExit {
+    uint32                                          position    = 1; //row << 16 | col; 
+}
+// MSG_SC_EXPLORATION_EVENT_SpecifyExit = 30410; // 事件房特殊逻辑下退出
+message SC_EXPLORATION_EVENT_SpecifyExit {
+    ErrorCode                                       ret         = 1;
+}
+//   // reconstitution room 30421-30440
+//   MSG_CS_EXPLORATION_RECONSTITUTION_Reproduction  = 30421;  //  重构房-复制
+message CS_EXPLORATION_RECONSTITUTION_Reproduction {
+    uint32                                          position    = 1; //row << 16 | col;  
+    message elem {
+        uint32                                      algId       = 1;
+        uint32                                      ch          = 2; // 角色id，0作为全局芯片 
+    }
+    elem                                            alg         = 2; // 函数
+    uint32                                          heroId      = 3; // 角色id
+}
+//   MSG_SC_EXPLORATION_RECONSTITUTION_Reproduction  = 30422;  //  重构房-复制-返回
+message SC_EXPLORATION_RECONSTITUTION_Reproduction {
+    ErrorCode                                       ret         = 1;
+}
+//   MSG_CS_EXPLORATION_RECONSTITUTION_Fusion        = 30423;  //  重构房-融合
+message CS_EXPLORATION_RECONSTITUTION_Fusion {
+    uint32                                          position    = 1; //row << 16 | col;  
+    message elem {
+        uint32                                      algId       = 1;
+        uint32                                      ch          = 2; // 角色id，0作为全局芯片 
+    }
+    repeated elem                                   alg         = 2; // 函数                                
+}
+//   MSG_SC_EXPLORATION_RECONSTITUTION_Fusion        = 30424;  //  重构房-融合-返回
+message SC_EXPLORATION_RECONSTITUTION_Fusion {
+    ErrorCode                                       ret         = 1;
+    uint32                                          alg         = 2; // alg=0即为空
+}
+//   MSG_CS_EXPLORATION_RECONSTITUTION_Reconstitution= 30425;  //  重构房-重构
+message CS_EXPLORATION_RECONSTITUTION_Reconstitution {
+    uint32                                          position    = 1; //row << 16 | col;  
+    message elem {
+        uint32                                      algId       = 1;
+        uint32                                      ch          = 2; // 角色id，0作为全局芯片 
+    }
+    elem                                            alg         = 2; // 函数
+}
+//   MSG_SC_EXPLORATION_RECONSTITUTION_Reconstitution= 30426;  //  重构房-重构-返回
+message SC_EXPLORATION_RECONSTITUTION_Reconstitution {
+    ErrorCode                                       ret         = 1;
+    uint32                                          alg         = 2; // alg=0即为空
+}
+// MSG_CS_EXPLORATION_RECONSTITUTION_Quit          = 30427;  //  重构房-放弃
+message CS_EXPLORATION_RECONSTITUTION_Quit {
+    uint32                                          position    = 1; //row << 16 | col; 
+}
+// MSG_SC_EXPLORATION_RECONSTITUTION_Quit          = 30428;  //  重构房-放弃-返回
+message SC_EXPLORATION_RECONSTITUTION_Quit {
+    ErrorCode                                       ret         = 1;
+}
+  // resident 
+  // store 30441-40450
+//   MSG_CS_EXPLORATION_RESIDENT_STORE_Purchase   = 30441;  //  常驻商店房发起购买
+message CS_EXPLORATION_RESIDENT_STORE_Purchase {
+    uint32                                          idx         = 2; //商品索引 0开始  
+}
+//   MSG_SC_EXPLORATION_RESIDENT_STORE_Purchase   = 30442;  //  常驻商店房发起购买-返回
+message SC_EXPLORATION_RESIDENT_STORE_Purchase {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_NtfServerEnter   = 30315;  //  通知服务器进入探索
+message CS_EXPLORATION_NtfServerEnter {
+
+}
+// MSG_SC_EXPLORATION_NtfServerEnter   = 30316;  //  通知服务器进入探索
+message SC_EXPLORATION_NtfServerEnter {
+    ErrorCode                                       ret         = 1;
+}
+
+//   // overclock
+//   MSG_CS_EXPLORATION_OVERCLOCK_Detail = 30451; // 请求超频数据
+message CS_EXPLORATION_OVERCLOCK_Detail {}
+//   MSG_SC_EXPLORATION_OVERCLOCK_Detail = 30452; // 请求超频数据
+message SC_EXPLORATION_OVERCLOCK_Detail {
+    proto_object.Overclock data = 1;
+}
+// MSG_CS_EXPLORATION_AlgUpperLimit_Sold = 30461; // 函数上限_售卖 
+message CS_EXPLORATION_AlgUpperLimit_Sold {
+    uint32                                          position    = 1; //row << 16 | col;
+    uint32 algId = 2; // 函数id
+}
+// MSG_SC_EXPLORATION_AlgUpperLimit_Sold = 30462; // 函数上限_售卖
+message SC_EXPLORATION_AlgUpperLimit_Sold {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_AlgUpperLimit_PurchaseLimit = 30463; // 函数上限_购买上限 
+message CS_EXPLORATION_AlgUpperLimit_PurchaseLimit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_AlgUpperLimit_PurchaseLimit = 30464; // 函数上限_购买上限
+message SC_EXPLORATION_AlgUpperLimit_PurchaseLimit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_AlgUpperLimit_Exit = 30465; // 函数上限_离开 
+message CS_EXPLORATION_AlgUpperLimit_Exit {
+    uint32                                          position    = 1; //row << 16 | col;
+}
+// MSG_SC_EXPLORATION_AlgUpperLimit_Exit = 30466; // 函数上限_离开
+message SC_EXPLORATION_AlgUpperLimit_Exit {
+    ErrorCode                                       ret         = 1;
+}
+// MSG_CS_EXPLORATION_CAMP_FETTER_USE = 30467; //使用羁绊技能
+message CS_EXPLORATION_CAMP_FETTER_USE {
+    uint64                                          uid = 1;//camp<<32|num
+}
+// MSG_SC_EXPLORATION_CAMP_FETTER_USE = 30468; //使用羁绊技能
+message SC_EXPLORATION_CAMP_FETTER_USE {
+    ErrorCode                                       ret = 1;
+}
+
+
+
+
+message LineGroup {
+    map<uint32, proto_object.LineBase> linesInfo = 1;
+}
+
+//  MSG_CS_FACTORY_Detail               = 30107;  //  流水线全部数据
+message CS_FACTORY_Detail {
+}
+//  MSG_SC_FACTORY_Detail               = 30108;  //  流水线全部数据-返回
+message SC_FACTORY_Detail {
+    ErrorCode                                   ret     = 1;
+    proto_csmsg.LineGroup                       detail  = 2;
+}
+//  MSG_CS_FACTORY_LineAccelerate          = 30101;  //  流水线加速
+message CS_FACTORY_LineAccelerate {
+    uint32                                      id          = 1;    //line Id
+}
+//  MSG_SC_FACTORY_LineAccelerate          = 30102;  //  流水线加速-返回
+message SC_FACTORY_LineAccelerate {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_FACTORY_LinePlaceOrder        = 30103;  //  流水线下单
+message CS_FACTORY_LinePlaceOrder {
+    uint32                                      id           = 1;    //line id
+    map<uint32, uint32>                         assistOrders = 2;    // 辅助订单(出现在生产订单中)<orderId, circle>
+    uint32                                      order        = 3;    //目标订单
+    uint32                                      orderNum     = 4;    //订单数量
+    repeated uint32                             helpList     = 5;    //帮助列表
+}
+//  MSG_SC_FACTORY_LinePlaceOrder         = 30104;  //  流水线下单-返回
+message SC_FACTORY_LinePlaceOrder {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_FACTORY_LineRewardPick  = 30105;  //  流水线产出领取
+message CS_FACTORY_LineRewardPick {
+    uint32                                      id          = 1; // lineId
+}
+//  MSG_SC_FACTORY_LineRewardPick  = 30106;  //  流水线产出领取-返回
+message SC_FACTORY_LineRewardPick {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_SC_FACTORY_SyncUpdateDiff  = 30109;  //  同步差异信息
+message SC_FACTORY_SyncUpdateDiff {
+    map<uint32, proto_object.LineBase> update = 1;
+    repeated uint32                    reset  = 2;
+}
+//  CS_FACTORY_DispatchHero  = 30110;  //  派遣人型
+message CS_FACTORY_DispatchHero {
+    uint32                                          lineId      = 1;
+    repeated uint32                                 helpList    = 2;
+}
+//  CS_FACTORY_DispatchHero  = 30111;  //  派遣人型-返回
+message SC_FACTORY_DispatchHero {
+    ErrorCode                                   ret         = 1;
+}
+
+
+
+
+
+//  GM
+//  MSG_CS_GM_GMOperation        = 30001;
+message CS_GM_GMOperation {
+    uint32          id      = 1;
+    string          param   = 2;
+  }
+  //  MSG_SC_GM_GMOperation       = 30002;
+  message SC_GM_GMOperation {
+    ErrorCode           ret      = 1;
+  }
+
+
+
+
+
+//  MSG_CS_HERO_AddExp           = 30031;  // 请求通过道具添加经验
+message CS_HERO_AddExp {
+    uint32                                      hero        = 1;
+    map<uint32, uint32>                         items       = 2;
+}
+//  MSG_SC_HERO_AddExp          = 30032;  // 返回结果
+message SC_HERO_AddExp {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_SC_HERO_SyncUpdateDiff          = 30033;  // 同步差异的英雄列表
+message SC_HERO_SyncUpdateDiff {
+    map<uint32, proto_object.Hero> update = 1;
+}
+
+//  MSG_CS_HERO_AddStar                 = 30034;  // 请求升星
+message CS_HERO_AddStar {
+    uint32                                      hero        = 1;
+}
+//  MSG_SC_HERO_AddStar                 = 30035;  // 请求升星-返回
+message SC_HERO_AddStar {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_HERO_SkillUpgrade            = 30036;  // 请求技能升级
+message CS_HERO_SkillUpgrade {
+    uint32                                      hero        = 1;
+    uint32                                      skill       = 2;
+}
+//  MSG_SC_HERO_SkillUpgrade            = 30037;  // 请求技能升级-返回
+message SC_HERO_SkillUpgrade {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_HERO_FormationFresh          = 30038;  //  请求编队更新
+message CS_HERO_FormationFresh {
+    uint32                                      id          = 1;
+    map<uint32, uint32>                         data        = 2;
+}
+//  MSG_SC_HERO_FormationFresh          = 30039;  //  请求编队更新-返回
+message SC_HERO_FormationFresh {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_HERO_FormationPickSkill      = 30040;  // 指挥官技能选择
+message CS_HERO_FormationPickSkill {
+    uint32                                      id          = 1;
+    map<uint32, uint32>                         userSkill   = 2;
+}
+//  MSG_SC_HERO_FormationPickSkill      = 30041;  // 指挥官技能选择-返回 
+message SC_HERO_FormationPickSkill {
+    ErrorCode                                   ret         = 1;
+}
+
+// MSG_CS_HERO_FormationNameFresh      = 30042;  // 编队名字更新
+message CS_HERO_FormationNameFresh {
+    uint32 id = 1;
+    string name = 2;
+}
+// MSG_SC_HERO_FormationNameFresh      = 30043;  // 编队名字更新
+message SC_HERO_FormationNameFresh {
+    ErrorCode                                   ret         = 1;
+}
+
+
+
+
+
+// MSG_CS_INTIMACY_Detail              = 31001;  //  亲密度详情
+message CS_INTIMACY_Detail {
+}
+// MSG_SC_INTIMACY_Detail              = 31002;  //  亲密度详情-返回
+message SC_INTIMACY_Detail {
+    map<uint32, proto_object.IntimacyHeroElem> heroIntimacy = 1;
+}
+// MSG_CS_INTIMACY_Presentation        = 31003;  //  赠礼
+message CS_INTIMACY_Presentation {
+    uint32 heroId = 1;
+    map<uint32, uint32> data = 2;
+}
+// MSG_SC_INTIMACY_Presentation        = 31004;  //  赠礼-返回
+message SC_INTIMACY_Presentation {
+    ErrorCode ret = 1;
+}
+// MSG_CS_INTIMACY_UpgradeLine         = 31005;  //  亲密度养成线升级
+message CS_INTIMACY_UpgradeLine {
+    uint32 heroId = 1;
+    uint32 lineId = 2;
+}
+// MSG_SC_INTIMACY_UpgradeLine         = 31006;  //  亲密度养成线升级-返回
+message SC_INTIMACY_UpgradeLine {
+    ErrorCode ret = 1;
+}
+
+
+
+
+message LotteryElem {
+    uint32                            item        = 1;
+    uint32                            num         = 2;
+    bool firstReward = 3; // 首次奖励
+  }
+  // lottery
+  //  MSG_CS_LOTTERY_ExecOnce             = 30051;  //  单抽
+  message CS_LOTTERY_ExecOnce {
+    uint32                            pool        = 1;
+  }
+  //  MSG_SC_LOTTERY_ExecOnce             = 30052;  //  单抽-返回
+  message SC_LOTTERY_ExecOnce {
+    ErrorCode                         ret         = 1;
+    LotteryElem                       elem        = 2;
+  }
+  //  MSG_CS_LOTTERY_ExecTen              = 30053;  //  十连
+  message  CS_LOTTERY_ExecTen {
+    uint32                            pool        = 1;
+  }
+  //  MSG_SC_LOTTERY_ExecTen              = 30054;  //  十连-返回
+  message  SC_LOTTERY_ExecTen {
+    ErrorCode                         ret         = 1;
+    repeated  LotteryElem             elem        = 2;
+  } 
+
+
+
+
+// MSG_SC_MAIL_Notify                  = 30601;  //  新邮件通知
+message SC_MAIL_Notify {
+}
+// MSG_CS_MAIL_Fetch                   = 30602;  //  仅针对30601前提下发起
+message CS_MAIL_Fetch {
+}
+// MSG_SC_MAIL_Fetch                   = 30603;  //  仅针对30601前提下发起-返回
+message SC_MAIL_Fetch {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_Read                    = 30604;  //  单邮件阅读
+message CS_MAIL_Read {
+    uint64                                      uid         = 1;
+}
+// MSG_SC_MAIL_Read                    = 30605;  //  单邮件阅读-返回
+message SC_MAIL_Read {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_ReceiveAttachment       = 30606;  //  单邮件附件领取
+message CS_MAIL_ReceiveAttachment {
+    uint64                                      uid         = 1;
+}
+// MSG_SC_MAIL_ReceiveAttachment       = 30607;  //  单邮件附件领取-返回
+message SC_MAIL_ReceiveAttachment {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_Delete                  = 30608;  //  单邮件删除
+message CS_MAIL_Delete {
+    uint64                                      uid         = 1;
+}
+// MSG_SC_MAIL_Delete                  = 30609;  //  单邮件删除-返回
+message SC_MAIL_Delete  {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_CS_MAIL_OneClickPickUp          = 30610;  //  邮件一键领取
+message CS_MAIL_OneClickPickUp {
+}
+// MSG_SC_MAIL_OneClickPickUp          = 30611;  //  邮件一键领取-返回
+message SC_MAIL_OneClickPickUp {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_SC_MAIL_SyncUpdateDiff          = 30612;  //  邮件差异更新
+message SC_MAIL_SyncUpdateDiff {
+    map<uint64, proto_object.MailDetail>        update      = 1;
+    map<uint64, bool>                           delete      = 2;
+}
+
+// MSG_CS_MAIL_Detail                  = 30613;  //  请求邮箱数据-登录请求
+message CS_MAIL_Detail {
+}
+// MSG_SC_MAIL_Detail                  = 30614;  //  请求邮箱数据-登录请求-返回
+message SC_MAIL_Detail  {
+    map<uint64, proto_object.MailDetail>        data        = 1;
+}
+// MSG_CS_MAIL_OneKeyDelete            = 30615;  //  邮件一键删除已读
+message CS_MAIL_OneKeyDelete {
+
+}
+// MSG_SC_MAIL_OneKeyDelete            = 30616;  //  邮件一键删除已读-返回
+message SC_MAIL_OneKeyDelete {
+    ErrorCode                                   ret         = 1;
+}
+
+
+//import "message/error_code.proto";
+
+
+message BattlePosition {
+    uint32      x   = 1;
+    uint32      z   = 2;
+}
+
+message Monster {
+    uint32                      monsterId       = 1;
+    uint32                      level           = 2;
+    repeated uint32             skillList       = 3;
+    map<uint32, uint32>         attr            = 4;
+    BattlePosition              position        = 5;
+    uint32                      exp             = 6;
+}
+
+message MonsterGroup {
+    repeated Monster            data            = 1;               
+}
+
+
+
+
+
+
+message ClientResource {
+  map<uint32, uint32>         currency      = 1;
+  proto_object.Backpack       backpack      = 2;
+  // uint64                      globalExp     = 3;
+}
+
+message QuestData {
+  map<uint32, bool> mainLineQuest = 1; // key-任务id
+}
+
+/////////// 主角的基本数据推送
+//  MSG_SC_SyncUserData   = 10005;
+message SC_SyncUserData {
+  proto_object.Function       function      = 1;
+  proto_object.HeroGroup      heroGroup     = 2;
+  ClientResource              resource      = 3;
+  proto_object.QuestGroup     questGroup    = 4;
+  proto_object.UserBase       userBase      = 5;
+  proto_object.AvgGroup       avg = 6; 
+  QuestData quest = 7;
+  proto_object.MonsterAtlas monsterAtlas = 8;
+  GlobalLogic logic = 9; // 全局逻辑  --只针对客户端无法获取到logic的模块
+}
+
+message ResourceCurrencyDiff {
+  map<uint32, uint64>               data      = 1;  //  货币id-数量
+}
+message ResourceBackpackDiff {
+  map<uint32, proto_object.Item>    updates   = 1;
+  map<uint32, bool>                 deletes   = 2;
+}
+message ResourceLineResourceDiff {
+  map<uint32, uint32>               data      = 2;  //  原料id-数量
+}
+message ResourceGlobalExpDiff {
+  uint64                            data      = 1;
+}
+
+//  MSG_SC_RESOURCE_SyncUpdateDiff      = 30012;  //  同步资源（货币，背包道具，流水线原材料）差异
+message SC_RESOURCE_SyncUpdateDiff {
+  ResourceCurrencyDiff              currency      = 1;
+  ResourceBackpackDiff              backpack      = 2;
+  // ResourceGlobalExpDiff             globalExp     = 3;
+}
+
+// //  backpack
+// //  MSG_SC_BACKPACK_SyncUpdateDiff      = 30011;
+// message SC_BACKPACK_SyncUpdateDiff {
+//   map<uint32, proto_object.Item>    updates   = 1;
+//   map<uint32, bool>                 deletes   = 2;
+// }
+
+//  function
+//  MSG_SC_FUNCTION_SyncUpdateDiff      = 30021;
+message SC_FUNCTION_SyncUpdateDiff {
+  map<uint32, bool>     updates   = 1;  
+  map<uint32, bool>     deletes   = 2;  
+}
+
+message RewardCommonElem {
+  uint32                            id          = 1;
+  uint32                            num         = 2;
+  uint32                            stacking    = 3;
+}
+
+message RewardCommon {
+  repeated RewardCommonElem         data        = 1;
+}
+
+message UserLevelDiff {
+  uint32                            level       = 1;
+  uint32                            exp         = 2;
+}
+
+message UserStmDiff {
+  proto_object.Stamina              stm         = 1;
+}
+
+message UserSKillDiff {
+  map<uint32, uint32>               updates     = 1;
+  //  map<uint32, bool>                 deletes     = 2; 技能删除待定
+}
+
+//  MSG_SC_SyncUserBaseDiff             = 10006;
+message SC_SyncUserBaseDiff {
+  UserLevelDiff                     level       = 1;
+  UserStmDiff                       stm         = 2;
+  UserSKillDiff                     skill       = 3;
+}
+
+
+// MSG_CS_User_UserNameModify = 33301; // 用户修改名字
+message CS_User_UserNameModify {
+  string name = 1;
+}
+// MSG_SC_User_UserNameModify = 33302; // 用户修改名字
+message SC_User_UserNameModify {
+  ErrorCode ret = 1;
+}
+
+// MSG_CS_User_ModifyShowGirl = 33303; // 看板娘设置
+message CS_User_ModifyShowGirl {
+  uint32 id = 1;
+}
+// MSG_SC_User_ModifyShowGirl = 33304; // 看板娘设置
+message SC_User_ModifyShowGirl {
+  ErrorCode ret = 1;
+}
+
+// MSG_CS_User_ClientLastSectorMention = 33305; // 客户端上一次扇区聚焦提醒ID
+message CS_User_ClientLastSectorMention {
+  uint32 id = 1;
+}
+// MSG_SC_User_ClientLastSectorMention = 33306; // 客户端上一次扇区聚焦提醒ID
+message SC_User_ClientLastSectorMention {
+  ErrorCode ret = 1;
+}
+  // 引导
+  // MSG_CS_GUIDE_TriggerComplete = 33401; // 触发式引导完成
+  message CS_GUIDE_TriggerComplete {
+    uint32 id = 1;
+  }
+  // MSG_SC_GUIDE_TriggerComplete = 33402; // 触发式引导完成
+  message SC_GUIDE_TriggerComplete {
+    ErrorCode ret = 1;
+  }
+
+  // 通用过期时间
+  // MSG_CS_COUNTER_Detail = 33321; // 通用计数器数据
+  message CS_COUNTER_Detail {}
+  // MSG_SC_COUNTER_Detail = 33322; // 通用计数器数据
+  message SC_COUNTER_Detail {
+    ErrorCode ret = 1;
+    proto_object.CounterSeries data = 2;
+  }
+  // MSG_SC_COUNTER_SyncUpdateDiff = 33323; // 通用计数器差异更新
+  message SC_COUNTER_SyncUpdateDiff {
+    map<uint64, proto_object.CounterElem> update = 1;
+    map<uint64, bool> delete = 2;
+  }
+
+  message GlobalLogic {
+    message singleLogic {
+      repeated uint32 data = 1; // [logicId, param1, param2 ...] param 是可变参数
+    }
+    repeated singleLogic logic = 1;
+  }
+
+  // MSG_CS_User_SystemOverDay = 33307; // 客户端请求模块默认过天点 -- 上线不请求
+  message CS_User_SystemOverDay {}
+  // MSG_SC_User_SystemOverDay = 33308; // 客户端请求模块默认过天点 -- 差异返回
+  message SC_User_SystemOverDay {
+    ErrorCode ret = 1;
+  }
+
+    // // 扫荡
+    // MSG_CS_BLITZ_Blitz = 33331; // 扫荡
+    message CS_BLITZ_Blitz {
+      uint32 cnt = 1; // 次数
+      uint32 dungeonId = 2; // 副本id
+    }
+    // MSG_SC_BLITZ_Blitz = 33332; // 扫荡-返回
+    message SC_BLITZ_Blitz {
+      ErrorCode ret = 1;
+      repeated proto_object.CommonReward rewards = 2; // 奖励
+    }
+
+
+
+
+
+//  MSG_CS_QUEST_UpgradeSchedule         = 30231;  //  发起更新任务进度
+message CS_QUEST_UpgradeSchedule {
+    uint32                                      qusetId     = 1;
+    uint32                                      questStep   = 2;
+}
+//  MSG_SC_QUEST_UpgradeSchedule         = 30232;  //  发起更新任务进度-返回
+message SC_QUEST_UpgradeSchedule {
+    ErrorCode                                   ret         = 1;
+}
+//  MSG_CS_QUEST_CommitQuest             = 30233;  //  任务提交
+message CS_QUEST_CommitQuest  {
+    uint32                                      qusetId     = 1;
+}
+//  MSG_SC_QUEST_CommitQuest             = 30234;  //  任务提交-返回
+message SC_QUEST_CommitQuest {
+    ErrorCode                                   ret         = 1;
+}
+// MSG_SC_QUEST_SyncUpdateDiff          = 30235;  //  同步差异信息
+message SC_QUEST_SyncUpdateDiff {
+    map<uint32, proto_object.Quest>             update      = 1;
+    map<uint32, proto_object.QuestDeleteReason> delete      = 2;
+}
+
+//   // dailyQuest/weeklyQuest
+//   MSG_CS_QUESTPERIOD_Detail           = 30521;  //  日常周常数据
+message CS_QUESTPERIOD_Detail {
+}
+//   MSG_SC_QUESTPERIOD_Detail           = 30522;  //  日常周常数据-返回
+message SC_QUESTPERIOD_Detail {
+    ErrorCode                                   ret             = 1;
+    map<uint32, bool>                           dailyRewards    = 2; // 日活奖励标识 key 领取过的索引
+    map<uint32, bool>                           weeklyRewarsd   = 3; // 周常奖励标识 key 领取过的索引
+    repeated uint32 daily = 4; // 每日所有任务集合-无状态
+    repeated uint32 weekly = 5; // 每周所有任务集合-无状态
+}
+//   MSG_CS_QUESTPERIOD_RewardPicked     = 30523;  //  日常周常活跃奖励领取
+message CS_QUESTPERIOD_RewardPicked {
+    uint32                                      cat             = 1; //类型 1-日常，2-周常
+    uint32                                      idx             = 2;
+}
+//   MSG_SC_QUESTPERIOD_RewardPicked     = 30524;  //  日常周常活跃奖励领取-返回
+message SC_QUESTPERIOD_RewardPicked {
+    ErrorCode                                   ret             = 1;
+}
+
+
+
+
+//  MSG_CS_SECTOR_Achievement           = 30271;  //  成就数据
+message CS_SECTOR_Achievement {
+}
+//  MSG_SC_SECTOR_Achievement           = 30272;  //  成就数据-返回
+message SC_SECTOR_Achievement {
+    ErrorCode                               ret         = 1;
+    map<uint32, proto_object.Sector>        sectorData  = 2;
+}
+
+
+//  MSG_CS_SECTOR_ChipSet               = 30273;  //  芯片集合
+message CS_SECTOR_ChipSet {
+}
+//  MSG_SC_SECTOR_ChipSet               = 30274;  //  芯片集合-返回
+message SC_SECTOR_ChipSet {
+    ErrorCode                               ret         = 1;
+    map<uint32, bool>                       data        = 2;
+}
+//  MSG_CS_SECTOR_PickReward            = 30275;  //  领取星数奖励
+message CS_SECTOR_PickReward {
+    uint32                                  sectorId    = 1;
+    uint32                                  id          = 2; // 打开宝箱id
+}
+//  MSG_SC_SECTOR_PickReward            = 30276;  //  领取星数奖励-返回
+message SC_SECTOR_PickReward {
+    ErrorCode                               ret         = 1;
+    uint32                                  sectorId    = 2;
+    uint32                                  id          = 3; // 打开宝箱id
+}
+
+// MSG_SC_SECTOR_SyncUpdateDiff        = 30277;  //  差异同步
+message SC_SECTOR_SyncUpdateDiff {
+    map<uint32, proto_object.DungeonStageState> update = 1;
+}
+// MSG_CS_SECTOR_Detail                = 30278;  //  扇区关卡数据
+message CS_SECTOR_Detail  {
+}
+// MSG_SC_SECTOR_Detail                = 30279;  //  扇区关卡数据-返回
+message SC_SECTOR_Detail {
+    map<uint32, proto_object.DungeonStageState> data = 1;
+}
+
+// MSG_CS_SECTOR_BattleFirstRewardPick = 30280;  //  扇区关卡首通奖励领取
+message CS_SECTOR_BattleFirstRewardPick {
+    uint32 id = 1;
+}
+// MSG_SC_SECTOR_BattleFirstRewardPick = 30281;  //  扇区关卡首通奖励领取-返回
+message SC_SECTOR_BattleFirstRewardPick {
+    ErrorCode                                       ret             = 1;
+    map<uint32, uint32>                             rewards         = 2; // 奖励，物品id-数量
+}
+
+
+
+
+// MSG_CS_STATION_Detail               = 30901;  //  角色入住详情
+message CS_STATION_Detail {
+}
+// MSG_SC_STATION_Detail               = 30902;  //  角色入住详情-返回
+message SC_STATION_Detail {
+    proto_object.Station data = 1;
+}
+// MSG_CS_STATION_Install              = 30903;  //  角色安装
+message CS_STATION_Install {
+    uint32 heroId = 1;
+    uint32 buildingId = 2;
+}
+// MSG_SC_STATION_Install              = 30904;  //  角色安装-返回
+message SC_STATION_Install {
+    ErrorCode ret = 1;
+}
+// MSG_CS_STATION_Uninstall            = 30905;  //  角色卸载
+message CS_STATION_Uninstall {
+    uint32 heroId = 1;
+}
+// MSG_SC_STATION_Uninstall            = 30906;  //  角色卸载-返回
+message SC_STATION_Uninstall {
+    ErrorCode ret = 1;
+}
+
+
+
+
+// message RefreshableStoreShelf {
+//     uint32                              shelfId     = 1;
+//     uint32                              itemId      = 2;
+//     uint32                              itemNum     = 3;
+//     uint32                              payType     = 4;
+//     uint32                              discount    = 5;
+//     bool                                soldOut     = 6;
+// }
+
+// message RefreshableStore {
+//     uint32                              storeId     = 1;
+//     map<uint32, RefreshableStoreShelf>  data        = 2;
+// }
+
+// message NormalStoreShelf {
+//     uint32                              shelfId     = 1;
+//     uint32                              itemId      = 2;
+//     uint32                              itemNum     = 3;
+//     uint32                              payType     = 4;
+//     uint32                              discount    = 5;
+//     uint32                              FreshType   = 6;
+//     uint32                              purchases   = 7; //购买次数
+// }
+
+// message NormalStore {
+//     uint32                              storeId     = 1;
+//     map<uint32, NormalStoreShelf>       data        = 2;
+// }
+
+message CommonStoreShelf {
+    uint32                              shelfId     = 1;
+    uint32                              itemId      = 2;
+    uint32                              itemNum     = 3;
+    uint32                              payType     = 4;
+    uint32                              discount    = 5;
+    uint32                              FreshType   = 6;
+    uint32                              purchases   = 7; //购买次数
+    int64                               freshTm     = 8; //仅处理非0数据
+}
+
+message CommonStore {
+    uint32                              storeId     = 1;
+    map<uint32, CommonStoreShelf>       data        = 2;
+    uint32                              freshCount  = 3;
+    uint32                              freeFreshTm = 4; // 下次的刷新时间,只针对刷新商店生效
+}
+
+//  MSG_CS_STORE_Detail                 = 30251;  //  商店详情
+message CS_STORE_Detail {
+    uint32                              storeId     = 1;
+}
+//  MSG_SC_STORE_Detail                 = 30252;  //  商店详情-返回
+message SC_STORE_Detail {
+    ErrorCode                           ret         = 1;
+    CommonStore                         data        = 2;
+}
+//  MSG_CS_STORE_Purchase               = 30253;  //  购买
+message CS_STORE_Purchase {
+    uint32                              storeId     = 1;
+    uint32                              shelfId     = 2;
+    uint32                              cnt         = 3; // 购买次数
+}
+//  MSG_SC_STORE_Purchase               = 30254;  //  购买-返回
+message SC_STORE_Purchase {
+    ErrorCode                           ret         = 1;
+    CommonStoreShelf                    data        = 2;
+}
+//  MSG_CS_STORE_Fresh                  = 30255;  //  刷新
+message CS_STORE_Fresh {
+    uint32                              storeId     = 1;
+}
+//  MSG_SC_STORE_Fresh                  = 30256;  //  刷新-返回
+message SC_STORE_Fresh {
+    ErrorCode                           ret         = 1;
+    CommonStore                         data        = 2;
+}
+
+
+
+
+message TraingingDetail {
+    map<uint32, proto_object.TrainingSlotBase>                  data    = 1;
+}
+//  MSG_CS_TRAINING_SlotHero            = 30211;  //  插入角色
+message CS_TRAINING_SlotHero {
+    uint32                                                      heroId  = 1;    //  角色id
+    uint32                                                      slotIdx = 2;    //  槽位
+    uint32                                                      effType = 3;    //  效率类型
+}
+//  MSG_SC_TRAINING_SlotHero            = 30212;  //  插入角色-返回
+message SC_TRAINING_SlotHero {
+    ErrorCode                                                   ret     = 1;
+    TraingingDetail                                             detail  = 2;
+}
+//  MSG_CS_TRAINING_Settle              = 30213;  //  结算
+message CS_TRAINING_Settle {
+    uint32                                                      slotIdx = 1;    //  槽位
+}
+//  MSG_SC_TRAINING_Settle              = 30214;  //  结算-返回
+message SC_TRAINING_Settle {
+    ErrorCode                                                   ret     = 1;
+    TraingingDetail                                             detail  = 2;
+    uint32                                                      overflow= 3;    //  溢出
+    uint32                                                      refund  = 4;    //  返还
+    uint32                                                      realExp = 5;    //  后续删除
+}
+//  MSG_CS_TRAINING_Detail              = 30215;  //  训练场数据
+message CS_TRAINING_Detail {
+
+}
+//  MSG_SC_TRAINING_Detail              = 30216;  //  训练场数据-返回
+message SC_TRAINING_Detail {
+    TraingingDetail                                             detail  = 1;
+}

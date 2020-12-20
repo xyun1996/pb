@@ -1,0 +1,1115 @@
+syntax="proto3";
+option go_package="/proto/proto_object";
+package proto_object;
+
+
+
+message Achievement {
+    map<uint32, bool>           levelRewradsPicked      = 1; // key对应等级的奖励
+    map<uint32, int64>          questFinishedRecords    = 2; // 成就完成数据 key-成就id value-完成时间
+}
+
+
+
+message ArithmeticElem {
+    uint64 uid  = 1;    // cfgId << 32 | hashid
+    // message attrElem {
+    //     // uint32  id = 1; // 属性id // ****废弃****
+    //     // uint32  value = 2; // ****废弃****
+    //     uint32  cfgId = 3; // 算法属性库id
+    // }
+    // repeated attrElem attr  = 2;
+    uint32 mainAttrCfgId = 2; // 算法属性库id
+    message affixElem {
+        uint32 id  = 1; // 词条id
+        uint32 quality = 2; // 1-4
+        // uint32 value = 3;// ****废弃****
+        uint32 level = 4; // 等级
+        uint32 exp = 5; //经验
+        bool lock = 6; // 上锁标记
+    }
+    repeated affixElem affix   = 3;
+    message bindInfoElem {
+        uint32 id = 1; //   hero id 
+        uint32 idx = 2; //  slot id
+        int32 grid = 3; // grid id
+    }
+    bindInfoElem   bindInfo   = 4; 
+    bool lockUnlock = 5; // true = lock
+    int64 ts = 6; // 入手时间戳
+}
+
+message ArithmeticSlotElem {
+    // message elem {
+    //     uint32 lv = 1;
+    //     uint32 exp = 2;
+    // }
+    // map<uint32, elem> slots = 1;
+    
+    // 没有数据，默认为空，需要前端自己绑定1级数据
+    map<uint32, uint32> slots = 1; // key-slot value-level
+}
+
+message ArithmeticAutoDecomposition {
+    bool trigger = 1;
+    message elem {
+        bool white = 1; // 白色勾选
+        bool blue = 2; // 蓝色勾选
+        bool purple= 3; // 紫色勾选
+        map<uint32, bool> orange = 4; // 橙色勾选 
+    }
+    map<uint32, elem> data = 2;  // 1-2-3-4
+}
+
+message ArithmeticReconsitution {
+    message reconsitutionElem {
+        uint32 id  = 1; // 词条id
+        uint32 quality = 2; // 1-4
+    }
+    uint64 uid = 1; // 当前作用的uid
+    map<uint32, reconsitutionElem> reco = 2; // key affix 的索引
+}
+
+message ArithmeticGroup {
+    map<uint64, ArithmeticElem> data    = 1; // 算法uid - 数据
+    map<uint32, ArithmeticSlotElem> slots = 2; // 角色id - 角色 ***废弃***
+    int32 failure = 3; // 失败次数
+    map<uint32, uint32> extra = 4;
+    ArithmeticAutoDecomposition autoDeco = 5;
+    message slotInfo {
+        uint32 lv = 1;
+        uint32 exp = 2;
+    }
+    map<uint32, slotInfo> slotLv = 6;
+    ArithmeticReconsitution  reconsitution = 7; // 重构保留
+}
+
+
+
+
+enum AttributionID {
+	AttributionIDNone = 0;    //
+	hp = 1;    ////生命值
+	maxHp = 2;    ////最大生命值
+	pow = 3;    ////攻击力
+	def = 4;    ////防御值
+	speed = 5;    ////速度值
+	hit = 6;    ////命中值
+	dodge = 7;    ////闪避值
+	move_speed = 8;    ////移动速度
+	crit = 9;    ////暴击值
+	crit_damage = 10;    ////暴击伤害倍率
+	lucky = 11;    ////幸运值
+	sunder = 12;    ////破甲值
+	true_damage = 13;    ////真实伤害值
+	resistance = 14;    ////抗性值
+	battle_hp_regen = 15;    ////战后生命恢复
+	attack_range = 16;    ////射程
+	life_steal = 17;    ////普攻吸血
+	spell_life_steal = 18;    ////技能吸血
+	damage_increase = 19;    ////伤害提高
+	injury_reduce = 20;    ////受伤减少
+	heal = 21;    ////治疗效果提高
+	treatment = 22;    ////受到治疗效果
+	cd_reduce = 23;    ////技能冷却缩短
+	return_damage = 24;    ////反伤
+	hp_regen = 25;    ////每5秒回血能力
+	skill_intensity = 26;    ////算力
+	a9 = 27;    //
+	a10 = 28;    //
+	a11 = 29;    //
+	a12 = 30;    //
+	a13 = 31;    //
+	a14 = 32;    //
+	MaxProperty = 33;    ////最大属性数量
+	base_maxHp = 102;    //基础-最大生命值
+	base_pow = 103;    //基础-攻击力
+	base_def = 104;    //基础-防御值
+	base_speed = 105;    //基础-速度值
+	base_hit = 106;    //基础-命中值
+	base_dodge = 107;    //基础-闪避值
+	base_move_speed = 108;    //基础-移动速度
+	base_crit = 109;    //基础-暴击值
+	base_crit_damage = 110;    //基础-暴击伤害倍率
+	base_lucky = 111;    //基础-幸运值
+	base_sunder = 112;    //基础-破甲值
+	base_true_damage = 113;    //基础-真实伤害值
+	base_hp_regen = 115;    //基础-生命恢复
+	base_attack_range = 116;    //基础-射程
+	base_skill_intensity = 126;    //基础-算力
+	ratio_maxHp = 202;    //千分比-最大生命值
+	ratio_pow = 203;    //千分比-攻击力
+	ratio_def = 204;    //千分比-防御值
+	ratio_speed = 205;    //千分比-速度值
+	ratio_hit = 206;    //千分比-命中值
+	ratio_dodge = 207;    //千分比-闪避值
+	ratio_move_speed = 208;    //千分比-移动速度
+	ratio_crit = 209;    //千分比-暴击值
+	ratio_crit_damage = 210;    //千分比-暴击伤害倍率
+	ratio_lucky = 211;    //千分比-幸运值
+	ratio_sunder = 212;    //千分比-破甲值
+	ratio_true_damage = 213;    //千分比-真实伤害值
+	ratio_hp_regen = 215;    //千分比-生命恢复
+	ratio_attack_range = 216;    //千分比-射程
+	ratio_skill_intensity = 226;    //千分比-算力
+}
+
+
+
+message AvgGroup {
+    map<uint32, bool> data = 1;
+}
+
+
+
+
+message Item {
+	uint32 id     = 1; //id
+	uint32 count  = 2; //数量
+	uint32 sheet  = 3; //所属页签
+}
+
+message Backpack {
+	map<uint32, Item> data = 1; 	// key-物品id
+}
+
+
+
+
+message BuildingBase {
+    uint32                                      id              = 1; // 建筑配置id
+    uint32                                      level           = 2; // 建筑等级
+    BuildingState                               state           = 3; // 建筑状态
+    int32                                       x               = 4; // 坐标x
+    int32                                       y               = 5; // 坐标y
+    int64                                       over            = 6; // 结束时间戳
+    int32                                       area            = 7; // 所属区域
+    bool                                        fix             = 8; // 地图异常后需要重新编辑的标记
+}
+
+
+
+message BuildingGroup {
+    map<uint32, BuildingBase>                   data            = 1;
+}
+
+
+
+message CSTproficient {
+    uint32 id = 1; // 精通技能id
+    uint32 level = 2; // 精通技能等级
+}
+
+message CSTComposition {
+    repeated uint32 skillActive = 1; // 主动技能列表
+    repeated uint32 skillPassive = 2; // 被动技能列表
+    map<uint32, CSTproficient> skillProficient = 3; // 精通技能加点
+}
+
+message CSTSaving {
+    repeated uint32 skillActive = 1; // 主动技能列表
+    map<uint32, CSTproficient> skillProficient = 2; // 精通技能加点数据
+}
+
+message CommandSkillTree {
+    uint32 id = 1; // 树id
+    uint32 level = 2; // 树等级
+    uint32 exp = 3; // 树经验
+    CSTSaving saving = 4; // 废弃
+    map<uint32, CSTSaving> sheet = 5; // 保存页 key-页id | value-保存的数据
+}
+
+message CommandSkill {
+    map<uint32, CommandSkillTree> tree = 1; // key-树id | value-树
+    uint32 pLevel = 2; // 专精等级
+    uint32 pExp = 3; // 专精经验
+    uint32 selected = 4; // 废弃
+}
+
+
+
+message Counter {
+    uint32                      counterId   = 1;
+    uint32                      cat         = 2; 
+    uint32                      value       = 3;
+    int64                       since       = 4;
+}
+
+message CounterGroup {
+    map<uint32, Counter>        data        = 1;
+}
+
+message CounterElem {
+    uint32 moduleId = 1; // CounterModule
+    uint64 specifyId = 2; // 特殊id
+    uint32 times = 3; // 次数
+    int64 nextExpiredTm = 4; // 下次过期时间
+    //bool serverHold = 5; // 服务器持有的，不进入前端定时器队列，前端最多只做数据使用
+}
+
+message CounterSeries {
+    map<uint64, CounterElem> data = 1; // key -- CounterModule << 54 | spcifyId
+}
+
+enum CounterModule {
+    CounterModuleNone = 0;
+
+    CounterModuleDailyQuest = 1; // 日常任务 --specifyId 0
+    CounterModuleWeeklyQuest = 2; // 周常任务 --specifyId 0
+    CounterModuleDungeonModuleCount = 3; // 通用副本模块计数 -- specifyid 模块id
+    CounterModuleExplorationOverclock = 4; // 探索超频计数 --specifyid 0
+    CounterModuleGlobalDailyFlush = 5; // 游戏全局的唯一刷新 -- specifyId 0 游戏中周几唯一指定过期时间
+    // 小于 200  是进入进入前端定时器队列
+
+    CounterModuleSeperate = 200;
+
+    // 大于 200  是服务器持有的，不进入前端定时器队列，前端最多只做数据使用
+    CounterModuleStorePurchaseResetTimes = 201; // 商店购买刷新次数 --specifyId 商店id
+    CounterModuleStoreSystemReset = 202; // 商店系统刷新 --specifyId 商店id
+    CounterModuleStoreShelfPurchaseLimit = 203; // 商店货架限购刷新逻辑 --specifyId 商店id << 27 | 货架id
+    
+
+    CounterModuleLotteryFreeCd = 204; // 抽卡免费cd -- specifyid 抽卡活动id 
+    CounterModuleLotteryNum = 205; // 抽卡次数 -- specifyid 抽卡活动id 
+}    
+   
+
+
+
+enum FT_R {
+    R_0 = 0;
+    R_90 = 90;
+    R_180 = 180;
+    R_270 = 270;
+}
+
+message DormRoomElem {
+    int32 id = 1;
+    uint32 pos = 2; // x << 16 | y
+    FT_R r = 3;
+    uint32 param = 4; // 针对家具为绑定的角色id,针对饰品时为指定的墙id,默认1,2,3,4
+}
+
+message DormRoom {
+    int32 id = 1;
+    repeated DormRoomElem data = 2;
+}
+
+
+message DormHouse {
+    int32 id = 1;
+    map<uint32, DormRoom>   data = 2; // pos = (x + 8) << 16 | (y+8)
+}
+
+message DormGroup {
+    map<int32, DormHouse> data = 1; // 宿舍id - 宿舍数据 接设置
+    map<uint32, DormRoom> prefab = 2;
+    int32 comfort = 3; // 历史达到的最高舒适度
+    uint32 counter = 4;
+}
+
+
+
+
+// 副本历史挑战次数
+message DungeonCount {
+    map<uint32, uint32> count = 1; // key-副本id | value-通关次数
+}
+
+message DungeonDailyCount {
+    // proto_object.CounterGroup cg = 1; --废弃
+    message elem {
+        map<uint32, uint32> data = 1; // key-副本id | value-挑战次数
+    } 
+    map<uint32, elem> dailyCounter = 2; // key-模块功能id | value-每日挑战数据
+}
+
+message DungeonStatic {
+    DungeonCount totalCount = 1;
+    DungeonDailyCount dailyCount = 2;
+}
+
+message MonsterAtlas {
+    map<uint32, bool> data = 1;
+}
+
+
+
+
+// 由于产出多种资源，因此无法共享时间
+message ResourceGeneratorBase {
+    // uid = 功能开放id << 32 | 各模块具体逻辑id 
+    // 例：建筑模块 建筑功能id << 32 | 建筑id 
+    // 注意，该uid为交互唯一id，但并非逻辑唯一id
+    uint64                                      uid             = 1;    
+    uint32                                      itemId          = 2;    //资源id
+    int64                                       originalStartTm = 3;    //上次操作时间
+    int64                                       relativeStartTm = 4;    //真实计数开始时间
+    uint32                                      containNum      = 5;    //持有数量 * 100--进度条数据
+    uint32                                      extraNum        = 6;    //加速导致的数据
+    uint32                                      keepNum         = 7;    //直接持有的数据
+} 
+
+message AutoResourceGeneratorBase {
+    uint32  itemId  = 1; // 物品id
+    int64   startTm = 2; // 开始操作时间
+    uint32  frag    = 3; // 不满1的计算碎片                         
+}
+
+message ResourceGeneratorGroup {
+    repeated ResourceGeneratorBase              data            = 1;
+    map<uint32, AutoResourceGeneratorBase>      autoResData     = 2; // 自动产生的道具
+}
+
+message Effector {
+    ResourceGeneratorGroup rg = 1; 
+}
+
+
+
+enum BuildingState {
+    BuildingStateNone               = 0;
+    BuildingStateCreate             = 1; // 创建
+    BuildingStateNormal             = 2; // 正常
+    BuildingStateUpgrade            = 3; // 升级
+}
+ 
+enum LineState {
+    LineStateNone                   = 0;
+    LineStateRunning                = 1;    // 运行中
+    LineStateInDonwTime             = 2;    // 停机
+    LineStateOutputOver             = 3;    // 产出已满
+}
+
+enum QuestState {
+    QuestStateNone                   = 0;       
+    QuestStateReceived               = 1;    //  接收
+    QuestStateCompleted              = 2;    //  完成
+    QuestStateExpired                = 3;    //  过期--仅配置了消失时间的支线展示
+}
+
+enum QuestDeleteReason {
+    QuestDeleteReasonNone                       = 0;
+    QuestDeleteReasonCompleted                  = 1;    //完成后立即删除
+    QuestDeleteReasonCompletedShowOver          = 2;    //完成，展示结束后的删除
+    QuestDeleteReasonExpired                    = 3;    //过期后立即删除
+    QuestDeleteReasonExpiredShowOver            = 4;    //过期，展示结束后的删除
+}
+
+enum DungeonStageState {
+    DungeonStageStateNone                       = 0;
+    DungeonStageStateCompleted                  = 1;    //完成，但没有领取奖励
+    DungeonStageStatePicked                     = 2;    //完成且领取了奖励
+}
+
+enum ExplorationCurGridState {
+    ExplorationCurGridState_None                = 0;
+    
+    //
+    // normal selected --> (dropAlg)? --> over
+    // battle selected --> (algWaiting)? -->  (dropAlg)? --> over
+
+    ExplorationCurGridState_Secleted            = 1;    // 格子选中阶段
+    ExplorationCurGridState_Over                = 2;    // 当前各自逻辑完成
+    ExplorationCurGridState_HalfOver            = 3;    // 中场结束
+    ExplorationCurGridState_DropAlg             = 4;    // 函数溢出售卖
+
+    ExplorationCurGridStateBattleALGWaiting     = 11;   // 函数选择阶段
+    ExplorationCurGridStateBattleFailure        = 12;   // 战斗失败阶段
+}
+
+enum ReconstitutionOp {
+    ReconstitutionOpNone                        = 0;
+    ReconstitutionOpReProdution                 = 1;    // 复制
+    ReconstitutionOpFusion                      = 2;    // 融合
+    ReconstitutionOpReConstitution              = 3;    // 重构
+    ReconstitutionOpMax                         = 4;  
+}
+
+enum StatisticResident {
+    StatisticResidentNone = 0;
+}
+
+enum BattleDungeonCat {
+    BattleDungeonCatNone = 0;
+    BattleDungeonCatExploration = 1;
+    BattleDungeonCatFrag = 2;
+    BattleDungeonCatMaterial = 3;
+    BattleDungeonCatMax = 4;
+}
+
+
+
+
+message BattleRecord {
+    enum recordIdx {
+        recordIdxNone = 0;
+        recordIdxInjury = 1;
+        recordIdxdamage = 2;
+        recordIdxHeroSelf = 3;
+        recordIdxHeroOther = 4;
+        recordIdxMax = 5;
+    }
+    repeated uint32 record = 1; // 长度为recordIdxMax的数组
+}
+
+// 怪物单位数据
+message EplGridMonsterElem {
+    uint32                                  coordination = 1;   // 战场地图坐标 row << 16 | col
+    uint32                                  templateId   = 2;
+    uint32                                  level        = 3;
+    map<uint32, uint32>                     skillGroup   = 4;
+    map<uint32, uint32>                     attr         = 5;
+    uint32                                  exp          = 6;
+    uint32                                  hpPer        = 7;   // 当前血量万分比
+    uint32                                  cat          = 8;   // 
+}
+
+// 怪物格子数据
+message EplGridMonsterGroup {
+    uint32                                  coordination    = 1;   //  探索地图坐标 row << 16 | col
+    map<uint32, EplGridMonsterElem>         data            = 2;   //  key-战场地图坐标
+    repeated uint32                         monsterAlg      = 3;   //  怪物自身
+    // 奖励
+    CommonReward                            rewards         = 4;    //  奖励
+    uint32                                  algShow         = 5;    //  预览展示
+    repeated uint32                         alg             = 6;    //  战斗成功后填充
+    uint32                                  battleId        = 7;    //  战斗组
+    uint32                                  dungeonType     = 8;    // 副本类型
+    uint32                                  ambush          = 9;    // 伏击   ((职业id << 4 | 判定次数) << 16) | 判定数据 判定数据为十进制进制数据 111 121 101 000 0-表示失败 1-表示普通成功 2-表示幸运成功  
+    uint32                                  stealth         = 10;   // 潜行   (职业id << 4 | 判定次数) << 16) | 判定数据 判定数据为十进制进制数据 111 121 101 000 0-表示失败 1-表示普通成功 2-表示幸运成功  
+    map<uint32, uint32>                     grids           = 11;   // key-坐标 | val-格子id key row << 16 | col
+}
+
+// 道具房数据
+
+message EplGridItem {
+    uint32                                  coordination    = 1;   //  探索地图坐标 row << 16 | col
+    uint32                                  boxId           = 2;
+    uint32                                  logic           = 3;   //  宝箱逻辑类型
+    uint32                                  freshCnt        = 4;   //  刷新次数
+    message Alg {
+        uint32                              id              = 1;
+        enum algState {
+            algStateNone        = 0;
+            algStateSelected    = 1;
+        }
+        algState                            state           = 2;
+    }                            
+    repeated Alg                            data            = 5;
+}
+
+message EplGridStore {
+    uint32                                  coordination    = 1;   //  探索地图坐标 row << 16 | col    
+    message elem {
+        uint32                              id              = 1;
+        uint32                              discount        = 2;
+        bool                                saled           = 3;
+    }     
+    repeated elem                           data            = 2; 
+    uint32                                  currency        = 3;  
+    uint32                                  storeId         = 4; 
+    uint32                                  refreshTimes    = 5; // 商店刷新次数    
+    uint32 purchaseTimes = 6; // 购买次数
+    uint32 discCountLimitTimes = 7; // 折扣购买限购次数 0 表示没有限制
+    uint32 freeRefreshTimes = 8;    //免费刷新次数
+}
+
+message EplGridEvent {
+    uint32                                         coordination    = 1;
+    uint32                                         eventId         = 2;
+    // repeated uint32                                choice          = 3;
+    message ChoiceElem {
+        uint32 id = 1; // 事件id或者随机id
+        bool random = 2; // 是否是随机的--废弃
+        enum category {
+            categoryNone = 0;
+            categoryNormalEvent = 1;
+            categoryRandomEvent = 2;
+            categoryAlgUpgradeEvent = 3;
+            categoryRoomJumpEvent = 4;
+            categoryMax = 5;
+        }
+        category cat = 3;
+    }
+    repeated ChoiceElem data = 4;
+    uint32 selectedRandomId = 5; // 是否研究进入随机流程--废弃
+    uint32 judge = 6;    // --废弃
+    message ChoiceParam {
+        uint32 p1 = 1; // 选项索引。 从0开始
+        uint32 p2 = 2; // 随机逻辑-随机id       |  升级逻辑-id
+        uint32 p3 = 3; // 随机逻辑-判定         |  购买次数-当前次数
+        //判定 ((职业id << 4 | 判定次数) << 16) | 判定数据 判定数据为十进制进制数据 111 121 101 000 0-表示失败 1-表示普通成功 2-表示幸运成功 
+    } 
+    ChoiceParam param = 7;
+
+}
+
+message EplGridReconstitution {
+    uint32                                         coordination    = 1;  
+    map<uint32, uint32>                            record          = 2; // 操作次数记录      
+}
+
+// 可探索的各自预备数据
+message Exploration_Grid_Detail {
+    map<uint32, EplGridMonsterGroup>        monster         = 1;    // 普通怪物房，精英房，挑战房，boss房 key-position
+    map<uint32, EplGridItem>                item            = 2;    // 道具房 key-position
+    map<uint32, EplGridEvent>               evt             = 3;    // 事件房，恢复房 key-position
+    map<uint32, EplGridStore>               store           = 4;    // 商店房 key-position
+    map<uint32, EplGridReconstitution>      reconstitution  = 5;    // 重构房 key-position
+    message buffEffective {
+        map<uint32, uint32>                 data            = 1;    // 当前有效buff-只对当前房间生效 key-buffid
+    }
+    buffEffective                           buffData        = 6;
+}
+
+// 角色操作数据
+message Exploration_Operator_Detail {
+    uint32                                  curPostion      = 1; // 当前位置
+    ExplorationCurGridState                 state           = 2; // 当前节点状态
+    repeated uint32                         path            = 3; // 路径
+    uint32                                  idx             = 4; // 0开始
+    bool                                    canFloorOver    = 5; // 可结束
+    uint32                                  jumpCat         = 6; // 跳转房间类型
+    // 装饰器
+    message decoration {
+        enum decorationId {
+            decorationIdNone = 0;
+            decorationIdSaveMoney = 1; // 储蓄
+            decorationIdBanCommanderSkill = 2; // 禁用指挥官技能
+        }
+        decorationId id = 1;
+        // 存钱-按层清楚 id=1 arrParams 步数_钱总数_倍率 步数_钱总数_倍率 ...3个一组
+        // 屏蔽技能-按战斗轮次清楚 id=2 mapParams=屏蔽技能id|数战斗轮次
+        repeated uint32 arrParams = 2; // 
+        map<uint32, uint32> mapParams = 3;
+    }
+    map<uint32, decoration> deco = 7;
+}
+
+// 地图数据
+message EXPLORATION_Map_Detail {
+    uint32                                       dungeonId   = 1;
+    uint32                                       floorIdx    = 2; // 层索引 0 开始
+    map<uint32, uint32>                          data        = 3; // 当前层地图 key = row << 16 | col; value = 房间类型  a2 << 5| a1     用例: t = v >> ( 5 * idx) & 0b1111 if  0 == t 结束
+    map<uint32, bool>                            hidden      = 4; // 隐藏房间 key = row << 16 | col;
+    uint32                                       width       = 5;
+    uint32                                       depth       = 6; // 指中间层的深度 - 除去终始
+    uint32                                       floor       = 7; // 总层数
+    uint32                                       logic       = 8; // 地图逻辑类型
+    message lineGraph {
+        uint32 cat = 1; // 类型
+        uint32 mode = 2; // 模式 - 1正常-2隐藏 3正常显示boss 4 隐藏显示boss
+    }
+    map<uint32, lineGraph>                       lineData     = 9; // 线性地图数据 key = row << 16 | col;
+    uint32                                       moduleId     = 10; // 功能模块id
+    uint32                                       floorId      = 11; // 层id
+    uint32                                       discardId    = 12; // 函数上限逻辑id
+    repeated uint32 skeleton = 13; //仅后端使用
+ }
+
+
+
+ message EXPLORATION_NextMap_Brief {
+     message elem {
+         uint32                                     idx             = 1;         
+     }
+     map<uint32, elem>                              data            = 1; // key-自定义id，仅作标识用
+ }
+
+ message EXPLORATION_Backpack_Detail {
+     map<uint32, uint32>                            item            = 1;  // 探索道具
+     message alg {
+         map<uint32, uint32>                        data            = 1;  // 函数 key-id|val-数量
+     }
+     alg                                            global          = 2;  // 全局函数
+     map<uint32, alg>                               specify         = 3;  // 角色绑定的函数 key-角色|val-函数集合
+     alg                                            temporary       = 4;  // 临时函数
+     uint32 focusLimit = 5; // 专注点上限
+     message Alg {
+        map<uint64, uint32> alg = 1; // key=algid << 32 | heroId, heroId = 0 则表示通用
+        map<uint32, uint32> tmpAlg = 3; // 临时芯片
+        map<uint32, uint32> hiddenAlg = 4; // 隐藏芯片
+     }
+     Alg algData = 6;
+     uint32 algUpperLimit = 7; // 算法类型上限
+ }
+
+
+ message Exploration_Grid_Inner {
+     message alg {
+         repeated uint32                            data    = 1;
+     }
+     message monster {
+         uint32                                     roomId  = 1;
+         alg                                        data    = 2;
+         uint32 repeatCnt = 3;
+     }
+     // 房间准备时候就随好数据
+     map<uint32,monster>                            innerMonser     = 1;
+    //  map<uint32, uint32>                            rewardsRecord   = 2; // -- 废弃
+ }
+
+ message Exploration_Formation_Detail {
+     message elem {
+         uint32                                     id              = 1;
+         uint32                                     hpPer           = 2;    // 血量万分比
+         uint32                                     position        = 3;    // 默认都是0，自行适配
+         uint32                                     idx             = 4;    // 阵容索引序
+         uint32                                     damage          = 5;    // 累计伤害
+         BattleRecord                               record          = 6;    // 战斗数据记录
+     }
+     uint32                                         formId          = 1;    // 阵容id
+     map<uint32, elem>                              data            = 2;    // 角色数据  key-角色|val-角色数据 
+     bool                                           initial         = 3;    // true=初始布阵，false=历史记录    
+     uint32                                         mp              = 4;    // 指挥官技能条 
+     uint32                                         hmp             = 5;    // 角色全局能量条--废弃
+ }
+
+ message Exploration_Resident_Detail {
+     message storeElem {
+        message elem {
+            uint32                              id              = 1;
+            uint32                              discount        = 2;
+            bool                                saled           = 3;
+        }     
+        repeated elem                           data            = 2; 
+        uint32                                  currency        = 3;   
+     }
+     storeElem                                  store           = 1;
+ }
+
+ message ExplorationMiscKeep {
+     int32 valueFix = 1;
+     int32 monsterMaxHpModifyFix = 2;
+     uint32 levelFloorFix = 3;
+     bool rewardBan = 4;
+     algData alg = 5;
+     uint32 heroDieNum = 6;
+     int32 monsterPowModifyFix = 7;
+     int32 monsterSkillModifyFix = 8;
+ }
+ message algData {
+    map<uint64, uint32> alg =1;
+    map<uint32, uint32> tmp = 2;
+    map<uint32, uint32> hidden = 3;
+}
+
+
+
+message ExplorationFloorMap {
+    EXPLORATION_Map_Detail                  epMap           = 1;
+    Exploration_Operator_Detail             epOp            = 2;
+    Exploration_Grid_Detail                 epGrid          = 3;
+    Exploration_Grid_Inner                  epInner         = 4;
+    Exploration_Formation_Detail            epForm          = 5;
+    EXPLORATION_NextMap_Brief               epNext          = 6;
+    EXPLORATION_Backpack_Detail             epBackpack      = 7;
+    BuffGroup                               epBuff          = 8;
+    Exploration_Resident_Detail             epResident      = 9;
+    ExplorationMiscKeep misc = 10;
+    string version = 11; // 版本
+}
+
+
+
+message LineBase {
+    uint32                      id           = 1;    //line id
+    map<uint32,bool>            heroIds      = 2;    //人型帮助列表
+}
+
+
+message LineGroup {
+    map<uint32, LineBase> linesInfo = 1;
+    FactoryIntro          intro     = 2;
+}
+
+message FactoryIntro {
+    map<uint32,bool> lineOpenning = 1;  //开放的流水线
+}
+
+
+
+message Function {
+    map<uint32, bool>           data = 1;
+}     
+
+
+
+
+
+message HeroBase {
+    uint32                          id      = 1;
+    uint32                          level   = 2;
+    uint32                          exp     = 3;
+    uint32                          star    = 4;
+    uint32                          ts      = 5; //获取时的时间戳
+    uint32                          career  = 6; // 职业
+    uint32                          company = 7; // 企业
+}
+message HeroSkill {
+    // 技能ID-技能等级， 角色基础技能
+    map<uint32, uint32>             data    = 1;  
+}
+message HeroAttr {
+    // 属性ID-属性值
+    map<uint32, uint64>             data    = 1;
+}
+message Hero {
+    HeroBase                            basic   = 1; // 角色基础数据
+    HeroSkill                           skill   = 2; // 角色技能数据                 
+}
+
+message Formation {
+    uint32                          id          = 1;
+    map<uint32, uint32>             data        = 2; // 编队角色 key-编号|value-角色id
+    string                          name        = 3; 
+    map<uint32, uint32>             userSkill   = 4; // key-索引 | value-技能id       
+    message comandSkillSaving {      
+        uint32 treeId = 2; // 技能树id
+        CSTSaving saving = 3; // 技能树数据
+    }       
+    comandSkillSaving cst = 5;        
+}
+
+message HeroGroup {
+    map<uint32, Hero>                   hero        = 1; // 角色列表
+    map<uint32,Formation>               formation   = 2; // 编队信息
+}
+
+
+
+message IntimacyHeroElem {
+    uint32 heroId = 1; // 角色id
+    uint32 lv = 2; // 亲密度等级
+    uint32 exp = 3; // 亲密度经验
+    map<uint32, uint32> lineData = 4; // 养成线数据 key-线id | value-线等级
+    uint32 times = 5; // 出战次数
+}
+
+message Intimacy {
+    map<uint32, IntimacyHeroElem> heroIntimacy = 1; // key-角色id
+}
+
+
+
+message LotteryBase {
+    uint32                      total               = 1;    //  总次数
+    uint32                      seq                 = 2;    //  十连
+    uint32                      single              = 3;    //  单抽
+    uint32                      free                = 4;    //  免费单抽
+    uint32                      special             = 5;    //  大奖次数
+    uint32                      guarantee           = 6;    //  保底及以上次数
+    uint32                      specialMiss         = 7;    //  大奖错过次数
+    uint32                      guaranteeMiss       = 8;    //  保底错过次数
+    uint32                      freeTs              = 9;    //  下次免费
+    int64                       disappearTs         = 10;   //  活动结束时间
+}
+
+message Lottery {
+    map<uint32, LotteryBase>        data            = 1;
+}
+
+
+
+message MailInfo {
+    uint32                              code        = 1; // 邮件码 针对平台，填充了code就走配置，为0就走平台填充的数据
+    string                              senderName  = 2; // 发送人
+    string                              title       = 3; // 邮件标题
+    string                              content     = 4; // 邮件内容
+    int64                               created     = 5; // 创建时间   
+    int64                               effectiveTm = 6; // 生效时间
+}
+
+message MailAttachment {
+    // 后续再修正
+    map<uint32, uint32>                 data        = 1; // key-物品id | value-物品数量
+}
+
+message MailExpiredInfo {
+    int64                               duration    = 1; // 指定持续时间
+    int64                               expiredTm   = 2; // 指定过期时间点
+}
+
+message MailCondition {
+    message cond {
+        repeated uint64                 data        = 1;
+    }
+    repeated cond                       data        = 1;
+    bool                                onceCheck   = 2;
+}
+
+message MailDetail {
+    uint64                              uid         = 1;
+    MailInfo                            info        = 2;
+    MailAttachment                      att         = 3;
+    int64                              expiredTm   = 4;
+    enum Status {
+        Status_None         = 0;
+        Status_Read         = 1;
+        Status_Received     = 2;
+    }
+    Status                              status      = 5;
+}
+
+message MailBrief {
+    uint64                              uid         = 1; // 邮件唯一id --全局邮件系统控制生成
+    MailInfo                            info        = 2; // 邮件信息
+    MailAttachment                      att         = 3; // 附件
+    MailCondition                       cond        = 4; // 领取条件
+    MailExpiredInfo                     expired     = 5; // 过期信息
+}
+
+enum GlobalMailUidMark {
+    GlobalMailUidMarkNone = 0;
+    GlobalMailUidMarkIdx = 62;
+}
+
+message MailBox {
+    map<uint64, MailDetail>             data        = 1;
+    map<uint64, bool>                   invalid     = 2;
+    uint64 uidGenerator = 3; //0 != uid & (1 << 62)
+    repeated MailBrief offLine = 4; // 未处理的邮件
+    repeated uint64 mailList = 5;
+    uint64 opseq = 6; // 全局邮件操作序
+    message globalMail {
+        map<uint64, bool> staus = 1; // true-已领取|false-无效邮件
+    }
+}
+message MailSet {
+    map<uint64, MailBrief>          data        = 1;
+}
+message MailGlobal {
+    uint64 uidGenerator = 1; //0 != uid & (1 << 62)
+    MailSet                             global      = 2;
+}
+
+
+
+
+message Stamina {
+    uint32                  value       = 1; // 当前耐力
+    uint32                  recoveTm    = 2; // 上次计算回复的时间
+    uint32                  frag        = 3; // 不满一点体力的计算碎片   
+    uint32                  recoveSpeed = 4; // 缓存下次重新计算前的速度            
+}
+
+message UserSKill {
+    map<uint32, uint32>                 data    = 1; 
+}
+
+message UserBase {
+    uint32                              level       = 1;
+    uint32                              exp         = 2;
+    Stamina                             stm         = 3;    //废弃
+    UserSKill                           skill       = 4;     //---废弃
+    map<uint32, bool> triggerGuidance = 5; // 触发式引导
+    uint32                              showGirl    = 6; // 看板娘
+    uint32                              cliLastSecMent = 7; // 客户端上一次扇区聚焦提醒ID
+    uint32                              sectorExplorationSchedule = 8; // 主线探索进度 -- 仅服务器埋点记录使用
+    uint32                              guideSchedule = 9; // 引导进度 -- 仅服务器埋点记录使用
+    uint32                              mainQuestSchedule = 10; // 主线进度 -- 仅服务器埋点记录使用
+}
+
+message CommonReward {
+    message elem {
+        uint32                              id          = 1;
+        uint32                              num         = 2;
+        uint32                              stacking    = 3;  
+    }
+    repeated elem                           data        = 1;
+    map<uint32, int32>                      extra       = 2; // key-物品id value-物品数量
+}
+
+message BuffElem {
+    uint32  id = 1;
+    message expiredInfo {
+        int64   expireTm = 1; // 消逝时间 -1 表示不限时
+        int32   cnt = 2; // 剩余次数 -1 表示不限次
+        int32   durationLayer = 3; // 剩余层生效， 比如1当前层，2层， -1 所有层
+    }                         
+    expiredInfo info = 2;
+}
+
+message BuffLogicGroup {
+    uint32 logic = 1;
+    repeated BuffElem data = 2;
+}
+
+message BuffGroup {
+    map<uint32, BuffLogicGroup>     data        = 1; // key buff类型logic，value 该类型数据
+    map<uint64, uint32>             campFetter  = 2; // 企业羁绊 key camp<<32|num, value
+}
+
+// UserRealInfo 用来控制防沉迷的结构
+message UserRealInfo{
+    int64 create_tm = 1; // 创建时间
+    uint32 total_active_tm = 2; // 累计游戏时长
+    uint32 cur_active_tm = 3;    // 当日游戏时长
+    int64 last_check_tm = 4;  // 上次记录点
+    int64 last_login_tm = 5; // 上次登录时间
+    int64 last_offline_tm = 6; // 上次离线时间
+
+    message payDetail {
+        int32 total = 1; // 累计充值
+        int32 month = 2; // 月充值
+        int32 day = 3; // 日充值
+    }
+    payDetail pay = 7; // 充值数据
+    uint32 loginDaycount = 8;
+}
+
+message RoleBrief {
+    string name = 1; // 名字
+    uint64 id = 2; // ID
+    int32 timezone_offset = 3; // 时区
+    int64 timestamp = 4; // 
+    uint32 curActiveTime = 5; // curActiveTime 
+}
+
+
+
+message Overclock {
+    message elem {
+        uint32 id = 1; // 超频id
+        uint32 curFreeCnt = 2; // 当前免费第几次了
+        // int64 freshTm = 4; // 下次免费时间
+    }
+    map<uint32, elem> data = 1; // key-超频id
+}
+
+
+message QuestStep {
+    uint32                              stepIdx     = 1; // 阶段索引
+    uint32                              schedule    = 2; // 当前进度
+    uint32                              aim         = 3; // 目标进度
+}
+
+message Quest {
+    uint32                              id          = 1; // 任务id
+    map<uint32,QuestStep>               steps       = 2; // key 进度索引
+    QuestState                          state       = 3; // 当前状态
+    uint32                              acceptedTm  = 4; // 接受时间
+    uint32                              expiredTm   = 5; // 过期时间
+    uint32                              disappearTm = 6; // 消逝时间
+}
+
+message QuestGroup {
+    map<uint32, Quest>                  received    = 1; // key-任务id
+}
+
+
+message QuestPeriod {
+    repeated uint32                     daily           =   1; // 完成的日常任务id
+    repeated uint32                     weekly          =   2; // 完成的周常任务id
+    map<uint32, bool>                   dailyRewards    =   3; // 领取的日常任务奖励id
+    map<uint32, bool>                   weeklyRewards   =   4; // 领取的周常任务奖励id
+}
+
+
+
+
+message Sector {
+    map<uint32, bool>               completed       = 1;
+    map<uint32, bool>               boxPicked       = 2;
+}
+
+message SectorGroup {
+    map<uint32, Sector>             sectorData      = 1;
+    map<uint32, bool>               chipData        = 2;
+    map<uint32, DungeonStageState>               dungeonSet      = 3;      
+}
+
+message Endless {
+    map<uint32, bool> completed = 1; // 已经完成的 key-关卡id
+    map<uint32, uint32> processing = 2; // 尚处于进行中的 // key-关卡id value-当前通过了第几层 0， 1， 2， 3等
+}
+
+
+
+message Station {
+    message elem {
+        map<uint32, bool> data = 1; // key = hero id
+    }
+    map<uint32, elem> data = 1; // building id, hero list
+}
+
+
+
+message QuestStatistics {
+    map<uint32,bool>                  mainline      = 1; // 主线任务id key-任务id
+    map<uint32,bool>                  side          = 2; // 支线任务id key-任务id
+}
+
+message Statistics {
+    map<uint32, uint32>  resident = 1; // 常驻数据
+}
+
+
+
+
+message RefreshableStoreShelf {
+    uint32                                  id          = 1; //货架id
+    uint32                                  shelfIdx    = 2; //物品类型索引--从0开始
+    uint32                                  goodId      = 3; //随机出的商品表索引id
+    uint32                                  purchases   = 4; //购买次数
+}
+
+message RefreshableStore {
+    uint32                                  id          = 1;
+    map<uint32, RefreshableStoreShelf>      shelves     = 2;
+    // uint32                                  freshCount  = 3;
+    // uint32                                  freeFreshTm = 4;
+}
+
+message NormalStoreShelf {
+    uint32                                  shelfId     = 1; //货架id
+    // uint32                                  purchases   = 2; //购买次数
+}
+
+message TimesStoreShelf {
+    uint32 shelfId = 1;
+    uint32 purchases = 2;
+}
+
+message HeroStore {
+    uint32 storeId = 1;
+    map<uint32, TimesStoreShelf> shelves = 2;
+}
+
+message NormalStore {
+    uint32                                  storeId     = 1;
+    map<uint32, NormalStoreShelf>           shelves     = 2;
+}
+
+message ResourrceStore {
+    uint32                                  storeId     = 1;
+    map<uint32, TimesStoreShelf>           shelves     = 2;
+    CounterGroup counter= 3;
+}
+
+message StoreGroup {
+    map<uint32, RefreshableStore>           refreshableStoreGroup       = 1;
+    map<uint32, NormalStore>                normalStoreGroup            = 2;
+    CounterGroup                            normal                      = 3;
+    CounterGroup                            refresh                     = 4;
+    map<uint32, HeroStore> heroStoreGroup = 5;
+    map<uint32, ResourrceStore> resourceStoreGroup = 6;
+}
+
+
+
+message TrainingSlotBase {
+    uint32                                      idx             = 1;
+    uint32                                      hero            = 2;
+    uint32                                      effectiveness   = 3;    //效率
+    uint32                                      overTm          = 4;    //结束时间
+    uint32                                      startTm         = 5;   
+    uint32                                      extraNum        = 6;    //
+}
+
+message Training {
+    // uint64                                      curExpPool          = 1;    //  后续迁移，暂放 废弃
+    uint32                                      lastEffIdx          = 2;
+    map<uint32, TrainingSlotBase>               trainingSlotBase    = 3;
+}

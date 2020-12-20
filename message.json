@@ -1,0 +1,96 @@
+{
+	"title": "SC_EFFECTOR_RGSyncUpdateDiff",
+	"type": "object",
+	"properties": {
+		"argDelete": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "boolean"
+					}
+				}
+			}
+		},
+		"autoRg": {
+			"type": "array",
+			"items": {
+				"title": "AutoResourceGeneratorBase",
+				"type": "object",
+				"properties": {
+					"frag": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 4294967295
+					},
+					"itemId": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 4294967295
+					},
+					"startTm": {
+						"type": "integer",
+						"minimum": -9223372036854775808,
+						"maximum": 9223372036854775807
+					}
+				}
+			}
+		},
+		"rgDelete": {
+			"type": "object",
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "boolean"
+					}
+				}
+			}
+		},
+		"update": {
+			"type": "array",
+			"items": {
+				"title": "ResourceGeneratorBase",
+				"type": "object",
+				"properties": {
+					"containNum": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 4294967295
+					},
+					"extraNum": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 4294967295
+					},
+					"itemId": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 4294967295
+					},
+					"keepNum": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 4294967295
+					},
+					"originalStartTm": {
+						"type": "integer",
+						"minimum": -9223372036854775808,
+						"maximum": 9223372036854775807
+					},
+					"relativeStartTm": {
+						"type": "integer",
+						"minimum": -9223372036854775808,
+						"maximum": 9223372036854775807
+					},
+					"uid": {
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 18446744073709551615
+					}
+				}
+			}
+		}
+	}
+}
